@@ -1,0 +1,4 @@
+# Keep this file small and project-specific.
+# Detekt runs with buildUponDefaultConfig=true, so standard Detekt rules stay enabled.
+# The ktlint wrapper rule set is added through build-logic and supports auto-correct:
+# ./gradlew detekt --auto-correct
