@@ -26,6 +26,8 @@ android {
 
 dependencies {
     implementation(project(":framework"))
+    implementation(project(":router"))
+    implementation(project(":tools"))
     implementationFeatureModules()
 }
 

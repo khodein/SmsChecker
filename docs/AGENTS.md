@@ -90,6 +90,15 @@
 12. Если фича использует локальное хранение, добавь новую таблицу и необходимые методы работы с ней.
 13. Подключи зависимости через Koin.
 14. Настрой навигацию через `Router` и `goTo(key: NavKey)`.
+15. Создай папки ресурсов для каждой поддерживаемой локали: `src/main/res/values/strings.xml` (English — по умолчанию), `src/main/res/values-ru/strings.xml` (Russian), `src/main/res/values-kk/strings.xml` (Kazakh). Следуй правилам именования и перевода строк из `docs/ai/rules/strings.md`.
+
+---
+
+### Add new non-feature module
+1. Создай Gradle-модуль с `build.gradle.kts` и нужными convention plugins.
+2. Создай `object XModule` с методом `fun get(): Module` внутри модуля.
+3. Зарегистрируй `XModule.get()` в `AppModule.get()` в `App.kt`.
+4. Если модуль нужен всем фичам — добавь `project(":module-name")` в `smschecker.android.feature.gradle.kts`.
 
 ---
 
@@ -139,6 +148,7 @@
 ---
 
 ## File Structure
+- Стандартную структуру файлов внутри feature-модуля смотри в `docs/ai/rules/structure.md`.
 - `<feature-name>/` — самостоятельная фича, внутри которой должны находиться слои `data`, `domain`, `presentation`.
 - `<feature-name>/presentation/` — UI, `ViewModel`, `UiState`, навигация фичи.
 - `<feature-name>/domain/` — бизнес-логика, `UseCase`, domain-модели фичи.
@@ -156,8 +166,10 @@
 ## References
 - `docs/ai/context.md` — общий контекст проекта и дополнительные пояснения.
 - `docs/ai/rules/` — подробные правила и соглашения проекта.
+- `docs/ai/rules/structure.md` — стандартная файловая структура feature-модуля.
 - `docs/ai/rules/dependencies.md` — правила добавления и группировки зависимостей.
 - `docs/ai/rules/code-quality.md` — правила запуска Detekt и auto-correct.
+- `docs/ai/rules/strings.md` — правила именования строковых ресурсов и обязательного перевода на все локали.
 - `docs/ai/skills/` — дополнительные инструкции и сценарии работы для AI-агентов.
 - При добавлении новых важных документов для AI-агентов этот раздел должен быть расширен.
 

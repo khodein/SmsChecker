@@ -17,10 +17,10 @@
 
 ## Rules
 - Размещай конфигурацию DI для каждой фичи в файле `feature/FeatureNameModule.kt`
-- Объявляй зависимости фичи внутри `val featureNameModule = module { }`
-- Создавай отдельный Koin-модуль для каждой фичи
-- Регистрируй `ViewModel`, `UseCase`, `Repository` и другие зависимости фичи только внутри Koin-модуля фичи
-- Регистрируй `Router` в отдельном Koin-модуле навигации внутри класса или файла роутера фичи
+- Объявляй зависимости фичи внутри `object XModule` с методом `fun get(): Module`
+- Создавай отдельный модуль для каждой фичи
+- Регистрируй `ViewModel`, `UseCase`, `Repository` и другие зависимости фичи только внутри `XModule.get()`
+- Регистрируй `Router` вместе с остальными зависимостями фичи внутри `XModule.get()`
 - Регистрируй `ViewModel` через Koin DSL `viewModelOf`
 - Используй `singleOf`, `factoryOf`, `single`, `factory` и другие Koin-регистрации в соответствии с жизненным циклом зависимости
 - Сохраняй зависимости фичи внутри ее собственной области ответственности
@@ -32,7 +32,7 @@
 
 ## Do
 - Создавай для каждой фичи отдельный файл `FeatureNameModule.kt`
-- Объявляй зависимости фичи внутри одного `val featureNameModule = module { }`
+- Объявляй зависимости фичи внутри одного `object XModule { fun get() = module { ... } }`
 - Регистрируй `ViewModel` через `viewModelOf`
 - Используй `factoryOf` и `singleOf`, если они подходят для регистрации зависимости
 - Связывай интерфейсы с реализациями явно, если у компонента есть контракт
@@ -41,8 +41,11 @@
 - Подключай в модуль только зависимости, которые действительно нужны фиче
 - Используй `get()` только для тех зависимостей, которые уже зарегистрированы в Koin
 - Регистрируй `UseCase`, `Repository`, `Router` и другие компоненты в соответствии с их жизненным циклом
-- Выноси модуль навигации для `Router` в класс или файл роутера фичи
+- Регистрируй `Router` внутри `XModule.get()` вместе с другими зависимостями фичи
+- После создания нового модуля добавляй `XModule.get()` в `AppModule.get()` в `App.kt`
+- Если модуль должен быть доступен всем фичам — добавляй `project(":module-name")` в `smschecker.android.feature.gradle.kts`
 - Следуй архитектурным границам проекта при объявлении зависимостей
+- Следуй структуре файлов и правилам видимости из `docs/ai/rules/structure.md`
 
 ## Don't
 - Не создавай зависимости вручную в точке использования вместо Koin
@@ -57,20 +60,26 @@
 - Не создавай циклические зависимости между компонентами
 - Не размещай бизнес-логику в Koin-модуле
 - Не используй Koin-модуль как место для инициализации сценариев, навигации или работы с данными
-- Не регистрируй `Router` внутри feature-модуля, если для него используется отдельный модуль навигации
+- Не создавай отдельный Koin-модуль только для `Router` — регистрируй его в `XModule.get()`
+- Не забывай регистрировать `XModule.get()` нового модуля в `AppModule.get()` в `App.kt`
 - Не игнорируй правила `viewmodel.md`, `usecase.md`, `repository.md` и `navigation.md` при регистрации зависимостей
 
 ## Examples
 ### ✅ Correct
 ```text
 home/
-  HomeModule.kt
+  HomeModule.kt        — Router interface, RouterImpl, ProviderImpl, Koin module
   presentation/
-    HomeRoute.kt
-    HomeScreen.kt
-    HomeViewModel.kt
-    HomeUiState.kt
-    HomeRouter.kt
+    screen/
+      list/
+        management/
+          HomeListKey.kt
+          HomeListState.kt
+        route/
+          HomeListRoute.kt
+        screen/
+          HomeListScreen.kt
+          HomeListViewModel.kt
   domain/
     GetHomeUseCase.kt
     HomeModel.kt
@@ -80,27 +89,48 @@ home/
 ```
 
 ```kotlin
-val homeModule = module {
-    viewModelOf(::HomeViewModel)
+interface HomeRouter {
+    fun gotoHomeList()
+}
 
-    factoryOf(::GetHomeUseCase)
+object HomeModule {
 
-    single<HomeRepository> {
-        HomeRepositoryImpl(
-            api = get(),
-            dao = get()
-        )
+    fun get() = module {
+        viewModelOf(::HomeListViewModel)
+        single<HomeRouter> { HomeRouterImpl(get()) }
+        singleOf(::HomeProviderImpl) bind Router.Provider::class
+
+        factoryOf(::GetHomeUseCase)
+
+        single<HomeRepository> {
+            HomeRepositoryImpl(api = get(), dao = get())
+        }
+    }
+
+    private class HomeRouterImpl(private val router: Router) : HomeRouter {
+        override fun gotoHomeList() {
+            router.goTo(HomeListKey)
+        }
+    }
+
+    private class HomeProviderImpl : Router.Provider {
+        override fun invoke(): EntryProviderInstaller = {
+            entry<HomeListKey> {
+                val viewModel = koinViewModel<HomeListViewModel>()
+                HomeListRoute(viewModel = viewModel)
+            }
+        }
     }
 }
 ```
 
+Подключение в `AppModule`:
 ```kotlin
-val homeRouterModule = module {
-    single<HomeRouter> {
-        HomeRouterImpl(
-            router = get()
-        )
-    }
+private object AppModule {
+    fun get(): List<Module> = listOf(
+        rootModule,
+        HomeModule.get()
+    )
 }
 ```
 

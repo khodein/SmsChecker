@@ -17,7 +17,8 @@
 ## Rules
 - Создавай навигацию только как часть слоя presentation
 - Создавай для каждой фичи отдельный интерфейс роутера, например `HomeRouter`
-- Размещай навигационный контракт, `NavKey`, реализацию роутера и `Provider` в `presentation` фичи
+- Размещай навигационный контракт (`XRouter` interface) в `XModule.kt` на уровне пакета фичи
+- Размещай `NavKey`, `RouterImpl` и `Provider` как `private` классы внутри `object XModule`
 - Создавай для каждого экрана отдельный `NavKey`
 - Делай `NavKey` приватным для фичи, если он не должен использоваться извне
 - Используй `@Serializable` для каждого `NavKey`
@@ -33,9 +34,9 @@
 
 ## Do
 - Выноси навигационный контракт фичи в отдельный интерфейс, например `HomeRouter`
-- Держи `NavKey`, реализацию роутера и `Provider` рядом с навигационным контрактом фичи
-- Размещай навигационные сущности фичи в одном файле, например `HomeRouter.kt`, если это соответствует структуре проекта
-- Оставляй публичным только интерфейс роутера, а остальные навигационные сущности делай `private`
+- Держи `NavKey`, реализацию роутера и `Provider` как `private` классы внутри `object XModule`
+- Размещай навигационные сущности фичи в `XModule.kt`
+- Оставляй публичным только интерфейс роутера (`XRouter`), остальные навигационные сущности делай `private`
 - Делай `NavKey` приватным, если он используется только внутри фичи
 - Используй понятные методы навигации в интерфейсе роутера, например `gotoHomeList()`
 - Реализуй переходы в `RouterImpl` через `router.goTo(...)`
@@ -48,7 +49,7 @@
 - Следуй правилам `screen.md` для открытия `Route` и `viewmodel.md` для получения `ViewModel`
 
 ## Don't
-- Не размещай навигацию вне слоя presentation
+- Не обращайся к навигации из слоёв `domain` и `data`
 - Не создавай общий роутер для нескольких фич, если он смешивает их ответственность
 - Не вызывай `goTo(...)` напрямую из `Screen`-Composable
 - Не открывай `Screen`-Composable напрямую через `entry<NavKey>`
@@ -62,17 +63,24 @@
 - Не вызывай роутеры других фич напрямую из `Screen`, если переход можно передать через `Route`-лямбду
 - Не открывай экран вне `Router.Provider`, если для него уже определен navigation-поток через `NavKey`
 - Не игнорируй правила `screen.md` и `viewmodel.md` при открытии `Route`
+- Следуй структуре файлов из `docs/ai/rules/structure.md`
 
 ## Examples
 ### ✅ Correct
 ```text
 home/
+  HomeModule.kt        — Router interface, RouterImpl, ProviderImpl
   presentation/
-    HomeRoute.kt
-    HomeScreen.kt
-    HomeViewModel.kt
-    HomeUiState.kt
-    HomeRouter.kt
+    screen/
+      list/
+        management/
+          HomeListKey.kt
+          HomeListState.kt
+        route/
+          HomeListRoute.kt
+        screen/
+          HomeListScreen.kt
+          HomeListViewModel.kt
 ```
 
 ```kotlin
@@ -80,35 +88,39 @@ interface HomeRouter {
     fun gotoHomeList()
 }
 
-@Serializable
-private class HomeNavKey : NavKey
+object HomeModule {
 
-private class HomeRouterImpl(
-    private val router: Router
-) : HomeRouter {
-
-    override fun gotoHomeList() {
-        router.goTo(HomeNavKey())
+    fun get() = module {
+        viewModelOf(::HomeListViewModel)
+        single<HomeRouter> { HomeRouterImpl(get()) }
+        singleOf(::HomeProviderImpl) bind Router.Provider::class
     }
-}
 
-private class HomeProviderImpl(
-    private val detailsRouter: DetailsRouter
-) : Router.Provider {
-    override operator fun invoke(): EntryProviderInstaller {
-        return {
-            entry<HomeNavKey> {
-                val viewModel = koinViewModel<HomeViewModel>()
-                HomeRoute(
+    private class HomeRouterImpl(
+        private val router: Router
+    ) : HomeRouter {
+        override fun gotoHomeList() {
+            router.goTo(HomeListKey)
+        }
+    }
+
+    private class HomeProviderImpl(
+        private val detailsRouter: DetailsRouter
+    ) : Router.Provider {
+        override fun invoke(): EntryProviderInstaller = {
+            entry<HomeListKey> {
+                val viewModel = koinViewModel<HomeListViewModel>()
+                HomeListRoute(
                     viewModel = viewModel,
-                    gotoDetails = { id ->
-                        detailsRouter.gotoDetails(id)
-                    }
+                    gotoDetails = { id -> detailsRouter.gotoDetails(id) }
                 )
             }
         }
     }
 }
+
+@Serializable
+private object HomeListKey : NavKey
 ```
 
 ### ❌ Incorrect

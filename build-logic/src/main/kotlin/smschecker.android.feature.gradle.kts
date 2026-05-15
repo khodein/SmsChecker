@@ -18,6 +18,9 @@ val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 fun DependencyHandler.addFeatureDependencies() {
     add("implementation", libs.findLibrary("androidx-navigation3-runtime").get())
+    add("implementation", project(":router"))
+    add("implementation", project(":framework"))
+    add("implementation", project(":tools"))
 }
 
 pluginManager.withPlugin("com.android.library") {
