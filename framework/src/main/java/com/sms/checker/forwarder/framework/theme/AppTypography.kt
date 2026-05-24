@@ -7,18 +7,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-// TODO: после добавления файлов nunito_regular.ttf, nunito_medium.ttf, nunito_bold.ttf
-//       в framework/src/main/res/font/ заменить на:
-//
-// import androidx.compose.ui.text.font.Font
-// import com.sms.checker.forwarder.framework.R
-//
-// private val NunitoFontFamily = FontFamily(
-//     Font(R.font.nunito_regular, FontWeight.Normal),
-//     Font(R.font.nunito_medium, FontWeight.Medium),
-//     Font(R.font.nunito_bold, FontWeight.Bold)
-// )
-private val NunitoFontFamily = FontFamily.Default
+ import androidx.compose.ui.text.font.Font
+ import com.sms.checker.forwarder.framework.R
+
+ private val NunitoFontFamily = FontFamily(
+     Font(R.font.regular, FontWeight.Normal),
+     Font(R.font.medium, FontWeight.Medium),
+     Font(R.font.bold, FontWeight.Bold)
+ )
 
 @Immutable
 data class AppTypography(

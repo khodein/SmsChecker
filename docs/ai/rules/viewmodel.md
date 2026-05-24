@@ -9,24 +9,26 @@
 - Правило распространяется на `ViewModel`, `UiState` и управление состоянием экрана в слое presentation
 
 ## Principles
-- `ViewModel` отвечает за управление состоянием экрана и обработку пользовательских действий
+- `ViewModel` отвечает за сборку состояния экрана из блоков и связывание блоков между собой
 - `UiState` является частью framework-контракта presentation-слоя
-- Бизнес-логика во `ViewModel` должна оставаться чистой и не зависеть от Android, Compose и framework-типов вне базовых контрактов проекта
-- `ViewModel` должна быть связующим звеном между UI и domain-слоем, не нарушая границы архитектуры
+- Логика частей экрана инкапсулируется в отдельных `Block`-классах, а не в `ViewModel` напрямую
+- `ViewModel` должна быть связующим звеном между блоками и экраном, не нарушая границы архитектуры
 
 ## Rules
 - Создавай `ViewModel` только как часть слоя presentation
-- Наследуй каждую `ViewModel` от `BaseViewModel`
+- Наследуй каждую `ViewModel` от `BaseViewModel<UiState>`
 - Используй для каждой `ViewModel` `UiState`, который наследуется от `BaseUiState`
 - Помечай `UiState` и дополнительные UI-модели аннотацией `@Immutable`
-- Храни состояние экрана только во `ViewModel`
+- Реализуй метод `attach()`, в котором вызывай `registerBlocks { }` для регистрации блоков
+- Реализуй метод `updateViewState()`, который собирает `UiState` из состояний блоков
+- Реализуй метод `getInitialUiState()`, который возвращает начальное состояние из блоков
+- Регистрируй блоки через `registerBlocks { add(block, provider) }`
+- Храни состояние экрана только во `ViewModel` через агрегацию состояний блоков
 - Используй только одну `ViewModel` для одного экрана
 - Используй только один основной `UiState` для одного экрана
-- Обновляй состояние экрана только через `UiState`
+- Обновляй состояние экрана только через `updateViewState()` или `setState { }`
 - Используй `status` из `BaseUiState` для отображения состояний `LOADING`, `ERROR` и `SUCCESS`
 - Передавай данные в UI только через `UiState`
-- Обрабатывай пользовательские действия во `ViewModel`
-- Вызывай `UseCase` из `ViewModel` для выполнения бизнес-логики
 - Не обращайся к `Repository`, API и базе данных напрямую из `ViewModel`
 - Не используй `request`, `response` и `entity` модели во `ViewModel`
 - Не передавай `ViewModel` в `Screen`-Composable
@@ -34,112 +36,108 @@
 - Сохраняй `UiState` immutable
 
 ## Do
-- Создавай `ViewModel` как единую точку управления состоянием экрана
-- Создавай отдельный `UiState` для каждого экрана
-- Наследуй `UiState` экрана от `BaseUiState`
+- Создавай `ViewModel` как точку сборки состояния экрана из блоков
+- Создавай отдельный `UiState` для каждого экрана, наследуй от `BaseUiState`
 - Помечай `UiState` и дополнительные UI-модели аннотацией `@Immutable`
 - Используй `status` для отображения состояний `LOADING`, `ERROR` и `SUCCESS`
 - Храни в `UiState` только данные, необходимые для отображения экрана
-- Обновляй `UiState` последовательно и предсказуемо в ответ на действия пользователя или результат `UseCase`
-- Обрабатывай пользовательские действия в методах `ViewModel`
-- Вызывай `UseCase` из `ViewModel` для выполнения бизнес-логики
-- Не передавай domain-модели в UI-слой и преобразовывай их во `ViewModel` в данные, удобные для отображения
-- Создавай дополнительные UI-модели внутри `UiState`, если экрану нужны отдельные модели для отображения
-- Используй для дополнительных UI-моделей нейминг, понятный в контексте текущего `UiState`
+- Регистрируй блоки в `attach()` через `registerBlocks { add(block, provider) }`
+- Собирай `UiState` из состояний блоков в `updateViewState()`
 - Делай `UiState` и дополнительные UI-модели immutable
 - Используй только `val` в `UiState` и дополнительных UI-моделях без `var`
-- Передавай в `Screen` только `UiState` и callbacks
+- Передавай в `Screen` только `UiState`
 - Используй `Flow` и `StateFlow` для управления состоянием экрана
 - Следуй правилам `screen.md` для отображения состояния и `usecase.md` для бизнес-логики
+- Следуй правилам `block.md` для реализации блоков
 
 ## Don't
-- Не создавай `ViewModel`, которая не наследуется от `BaseViewModel`
+- Не создавай `ViewModel`, которая не наследуется от `BaseViewModel<UiState>`
 - Не используй `UiState`, который не наследуется от `BaseUiState`
 - Не используй `UiState` и дополнительные UI-модели без аннотации `@Immutable`
 - Не используй больше одной `ViewModel` для одного экрана
 - Не используй больше одного основного `UiState` для одного экрана
 - Не храни состояние экрана вне `UiState`
-- Не используй `var` в `UiState` и дополнительных UI-моделях
-- Не делай `UiState` и дополнительные UI-модели mutable
+- Не используй `var` в `UiState`
+- Не делай `UiState` mutable
 - Не передавай domain-модели в UI-слой
 - Не передавай `request`, `response` и `entity` модели во `ViewModel`
 - Не передавай `Repository`, API и базу данных напрямую во `ViewModel`
-- Не размещай бизнес-логику, связанную с данными, вне `UseCase` и `ViewModel`
+- Не размещай логику частей экрана напрямую во `ViewModel` — выноси в блоки
 - Не вызывай `Repository`, API и базу данных напрямую из `ViewModel`
 - Не передавай `ViewModel` в `Screen`-Composable
 - Не передавай во `Screen` данные, которые не входят в `UiState`
 - Не создавай дополнительные UI-модели вне `UiState`
 - Не используй Android-, Compose- и UI-типы в бизнес-логике внутри `ViewModel`, кроме базовых контрактов проекта и инфраструктуры `ViewModel`
 - Не обновляй состояние экрана вне `ViewModel`
-- Не игнорируй правила `screen.md` и `usecase.md`, если они относятся к реализации `ViewModel`
+- Не игнорируй правила `screen.md`, `usecase.md` и `block.md`, если они относятся к реализации `ViewModel`
 
 ## Examples
 ### ✅ Correct
-```text
-home/
-  presentation/
-    HomeRoute.kt
-    HomeScreen.kt
-    HomeViewModel.kt
-    HomeUiState.kt
-```
-
 ```kotlin
 @Immutable
-data class HomeUiState(
-    val numbers: List<NumberItem> = emptyList(),
-    override val status: Status = Status.SUCCESS
-) : BaseUiState {
-    @Immutable
-    data class NumberItem(
-        val id: Int,
-        val title: String
-    )
-}
+internal data class ListeningListState(
+    override val status: Status,
+    val listeningToolbarState: ListeningToolbarState,
+    val listeningState: ListeningState,
+    val listeningBottomBarState: ListeningBottomBarState,
+    val items: List<ListeningListItemState> = emptyList(),
+) : BaseUiState()
 
-class HomeViewModel(
-    private val getHomeNumbersUseCase: GetHomeNumbersUseCase
-) : BaseViewModel<HomeUiState>() {
-    override val initialUiState: HomeUiState = HomeUiState()
-    private var loadJob: Job? = null
+internal class ListeningListViewModel(
+    private val listeningBlock: ListeningBlock,
+    private val listeningBottomBarBlock: ListeningBottomBarBlock,
+    private val listeningToolbarBlock: ListeningToolbarBlock,
+) : BaseViewModel<ListeningListState>() {
 
-    fun load() {
-        setState { copy(status = Status.LOADING) }
+    init {
+        attach()
+    }
 
-        loadJob?.cancel()
-        loadJob = viewModelScope.launch {
-            runCatching {
-                getHomeNumbersUseCase()
-            }.onSuccess { numbers ->
-                setState {
-                    copy(
-                        numbers = numbers.map { model ->
-                            HomeUiState.NumberItem(
-                                id = model.id,
-                                title = model.title
-                            )
-                        },
-                        status = Status.SUCCESS
-                    )
-                }
-            }.onFailure {
-                setState {
-                    copy(status = Status.ERROR)
-                }
-            }
+    override fun updateViewState() {
+        setState {
+            copy(
+                listeningState = listeningBlock.blockState.value,
+                listeningToolbarState = listeningToolbarBlock.blockState.value,
+                listeningBottomBarState = listeningBottomBarBlock.blockState.value
+            )
         }
+    }
+
+    override fun attach() {
+        registerBlocks {
+            add(listeningToolbarBlock, Unit)
+            add(listeningBlock, Unit)
+            add(listeningBottomBarBlock, Unit)
+        }
+    }
+
+    override fun getInitialUiState(): ListeningListState {
+        return ListeningListState(
+            status = Status.SUCCESS,
+            listeningState = listeningBlock.blockState.value,
+            listeningToolbarState = listeningToolbarBlock.blockState.value,
+            listeningBottomBarState = listeningBottomBarBlock.blockState.value,
+            items = emptyList(),
+        )
     }
 }
 ```
 
 ### ❌ Incorrect
 ```kotlin
-data class HomeUiState(
-    var numbers: List<HomeModel> = emptyList(),
-    override val status: Status = Status.SUCCESS
-) : BaseUiState
+// ViewModel напрямую содержит логику вместо блоков
+class HomeListViewModel(
+    private val getItemsUseCase: GetItemsUseCase
+) : BaseViewModel<HomeListState>() {
 
-class HomeViewModel(
-    private val homeRepository: HomeRepository
-) : ViewModel()
+    override fun attach() {
+        // логика должна быть в блоке
+        viewModelScope.launch { getItemsUseCase() }
+    }
+}
+
+// var в UiState
+data class HomeListState(
+    var numbers: List<HomeModel> = emptyList()
+) : BaseUiState()
 ```

@@ -59,57 +59,38 @@
 
 ## Examples
 ### ✅ Correct
-```text
-home/
-  presentation/
-    HomeRoute.kt
-    HomeScreen.kt
-    HomeViewModel.kt
-    HomeUiState.kt
-```
 
-`Route` получает состояние из `ViewModel` и передает в `Screen` только `HomeUiState` и callbacks.
+`Route` получает состояние из `ViewModel` и передает в `Screen` только `UiState`. Callbacks содержатся в состояниях блоков внутри `UiState`.
 
 ```kotlin
 @Composable
-fun HomeRoute(
-    viewModel: HomeViewModel
+internal fun ListeningListRoute(
+    viewModel: ListeningListViewModel,
 ) {
-    val uiState = viewModel.uiState.collectAsState()
+    val state by viewModel.viewState.collectAsState()
 
-    HomeScreen(
-        state = uiState.value,
-        onNumberClick = viewModel::onNumberClick,
-        onRetryClick = viewModel::onRetryClick
-    )
+    ListeningListScreen(state = state)
 }
 
 @Composable
-fun HomeScreen(
-    state: HomeUiState,
-    onNumberClick: (Int) -> Unit,
-    onRetryClick: () -> Unit
+internal fun ListeningListScreen(
+    state: ListeningListState
 ) {
-    when (state.status) {
-        Status.LOADING -> {
-            CircularProgressIndicator()
+    Scaffold(
+        topBar = {
+            ListeningToolbarWidget(
+                modifier = Modifier.fillMaxWidth(),
+                state = state.listeningToolbarState,
+            )
+        },
+        bottomBar = {
+            ListeningBottomBarWidget(
+                modifier = Modifier.fillMaxWidth(),
+                state = state.listeningBottomBarState,
+            )
         }
-
-        Status.ERROR -> {
-            Button(onClick = onRetryClick) {
-                Text(text = "Retry")
-            }
-        }
-
-        Status.SUCCESS -> {
-            LazyColumn {
-                items(state.numbers) { number ->
-                    Button(onClick = { onNumberClick(number) }) {
-                        Text(text = number.toString())
-                    }
-                }
-            }
-        }
+    ) {
+        // content
     }
 }
 ```

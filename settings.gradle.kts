@@ -33,10 +33,18 @@ fun includeProjectModules() {
         .asSequence()
         .filter { it.isDirectory }
         .filter { it.name != "build-logic" }
-        .filter { it.resolve("build.gradle.kts").isFile }
         .sortedBy { it.name }
         .forEach { moduleDir ->
-            include(":${moduleDir.name}")
+            if (moduleDir.resolve("build.gradle.kts").isFile) {
+                include(":${moduleDir.name}")
+            }
+            moduleDir.listFiles()
+                .orEmpty()
+                .filter { it.isDirectory && it.resolve("build.gradle.kts").isFile }
+                .sortedBy { it.name }
+                .forEach { subDir ->
+                    include(":${moduleDir.name}:${subDir.name}")
+                }
         }
 }
 

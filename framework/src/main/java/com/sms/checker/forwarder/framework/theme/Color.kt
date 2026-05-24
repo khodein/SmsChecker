@@ -39,19 +39,33 @@ private val Red500 = Color(0xFFEF4444)
 
 @Stable
 interface AppColors {
+    // кнопки, switch, активные иконки, акцентные элементы
     val primary: Color
+    // текст и иконки поверх primary
     val onPrimary: Color
+    // мягкий фон для акцентных блоков, chips, тегов
     val primaryContainer: Color
+    // текст и иконки поверх primaryContainer
     val onPrimaryContainer: Color
+    // фон всего экрана
     val background: Color
+    // основной текст и иконки на фоне background
     val onBackground: Color
+    // фон карточек, диалогов, bottom sheet
     val surface: Color
+    // фон второстепенных блоков, полей ввода, строк списка
     val surfaceVariant: Color
+    // основной текст и иконки на surface
     val onSurface: Color
+    // второстепенный текст, подписи, placeholder на surfaceVariant
     val onSurfaceVariant: Color
+    // разделители, обводки активных полей ввода
     val outline: Color
+    // тонкие разделители, обводки неактивных карточек и полей
     val outlineVariant: Color
+    // фон элементов ошибки, деструктивные действия
     val error: Color
+    // текст и иконки поверх error
     val onError: Color
 }
 

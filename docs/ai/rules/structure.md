@@ -16,67 +16,128 @@
 
 ### Структура
 
+Каждый feature-модуль — это папка без собственного `build.gradle.kts`, внутри которой два Gradle-субмодуля:
+
 ```text
-feature-x/
-  XModule.kt                          — Koin DI, Router interface, RouterImpl, ProviderImpl
-  presentation/
-    screen/
-      {screenName}/                   — папка на каждый экран (list, detail, edit и т.д.)
-        management/
-          key/
-            XScreenNameKey.kt         — NavKey экрана
-          screen/
-            XScreenNameState.kt       — UiState экрана
-            XScreenNameItem.kt        — UI-модель элемента (опционально)
-        route/
-          XScreenNameRoute.kt         — Route composable
+feature-x/                            — папка-контейнер, не Gradle-модуль
+  api/                                — публичные контракты фичи
+    build.gradle.kts                  — plugin: smschecker.android.feature.api
+    src/main/AndroidManifest.xml
+    src/main/java/.../feature/x/
+      XRouter.kt                      — интерфейс роутера (если нужна навигация извне)
+      (другие публичные интерфейсы)
+  impl/                               — реализация фичи
+    build.gradle.kts                  — plugin: smschecker.android.feature; depends on :feature-x:api
+    src/main/java/.../feature/x/
+      XModule.kt                      — Koin DI
+      presentation/
         screen/
-          widget/                     — UI-компоненты экрана (опционально)
-            XWidget.kt
-          XScreenNameScreen.kt        — Screen composable
-          XScreenNameViewModel.kt     — ViewModel
-  domain/
-    XUseCase.kt
-    XModel.kt
-    XRepository.kt                    — интерфейс репозитория
-  data/
-    XRepositoryImpl.kt                — реализация репозитория
+          {screenName}/               — папка на каждый экран (list, detail, edit и т.д.)
+            route/
+              XScreenNameKey.kt       — NavKey экрана
+              XScreenNameRoute.kt     — Route composable
+            screen/
+              state/
+                XScreenNameState.kt   — UiState экрана
+                XScreenNameItemState.kt — UI-модель элемента (опционально)
+                XScreenNameAction.kt  — Action экрана (опционально)
+              mapper/
+                XScreenNameMapper.kt  — маппер экрана (опционально)
+              blocks/                 — блоки — самостоятельные части экрана
+                {blockName}/
+                  XBlockNameBlock.kt  — логика блока
+                  state/
+                    XBlockNameState.kt
+                    XBlockNameAction.kt
+                  mapper/
+                    XBlockNameMapper.kt
+                  widget/
+                    XBlockNameWidget.kt
+              XScreenNameScreen.kt    — Screen composable
+              XScreenNameViewModel.kt — ViewModel
+      domain/
+        XUseCase.kt
+        XModel.kt
+        XRepository.kt               — интерфейс репозитория
+      data/
+        XRepositoryImpl.kt           — реализация репозитория
 ```
+
+### api vs impl
+
+- `api` — только публичные интерфейсы и контракты, которые нужны другим модулям или `app`
+- `impl` зависит от своего `api` через `implementation(project(":feature-x:api"))`
+- `app` подключает оба субмодуля автоматически через `implementationFeatureModules()`
+- Содержимое `api` должно быть минимальным — только то, что реально нужно снаружи
 
 ### Видимость
 
-- `XModule` и `XRouter` — публичные (`public`), доступны из других модулей
-- Все остальные классы и функции внутри фичи — `internal`
-- Классы, вложенные внутрь `object XModule` (`RouterImpl`, `ProviderImpl`, `NavKey`) — `private`
+- `XModule` и публичные интерфейсы в `api` — `public`, доступны из других модулей
+- Всё остальное в `impl` — `internal`
+- Классы, вложенные внутрь `object XModule` (`RouterImpl`, `ProviderImpl`) — `private`
 
 ### Именование файлов
 - `{screenName}` — название экрана строчными буквами: `list`, `detail`, `edit`
-- `XModule.kt` — `Feature` + `Module`, например `DevModule.kt`
-- `XScreenNameKey.kt` — `Feature` + `ScreenName` + `Key`, например `DevListKey.kt`
-- `XScreenNameState.kt` — `Feature` + `ScreenName` + `State`, например `DevListState.kt`
-- `XScreenNameRoute.kt` — `Feature` + `ScreenName` + `Route`, например `DevListRoute.kt`
-- `XScreenNameScreen.kt` — `Feature` + `ScreenName` + `Screen`, например `DevListScreen.kt`
-- `XScreenNameViewModel.kt` — `Feature` + `ScreenName` + `ViewModel`, например `DevListViewModel.kt`
+- `{blockName}` — название блока строчными буквами: `toolbar`, `bottombar`, `listening`
+- `XModule.kt` — `Feature` + `Module`, например `ListeningModule.kt`
+- `XScreenNameKey.kt` — `Feature` + `ScreenName` + `Key`, например `ListeningListKey.kt`
+- `XScreenNameState.kt` — `Feature` + `ScreenName` + `State`, например `ListeningListState.kt`
+- `XScreenNameRoute.kt` — `Feature` + `ScreenName` + `Route`, например `ListeningListRoute.kt`
+- `XScreenNameScreen.kt` — `Feature` + `ScreenName` + `Screen`, например `ListeningListScreen.kt`
+- `XScreenNameViewModel.kt` — `Feature` + `ScreenName` + `ViewModel`, например `ListeningListViewModel.kt`
+- `XBlockNameBlock.kt` — `Feature` + `BlockName` + `Block`, например `ListeningToolbarBlock.kt`
+- `XBlockNameState.kt` — `Feature` + `BlockName` + `State`, например `ListeningToolbarState.kt`
+- `XBlockNameAction.kt` — `Feature` + `BlockName` + `Action`, например `ListeningToolbarAction.kt`
+- `XBlockNameMapper.kt` — `Feature` + `BlockName` + `Mapper`, например `ListeningToolbarMapper.kt`
+- `XBlockNameWidget.kt` — `Feature` + `BlockName` + `Widget`, например `ListeningToolbarWidget.kt`
 
 ### Пример
 
 ```text
-feature-dev/
-  DevModule.kt
-  presentation/
-    screen/
-      list/
-        management/
-          key/
-            DevListKey.kt
-          screen/
-            DevListState.kt
-            DevListItem.kt
-        route/
-          DevListRoute.kt
+feature-listening/
+  api/
+    build.gradle.kts
+    src/main/AndroidManifest.xml
+    src/main/java/.../feature/listening/
+      ListeningRouter.kt              — интерфейс роутера (публичный контракт)
+  impl/
+    build.gradle.kts
+    src/main/AndroidManifest.xml
+    src/main/java/.../feature/listening/
+      ListeningModule.kt
+      presentation/
         screen/
-          widget/
-            DevMenuWidget.kt
-          DevListScreen.kt
-          DevListViewModel.kt
+          list/
+            route/
+              ListeningListKey.kt
+              ListeningListRoute.kt
+            screen/
+              state/
+                ListeningListState.kt
+                ListeningListItemState.kt
+              blocks/
+                toolbar/
+                  ListeningToolbarBlock.kt
+                  state/
+                    ListeningToolbarState.kt
+                    ListeningToolbarAction.kt
+                  mapper/
+                    ListeningToolbarMapper.kt
+                  widget/
+                    ListeningToolbarWidget.kt
+                listening/
+                  ListeningBlock.kt
+                  state/
+                    ListeningState.kt
+                    ListeningAction.kt
+                  mapper/
+                    ListeningMapper.kt
+                  widget/
+                    ListeningWidget.kt
+              ListeningListScreen.kt
+              ListeningListViewModel.kt
+      domain/
+        ...
+      data/
+        ...
 ```

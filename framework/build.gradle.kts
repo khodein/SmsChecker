@@ -8,3 +8,7 @@ plugins {
 android {
     namespace = "com.sms.checker.forwarder.framework"
 }
+
+dependencies {
+    implementation(project(":framework:tools"))
+}

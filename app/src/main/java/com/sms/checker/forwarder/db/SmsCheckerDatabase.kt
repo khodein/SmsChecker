@@ -2,12 +2,17 @@ package com.sms.checker.forwarder.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.sms.checker.forwarder.feature.sms.db.SmsDao
+import com.sms.checker.forwarder.feature.sms.db.entity.SmsEntity
 
 @Database(
     entities = [
-        TemporaryEntity::class
+        SmsEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
-abstract class SmsCheckerDatabase : RoomDatabase()
+abstract class SmsCheckerDatabase : RoomDatabase() {
+
+    abstract fun smsDao(): SmsDao
+}

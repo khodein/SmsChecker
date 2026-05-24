@@ -4,13 +4,16 @@ import android.app.Application
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.navigation3.runtime.NavKey
+import androidx.room.Room
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import coil3.memory.MemoryCache
 import coil3.request.crossfade
-import com.sms.checker.forwarder.feature.dev.DevModule
-import com.sms.checker.forwarder.tools.ResModule
+import com.sms.checker.forwarder.db.SmsCheckerDatabase
+import com.sms.checker.forwarder.feature.listening.ListeningModule
+import com.sms.checker.forwarder.feature.sms.SmsModule
+import com.sms.checker.forwarder.framework.tools.ResModule
 import com.sms.checker.forwarder.main.MainViewModel
 import com.sms.checker.forwarder.router.Router
 import org.koin.android.ext.koin.androidContext
@@ -43,13 +46,25 @@ class App : Application(), SingletonImageLoader.Factory {
             return listOf(
                 rootModule,
                 ResModule.get(),
-                DevModule.get()
+                ListeningModule.get(),
+                SmsModule.get()
             )
         }
 
         private val rootModule = module {
             viewModelOf(::MainViewModel)
+
             singleOf(::RouterImpl) bind Router::class
+
+            single {
+                Room.databaseBuilder(
+                    context = androidContext(),
+                    klass = SmsCheckerDatabase::class.java,
+                    name = "sms_checker_forwarder_db"
+                ).build()
+            }
+
+            single { get<SmsCheckerDatabase>().smsDao() }
         }
 
         fun newImageLoader(

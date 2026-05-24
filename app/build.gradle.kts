@@ -26,17 +26,20 @@ android {
 
 dependencies {
     implementation(project(":framework"))
+    implementation(project(":framework:tools"))
     implementation(project(":router"))
-    implementation(project(":tools"))
     implementationFeatureModules()
 }
 
 fun DependencyHandlerScope.implementationFeatureModules() {
     rootProject.subprojects
         .asSequence()
-        .filter { it.name.startsWith("feature-") }
-        .sortedBy { it.name }
-        .forEach { featureProject ->
-            implementation(project(":${featureProject.name}"))
+        .filter { project ->
+            val isFeatureSubmodule = (project.name == "impl" || project.name == "api") &&
+                project.parent?.name?.startsWith("feature-") == true
+            val isLegacyFeature = project.name.startsWith("feature-") && project.childProjects.isEmpty()
+            isFeatureSubmodule || isLegacyFeature
         }
+        .sortedBy { it.path }
+        .forEach { implementation(project(it.path)) }
 }

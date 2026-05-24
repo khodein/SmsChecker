@@ -42,7 +42,10 @@
 ## Architecture
 
 - Проект использует Clean Architecture.
-- На текущем этапе приложение не разделено на отдельные модули и развивается в рамках единой структуры проекта.
+- Каждая фича разделена на два Gradle-субмодуля: `api` и `impl`.
+- `api` — публичные интерфейсы и контракты фичи (минимальные зависимости: только core-ktx).
+- `impl` — реализация фичи: presentation, domain, data; зависит от своего `api`.
+- `app` автоматически подключает оба субмодуля через `implementationFeatureModules()`.
 - Presentation — слой пользовательского интерфейса на Jetpack Compose и ViewModel.
 - Domain — слой бизнес-логики, в котором размещаются UseCase.
 - Data — слой работы с данными, включающий Repository, API и локальную базу данных.
@@ -53,9 +56,12 @@
 ## Core Rules
 - UI-логика не должна содержать бизнес-логику.
 - Для хранения состояния в оперативной памяти и работы с состоянием используй ViewModel.
-- Каждая ViewModel должна наследоваться от `com.sms.checker.forwarder.framework.BaseViewModel`.
+- Каждая ViewModel должна наследоваться от `com.sms.checker.forwarder.framework.BaseViewModel<UiState>`.
 - Состояние каждой ViewModel должно наследоваться от `com.sms.checker.forwarder.framework.BaseUiState`.
-- Вся бизнес-логика во ViewModel должна быть написана на чистом Kotlin без использования Android, Compose и других библиотек.
+- Логика частей экрана инкапсулируется в блоках (`BaseBlock`), которые регистрируются в ViewModel через `registerBlocks { add(block, provider) }`.
+- ViewModel собирает итоговый `UiState` из состояний блоков в методе `updateViewState()`.
+- Пользовательские callbacks хранятся в `Action`-классах блоков и встраиваются в `State` блока как поле `action`.
+- Вся бизнес-логика во ViewModel и блоках должна быть написана на чистом Kotlin без использования Android, Compose и других библиотек.
 - UI не должен обращаться к Data-слою напрямую.
 - Для работы с потоками используй Flow.
 - Для запросов к базе данных и API используй `suspend`-функции.
@@ -76,21 +82,25 @@
 ## Workflow
 
 ### Add new feature
-1. Определи, к какому экрану или пользовательскому сценарию относится новая функциональность.
-2. Создай необходимые пакеты для новой фичи.
-3. Создай новый `NavKey`, если для фичи нужен отдельный экран.
-4. Создай `UiState` для состояния экрана.
-5. Создай `ViewModel`, наследуясь от `com.sms.checker.forwarder.framework.BaseViewModel`.
-6. Добавь `UseCase` для бизнес-логики фичи.
-7. Создай `Repository`, если фича требует отдельного источника или отдельной логики работы с данными.
-8. Добавь domain-модель, если она нужна для бизнес-логики.
-9. Добавь data-модели (`request`, `response`, `entity`), если фича работает с API или базой данных.
-10. Создай мапперы между data-моделями и domain-моделями.
-11. Добавь новые запросы к API или операции с базой данных, если это требуется фичей.
-12. Если фича использует локальное хранение, добавь новую таблицу и необходимые методы работы с ней.
-13. Подключи зависимости через Koin.
-14. Настрой навигацию через `Router` и `goTo(key: NavKey)`.
-15. Создай папки ресурсов для каждой поддерживаемой локали: `src/main/res/values/strings.xml` (English — по умолчанию), `src/main/res/values-ru/strings.xml` (Russian), `src/main/res/values-kk/strings.xml` (Kazakh). Следуй правилам именования и перевода строк из `docs/ai/rules/strings.md`.
+1. Создай папку `feature-{name}/` в корне проекта.
+2. Создай субмодуль `feature-{name}/api/` с `build.gradle.kts` (plugin: `smschecker.android.feature.api`) и `src/main/AndroidManifest.xml`. Помести сюда публичные интерфейсы фичи.
+3. Создай субмодуль `feature-{name}/impl/` с `build.gradle.kts` (plugin: `smschecker.android.feature`; `implementation(project(":feature-{name}:api"))`), `src/main/AndroidManifest.xml` и структурой пакетов.
+4. `settings.gradle.kts` подхватит оба субмодуля автоматически; `app` подключит их через `implementationFeatureModules()`.
+5. Создай новый `NavKey` в `route/`, если для фичи нужен отдельный экран.
+6. Создай `UiState` для состояния экрана в `screen/state/`.
+7. Определи логические части экрана и создай для каждой отдельный `Block` в `screen/blocks/{blockName}/`.
+8. Создай `ViewModel`, наследуясь от `com.sms.checker.forwarder.framework.BaseViewModel<UiState>`, и зарегистрируй блоки через `registerBlocks { }`.
+9. Добавь `UseCase` для бизнес-логики фичи.
+10. Создай `Repository`, если фича требует отдельного источника или отдельной логики работы с данными.
+11. Добавь domain-модель, если она нужна для бизнес-логики.
+12. Добавь data-модели (`request`, `response`, `entity`), если фича работает с API или базой данных.
+13. Создай мапперы между data-моделями и domain-моделями.
+14. Добавь новые запросы к API или операции с базой данных, если это требуется фичей.
+15. Если фича использует локальное хранение, добавь новую таблицу и необходимые методы работы с ней.
+16. Подключи зависимости через Koin в `XModule.kt` внутри `impl`.
+17. Зарегистрируй `XModule.get()` в `App.kt`.
+18. Настрой навигацию через `Router` и `goTo(key: NavKey)`.
+19. Создай папки ресурсов для каждой поддерживаемой локали: `src/main/res/values/strings.xml` (English — по умолчанию), `src/main/res/values-ru/strings.xml` (Russian), `src/main/res/values-kk/strings.xml` (Kazakh). Следуй правилам именования и перевода строк из `docs/ai/rules/strings.md`.
 
 ---
 
@@ -136,7 +146,7 @@
 - Вноси минимально необходимые изменения для решения задачи.
 - Не изменяй существующие публичные контракты без необходимости.
 - Следуй текущей структуре проекта, именованию и существующим паттернам кода.
-- Переиспользуй существующие базовые компоненты, включая `BaseViewModel`, `BaseUiState`, `Router`, `NavKey` и `MaterialTheme`.
+- Переиспользуй существующие базовые компоненты, включая `BaseViewModel`, `BaseUiState`, `BaseBlock`, `Router`, `NavKey` и `MaterialTheme`.
 - Не создавай новые сущности, если задачу можно решить через существующие.
 - Добавляй новые классы, модели, мапперы и репозитории только если они действительно нужны для реализации фичи.
 - Не переписывай рабочий код без явной причины.
@@ -149,13 +159,14 @@
 
 ## File Structure
 - Стандартную структуру файлов внутри feature-модуля смотри в `docs/ai/rules/structure.md`.
-- `<feature-name>/` — самостоятельная фича, внутри которой должны находиться слои `data`, `domain`, `presentation`.
-- `<feature-name>/presentation/` — UI, `ViewModel`, `UiState`, навигация фичи.
-- `<feature-name>/domain/` — бизнес-логика, `UseCase`, domain-модели фичи.
-- `<feature-name>/data/` — `Repository`, data-модели, мапперы и работа с источниками данных фичи.
+- `<feature-name>/` — папка-контейнер фичи, не является Gradle-модулем, содержит `api/` и `impl/`.
+- `<feature-name>/api/` — Gradle-субмодуль с публичными интерфейсами фичи; plugin: `smschecker.android.feature.api`.
+- `<feature-name>/impl/` — Gradle-субмодуль с реализацией фичи; plugin: `smschecker.android.feature`; зависит от своего `api`.
+- `<feature-name>/impl/presentation/` — UI, `ViewModel`, `UiState`, навигация фичи.
+- `<feature-name>/impl/domain/` — бизнес-логика, `UseCase`, domain-модели фичи.
+- `<feature-name>/impl/data/` — `Repository`, data-модели, мапперы и работа с источниками данных фичи.
 - `framework/` — базовые классы и общая инфраструктура проекта.
 - `app/.../db/` — application-level `RoomDatabase`, сборка DAO и Entity из feature-модулей.
-- `api/` — базовое подключение к API и общая сетевая инфраструктура.
 - `build-logic/` — convention plugins для Gradle-настроек и групп зависимостей.
 - `gradle/libs.versions.toml` — единый каталог версий, библиотек и Gradle-плагинов.
 - `docs/` — документация проекта.
@@ -167,6 +178,9 @@
 - `docs/ai/context.md` — общий контекст проекта и дополнительные пояснения.
 - `docs/ai/rules/` — подробные правила и соглашения проекта.
 - `docs/ai/rules/structure.md` — стандартная файловая структура feature-модуля.
+- `docs/ai/rules/viewmodel.md` — правила устройства ViewModel и UiState.
+- `docs/ai/rules/block.md` — правила устройства Block, его State, Action, Mapper и Widget.
+- `docs/ai/rules/screen.md` — правила устройства экрана и UI-компонентов.
 - `docs/ai/rules/dependencies.md` — правила добавления и группировки зависимостей.
 - `docs/ai/rules/code-quality.md` — правила запуска Detekt и auto-correct.
 - `docs/ai/rules/strings.md` — правила именования строковых ресурсов и обязательного перевода на все локали.

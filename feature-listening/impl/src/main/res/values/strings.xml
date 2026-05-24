@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_listening_title">SMS Checker</string>
+    <string name="feature_listening_add_forward">Add Forward</string>
+    <string name="feature_listening_switch_title">Listening</string>
+    <string name="feature_listening_switch_description">Enable to listen for SMS, keeps running after exit (notification required)</string>
+    <string name="feature_listening_notification_channel_name">SMS Listening</string>
+    <string name="feature_listening_notification_title">SMS Checker</string>
+    <string name="feature_listening_notification_text">Listening for incoming SMS</string>
+</resources>
