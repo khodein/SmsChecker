@@ -1,10 +1,12 @@
 package com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,6 +21,7 @@ import com.sms.checker.forwarder.feature.listening.presentation.screen.list.scre
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.listening.state.ListeningState
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.toolbar.state.ListeningToolbarState
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.bottombar.widget.ListeningBottomBarWidget
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.config.widget.ListeningConfigWidget
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.toolbar.widget.ListeningToolbarWidget
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.listening.widget.ListeningWidget
 import com.sms.checker.forwarder.framework.Status
@@ -87,14 +90,23 @@ private fun ListeningListSuccessContent(
     items: List<ListeningListItemState>,
 ) {
     LazyColumn(
-        modifier = modifier
+        modifier = modifier,
+        contentPadding = SmsCheckerTheme.padding.verticalExtraSmall(),
+        verticalArrangement = Arrangement.spacedBy(SmsCheckerTheme.padding.extraSmall())
     ) {
         items(
             items = items,
             key = { item -> item.id },
             contentType = { item -> item.contentType }
         ) { item ->
-
+            when (item) {
+                is ListeningListItemState.ConfigItemState -> {
+                    ListeningConfigWidget(
+                        modifier = Modifier,
+                        state = item.listeningConfigState
+                    )
+                }
+            }
         }
     }
 }
@@ -110,10 +122,7 @@ internal fun ListeningListAppBarWidget(
             .fillMaxWidth()
             .background(
                 color = SmsCheckerTheme.color.surface,
-                shape = CircleShape.copy(
-                    bottomStart = CornerSize(16.dp),
-                    bottomEnd = CornerSize(16.dp)
-                )
+                shape = SmsCheckerTheme.corner.bottom()
             ),
     ) {
         ListeningToolbarWidget(

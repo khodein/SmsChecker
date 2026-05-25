@@ -30,6 +30,16 @@ object SmsCheckerTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalAppLanguageController.current
+
+    val corner: AppCorners
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalAppCorners.current
+
+    val padding: AppPaddings
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalAppPaddings.current
 }
 
 @Composable
@@ -52,7 +62,9 @@ fun SmsCheckerTheme(
         LocalAppThemeController provides controller,
         LocalAppLanguageController provides languageController,
         LocalAppColors provides colors,
-        LocalAppTypography provides AppTypography()
+        LocalAppTypography provides AppTypography(),
+        LocalAppCorners provides AppCorners(),
+        LocalAppPaddings provides AppPaddings(),
     ) {
         MaterialTheme(
             colorScheme = colors.toMaterialColorScheme(darkTheme),

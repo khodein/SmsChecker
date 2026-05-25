@@ -26,9 +26,9 @@ internal fun ListeningWidget(
 ) {
     Row(
         modifier = modifier
-            .padding(horizontal = 12.dp)
-            .padding(bottom = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+            .padding(paddingValues = SmsCheckerTheme.padding.horizontalMedium())
+            .padding(bottom = SmsCheckerTheme.padding.medium()),
+        horizontalArrangement = Arrangement.spacedBy(SmsCheckerTheme.padding.medium())
     ) {
         Icon(
             modifier = Modifier
@@ -46,7 +46,7 @@ internal fun ListeningWidget(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(SmsCheckerTheme.padding.small())
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),

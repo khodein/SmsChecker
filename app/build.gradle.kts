@@ -22,12 +22,19 @@ android {
     buildFeatures {
         buildConfig = true
     }
+
+    packaging {
+        resources {
+            excludes += "META-INF/NOTICE.md"
+            excludes += "META-INF/LICENSE.md"
+        }
+    }
 }
 
 dependencies {
     implementation(project(":framework"))
     implementation(project(":framework:tools"))
-    implementation(project(":router"))
+    implementation(project(":framework:router"))
     implementationFeatureModules()
 }
 

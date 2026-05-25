@@ -30,7 +30,7 @@ fun TopAppBarWidget(
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = SmsCheckerTheme.color.background
+            containerColor = SmsCheckerTheme.color.surface
         )
     )
 }

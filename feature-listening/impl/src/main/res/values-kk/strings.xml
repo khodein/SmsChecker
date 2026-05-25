@@ -7,4 +7,7 @@
     <string name="feature_listening_notification_channel_name">SMS тыңдау</string>
     <string name="feature_listening_notification_title">SMS Checker</string>
     <string name="feature_listening_notification_text">Кіріс SMS тыңдалуда</string>
+    <string name="feature_listening_config_apply">Қолданылған конфигурациялар</string>
+    <string name="feature_listening_empty_configs">SMS жіберуге арналған конфигурациялар жоқ, оларды қосыңыз</string>
+    <string name="feature_listening_add_config">Конфигурация қосу</string>
 </resources>

@@ -8,4 +8,7 @@ android {
 
 dependencies {
     implementation(project(":feature-email:api"))
+
+    implementation(libs.android.mail)
+    implementation(libs.android.activation)
 }

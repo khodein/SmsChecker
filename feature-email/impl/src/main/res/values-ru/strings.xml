@@ -1,3 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="feature_email_new_smtp">Новый Smtp</string>
+    <string name="feature_email_add_new">Добавить новый</string>
+    <string name="feature_email_smtp_instruction">Изучите инструкцию по добавлению Smtp, чтобы посмотреть кликните на сообщение</string>
 </resources>

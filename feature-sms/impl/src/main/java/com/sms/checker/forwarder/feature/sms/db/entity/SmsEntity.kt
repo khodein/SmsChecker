@@ -18,5 +18,5 @@ data class SmsEntity(
     @ColumnInfo(name = "forwarded_to")
     val forwardedTo: String = "",
     @ColumnInfo(name = "forward_status")
-    val forwardStatus: String = "PENDING",
+    val forwardStatus: String,
 )

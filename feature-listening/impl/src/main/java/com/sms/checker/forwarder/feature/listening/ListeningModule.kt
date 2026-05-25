@@ -1,7 +1,6 @@
 package com.sms.checker.forwarder.feature.listening
 
 import com.sms.checker.forwarder.feature.listening.data.ListeningRepositoryImpl
-import com.sms.checker.forwarder.feature.listening.domain.usecase.GetListeningObserveUseCase
 import com.sms.checker.forwarder.feature.listening.domain.ListeningRepository
 import com.sms.checker.forwarder.feature.listening.domain.usecase.GetListeningUseCase
 import com.sms.checker.forwarder.feature.listening.domain.usecase.StartListeningUseCase
@@ -14,11 +13,13 @@ import com.sms.checker.forwarder.feature.listening.presentation.screen.list.scre
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.ListeningListViewModel
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.listening.ListeningBlock
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.bottombar.ListeningBottomBarBlock
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.config.ListeningConfigBlock
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.config.mapper.ListeningConfigMapper
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.toolbar.ListeningToolbarBlock
 import com.sms.checker.forwarder.feature.listening.router.ListeningProviderImpl
 import com.sms.checker.forwarder.feature.listening.router.ListeningRouter
 import com.sms.checker.forwarder.feature.listening.router.ListeningRouterImpl
-import com.sms.checker.forwarder.router.Router
+import com.sms.checker.forwarder.framework.router.Router
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -34,26 +35,27 @@ object ListeningModule {
         singleOf(::ListeningMapper)
         singleOf(::ListeningBottomBarMapper)
         singleOf(::ListeningToolbarMapper)
+        singleOf(::ListeningConfigMapper)
 
         //block
         factoryOf(::ListeningBlock)
         factoryOf(::ListeningToolbarBlock)
         factoryOf(::ListeningBottomBarBlock)
+        factoryOf(::ListeningConfigBlock)
 
         // domain
-        factoryOf(::GetListeningObserveUseCase)
         factoryOf(::StartListeningUseCase)
         factoryOf(::StopListeningUseCase)
         factoryOf(::GetListeningUseCase)
 
         // data
-        single<ListeningRepository> { ListeningRepositoryImpl(get()) }
+        singleOf(::ListeningRepositoryImpl) bind ListeningRepository::class
 
         // infrastructure
-        factoryOf(::ListeningNotificationDelegate)
+        single(createdAtStart = true) { ListeningNotificationDelegate(get(), get()) }
 
         // navigation
-        single<ListeningRouter> { ListeningRouterImpl(get()) }
-        single { ListeningProviderImpl() } bind Router.Provider::class
+        singleOf(::ListeningRouterImpl) bind ListeningRouter::class
+        singleOf(::ListeningProviderImpl) bind Router.Provider::class
     }
 }

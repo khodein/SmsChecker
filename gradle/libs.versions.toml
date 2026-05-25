@@ -42,6 +42,9 @@ room = "2.8.4"
 # Storage
 datastore = "1.2.1"
 
+# Email
+androidMail = "1.6.7"
+
 [libraries]
 # Build tooling
 android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
@@ -109,6 +112,10 @@ androidx-room-testing = { group = "androidx.room", name = "room-testing", versio
 
 # Storage
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+
+# Email
+android-mail = { module = "com.sun.mail:android-mail", version.ref = "androidMail" }
+android-activation = { module = "com.sun.mail:android-activation", version.ref = "androidMail" }
 
 [plugins]
 # Android

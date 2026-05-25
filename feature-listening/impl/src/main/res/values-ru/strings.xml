@@ -7,4 +7,7 @@
     <string name="feature_listening_notification_channel_name">Прослушивание SMS</string>
     <string name="feature_listening_notification_title">SMS Checker</string>
     <string name="feature_listening_notification_text">Входящие SMS прослушиваются</string>
+    <string name="feature_listening_config_apply">Применённые конфигурации</string>
+    <string name="feature_listening_empty_configs">У вас нет конфигураций, на которые можно переслать sms, добавьте их</string>
+    <string name="feature_listening_add_config">Добавить конфигурацию</string>
 </resources>

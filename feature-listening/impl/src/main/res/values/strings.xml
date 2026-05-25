@@ -7,4 +7,7 @@
     <string name="feature_listening_notification_channel_name">SMS Listening</string>
     <string name="feature_listening_notification_title">SMS Checker</string>
     <string name="feature_listening_notification_text">Listening for incoming SMS</string>
+    <string name="feature_listening_config_apply">Config Apply</string>
+    <string name="feature_listening_empty_configs">You have no configurations to forward SMS to, please add them</string>
+    <string name="feature_listening_add_config">Add Configuration</string>
 </resources>

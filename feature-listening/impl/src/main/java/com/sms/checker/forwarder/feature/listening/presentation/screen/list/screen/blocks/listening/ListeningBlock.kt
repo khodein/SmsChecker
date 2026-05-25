@@ -1,6 +1,5 @@
 package com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.listening
 
-import com.sms.checker.forwarder.feature.listening.domain.usecase.GetListeningObserveUseCase
 import com.sms.checker.forwarder.feature.listening.domain.usecase.GetListeningUseCase
 import com.sms.checker.forwarder.feature.listening.domain.usecase.StartListeningUseCase
 import com.sms.checker.forwarder.feature.listening.domain.usecase.StopListeningUseCase
@@ -8,15 +7,13 @@ import com.sms.checker.forwarder.feature.listening.presentation.screen.list.scre
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.listening.state.ListeningState
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.listening.mapper.ListeningMapper
 import com.sms.checker.forwarder.framework.block.BaseBlock
-import kotlinx.coroutines.launch
 
 internal class ListeningBlock(
-    private val listeningMapper: com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.listening.mapper.ListeningMapper,
-    private val getListeningObserveStateUseCase: GetListeningObserveUseCase,
+    private val listeningMapper: ListeningMapper,
     private val startListeningUseCase: StartListeningUseCase,
     private val stopListeningUseCase: StopListeningUseCase,
     getListeningUseCase: GetListeningUseCase,
-): BaseBlock<com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.listening.state.ListeningState, Unit>() {
+): BaseBlock<ListeningState, Unit>() {
 
     private var isListeningState: Boolean = getListeningUseCase.invoke()
 
@@ -37,12 +34,7 @@ internal class ListeningBlock(
     }
 
     override fun start() {
-        blockScope?.launch {
-            getListeningObserveStateUseCase.invoke().collect {
-                isListeningState = it
-                updateBlockState()
-            }
-        }
+
     }
 
     override fun updateBlockState() {

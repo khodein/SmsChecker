@@ -15,14 +15,13 @@ internal class ListeningNotificationDelegate(
     private val context: Context,
 ) {
 
-    fun onCreate() {
+    init {
         createNotificationChannel()
     }
 
-    fun onDestroy() {
-        context.getSystemService(NotificationManager::class.java)
-            .deleteNotificationChannel(CHANNEL_ID)
-    }
+    fun onCreate() {}
+
+    fun onDestroy() {}
 
     fun getNotification(): Notification {
         return NotificationCompat.Builder(context, CHANNEL_ID)

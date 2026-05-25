@@ -9,4 +9,5 @@ android {
 dependencies {
     implementation(project(":feature-listening:api"))
     implementation(project(":feature-sms:api"))
+    implementation(project(":feature-email:api"))
 }
