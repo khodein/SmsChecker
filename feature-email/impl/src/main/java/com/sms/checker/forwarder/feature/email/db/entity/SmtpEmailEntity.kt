@@ -19,8 +19,6 @@ class SmtpEmailEntity(
     val username: String,
     @ColumnInfo(name = "password")
     val password: String,
-    @ColumnInfo(name = "is_enabled")
-    val isEnabled: Boolean,
     @ColumnInfo(name = "from_email")
     val fromEmail: String,
     @ColumnInfo(name = "from_name")

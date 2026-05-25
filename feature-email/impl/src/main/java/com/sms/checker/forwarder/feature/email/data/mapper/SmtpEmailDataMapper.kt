@@ -9,7 +9,6 @@ internal class SmtpEmailDataMapper {
     fun toModel(entity: SmtpEmailEntity): SmtpEmailModel = SmtpEmailModel(
         id = entity.id,
         name = entity.name,
-        isEnabled = entity.isEnabled,
         host = entity.host,
         port = entity.port,
         username = entity.username,
@@ -27,7 +26,6 @@ internal class SmtpEmailDataMapper {
     fun toEntity(model: SmtpEmailModel): SmtpEmailEntity = SmtpEmailEntity(
         id = model.id ?: 0L,
         name = model.name,
-        isEnabled = model.isEnabled,
         host = model.host,
         port = model.port,
         username = model.username,

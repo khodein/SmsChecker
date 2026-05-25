@@ -7,6 +7,7 @@ import com.sms.checker.forwarder.feature.listening.presentation.screen.list.scre
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.config.ListeningConfigBlock
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.toolbar.ListeningToolbarBlock
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.mapper.ListeningListMapper
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.state.ListeningListItemState
 import com.sms.checker.forwarder.framework.BaseViewModel
 import com.sms.checker.forwarder.framework.Status
 
@@ -38,9 +39,7 @@ internal class ListeningListViewModel(
                 listeningState = listeningBlock.blockState.value,
                 listeningToolbarState = listeningToolbarBlock.blockState.value,
                 listeningBottomBarState = listeningBottomBarBlock.blockState.value,
-                items = listeningListMapper.map(
-                    configState = listeningConfigBlock.blockState.value
-                )
+                items = getItems()
             )
         }
     }
@@ -51,9 +50,13 @@ internal class ListeningListViewModel(
             listeningState = listeningBlock.blockState.value,
             listeningToolbarState = listeningToolbarBlock.blockState.value,
             listeningBottomBarState = listeningBottomBarBlock.blockState.value,
-            items = listeningListMapper.map(
-                configState = listeningConfigBlock.blockState.value
-            )
+            items = getItems()
+        )
+    }
+
+    private fun getItems(): List<ListeningListItemState>  {
+        return listeningListMapper.map(
+            configState = listeningConfigBlock.blockState.value
         )
     }
 }

@@ -3,4 +3,13 @@
     <string name="feature_email_new_smtp">Жаңа Smtp</string>
     <string name="feature_email_add_new">Жаңасын қосу</string>
     <string name="feature_email_smtp_instruction">Smtp қосу нұсқаулығын оқыңыз, қарау үшін хабарламаны басыңыз</string>
+    <string name="feature_email_smtp_name_placeholder">Қайта жіберуші атауы</string>
+    <string name="feature_email_smtp_host_placeholder">SMTP хост, мысалы smtp.gmail.com</string>
+    <string name="feature_email_smtp_host_error_empty">Өріс бос болмауы керек</string>
+    <string name="feature_email_smtp_host_error_invalid">Хосттың форматы қате</string>
+    <string name="feature_email_smtp_port_placeholder">Әдетте STARTTLS үшін 587 немесе SSL үшін 465</string>
+    <string name="feature_email_smtp_port_error_empty">Бос болмауы керек</string>
+    <string name="feature_email_smtp_port_error_invalid">Қате порт (1–65535)</string>
+    <string name="feature_email_smtp_name_error_empty">Өріс бос болмауы керек</string>
+    <string name="feature_email_smtp_name_error_min_length">Кемінде 3 таңба</string>
 </resources>

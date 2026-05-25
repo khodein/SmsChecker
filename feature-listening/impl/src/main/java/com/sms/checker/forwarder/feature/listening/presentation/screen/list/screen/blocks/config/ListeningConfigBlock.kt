@@ -44,14 +44,6 @@ internal class ListeningConfigBlock(
         }
     }
 
-    private fun onClickEmpty() {
-
-    }
-
-    private fun onClickItem(id: String) {
-
-    }
-
     private fun load() {
         blockScope?.launch {
             val smsConfigAsync = async {
@@ -74,5 +66,13 @@ internal class ListeningConfigBlock(
             smtpEmailList = null
             updateBlockState()
         }
+    }
+
+    private fun onClickEmpty() {
+
+    }
+
+    private fun onClickItem(id: String) {
+
     }
 }

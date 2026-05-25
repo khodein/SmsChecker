@@ -3,4 +3,13 @@
     <string name="feature_email_new_smtp">New Smtp</string>
     <string name="feature_email_add_new">Add New</string>
     <string name="feature_email_smtp_instruction">Study the instructions for adding Smtp, click on the message to view</string>
+    <string name="feature_email_smtp_name_placeholder">Forwarder Name</string>
+    <string name="feature_email_smtp_host_placeholder">SMTP host, for example smtp.gmail.com</string>
+    <string name="feature_email_smtp_host_error_empty">Field cannot be empty</string>
+    <string name="feature_email_smtp_host_error_invalid">Invalid host format</string>
+    <string name="feature_email_smtp_port_placeholder">Usually 587 for STARTTLS or 465 for SSL</string>
+    <string name="feature_email_smtp_port_error_empty">Cannot be empty</string>
+    <string name="feature_email_smtp_port_error_invalid">Invalid port (1–65535)</string>
+    <string name="feature_email_smtp_name_error_empty">Field cannot be empty</string>
+    <string name="feature_email_smtp_name_error_min_length">Minimum 3 characters</string>
 </resources>

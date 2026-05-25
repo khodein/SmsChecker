@@ -73,6 +73,13 @@ data class AppTypography(
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp
+    ),
+    val bodySmall: TextStyle = TextStyle(
+        fontFamily = NunitoFontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+        lineHeight = 16.sp,
+        letterSpacing = 0.4.sp
     )
 )
 

@@ -3,4 +3,13 @@
     <string name="feature_email_new_smtp">Новый Smtp</string>
     <string name="feature_email_add_new">Добавить новый</string>
     <string name="feature_email_smtp_instruction">Изучите инструкцию по добавлению Smtp, чтобы посмотреть кликните на сообщение</string>
+    <string name="feature_email_smtp_name_placeholder">Название пересыльщика</string>
+    <string name="feature_email_smtp_host_placeholder">SMTP хост, например smtp.gmail.com</string>
+    <string name="feature_email_smtp_host_error_empty">Поле не может быть пустым</string>
+    <string name="feature_email_smtp_host_error_invalid">Неверный формат хоста</string>
+    <string name="feature_email_smtp_port_placeholder">Обычно 587 для STARTTLS или 465 для SSL</string>
+    <string name="feature_email_smtp_port_error_empty">Не может быть пустым</string>
+    <string name="feature_email_smtp_port_error_invalid">Неверный порт (1–65535)</string>
+    <string name="feature_email_smtp_name_error_empty">Поле не может быть пустым</string>
+    <string name="feature_email_smtp_name_error_min_length">Минимум 3 символа</string>
 </resources>

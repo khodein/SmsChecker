@@ -8,8 +8,13 @@ import com.sms.checker.forwarder.feature.email.domain.usecase.GetSmtpEmailByForw
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.SmtpEmailViewModel
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.bottombar.SmtpBottomBarBlock
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.bottombar.mapper.SmtpBottomBarMapper
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.host.SmtpEmailHostBlock
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.host.mapper.SmtpEmailHostMapper
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.name.SmtpEmailNameBlock
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.name.mapper.SmtpEmailNameMapper
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.topbar.SmtpTopBarBlock
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.topbar.mapper.SmtpTopBarMapper
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.mapper.SmtpEmailMapper
 import com.sms.checker.forwarder.feature.email.router.EmailProviderImpl
 import com.sms.checker.forwarder.feature.email.router.EmailRouter
 import com.sms.checker.forwarder.feature.email.router.EmailRouterImpl
@@ -38,9 +43,14 @@ object EmailModule {
         viewModelOf(::SmtpEmailViewModel)
         factoryOf(::SmtpBottomBarBlock)
         factoryOf(::SmtpTopBarBlock)
+        factoryOf(::SmtpEmailNameBlock)
+        factoryOf(::SmtpEmailHostBlock)
 
         // mappers
         singleOf(::SmtpTopBarMapper)
         singleOf(::SmtpBottomBarMapper)
+        singleOf(::SmtpEmailNameMapper)
+        singleOf(::SmtpEmailMapper)
+        singleOf(::SmtpEmailHostMapper)
     }
 }
