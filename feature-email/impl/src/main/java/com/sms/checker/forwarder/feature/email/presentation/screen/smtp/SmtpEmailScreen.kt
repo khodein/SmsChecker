@@ -1,6 +1,7 @@
 package com.sms.checker.forwarder.feature.email.presentation.screen.smtp
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -14,8 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.bottombar.state.SmtpBottomBarState
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.bottombar.widget.SmtpBottomBarWidget
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.host.widget.SmtpEmailHostWidget
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.name.widget.SmtpEmailNameWidget
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.topbar.widget.SmtpTopBarWidget
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.user.widget.SmtpEmailUserWidget
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.state.SmtpEmailItemState
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.state.SmtpEmailState
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
@@ -56,6 +59,7 @@ private fun SmtpBottomBarContent(
 ) {
     LazyColumn(
         modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
         contentPadding = SmsCheckerTheme.padding.verticalExtraSmall()
     ) {
         items(
@@ -66,6 +70,20 @@ private fun SmtpBottomBarContent(
             when (item) {
                 is SmtpEmailItemState.NameState -> {
                     SmtpEmailNameWidget(
+                        modifier = Modifier.fillMaxWidth(),
+                        state = item.state
+                    )
+                }
+
+                is SmtpEmailItemState.HostState -> {
+                    SmtpEmailHostWidget(
+                        modifier = Modifier.fillMaxWidth(),
+                        state = item.state
+                    )
+                }
+
+                is SmtpEmailItemState.UserState -> {
+                    SmtpEmailUserWidget(
                         modifier = Modifier.fillMaxWidth(),
                         state = item.state
                     )

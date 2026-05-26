@@ -2,6 +2,7 @@ package com.sms.checker.forwarder.framework.uikit
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -27,8 +28,10 @@ fun FieldWidget(
     isError: Boolean = false,
     maxLength: Int = Int.MAX_VALUE,
     textAlign: TextAlign = TextAlign.Start,
+    placeholderAlign: TextAlign = TextAlign.Start,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     visualTransformation: VisualTransformation = VisualTransformation.None,
+    trailingIcon: @Composable (() -> Unit)? = null,
 ) {
     val colors = SmsCheckerTheme.color
     val typography = SmsCheckerTheme.typography
@@ -45,14 +48,45 @@ fun FieldWidget(
         value = value,
         onValueChange = { if (it.length <= maxLength) onValueChange(it) },
         modifier = modifier,
-        label = label?.let { { Text(text = it, style = typography.bodyMedium, color = labelColor) } },
-        placeholder = placeholder?.let { { Text(text = it, style = typography.bodyMedium, color = colors.onSurfaceVariant) } },
+        label = label?.let {
+            {
+                Text(
+                    text = it,
+                    style = typography.bodyMedium,
+                    color = labelColor
+                )
+            }
+        },
+        placeholder = placeholder?.let {
+            {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = it,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = typography.bodyMedium,
+                    color = colors.onSurfaceVariant,
+                    textAlign = placeholderAlign
+                )
+            }
+        },
         interactionSource = interactionSource,
         shape = corner.all(),
         isError = isError,
-        supportingText = error?.let { { Text(text = it, style = typography.bodySmall, color = colors.error, maxLines = 1, overflow = TextOverflow.Ellipsis) } },
+        supportingText = error?.let {
+            {
+                Text(
+                    text = it,
+                    style = typography.bodySmall,
+                    color = colors.error,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        },
         keyboardOptions = keyboardOptions,
         visualTransformation = visualTransformation,
+        trailingIcon = trailingIcon,
         textStyle = typography.bodyLarge.copy(textAlign = textAlign),
         singleLine = true,
         colors = TextFieldDefaults.colors(

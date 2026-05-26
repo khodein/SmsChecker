@@ -24,29 +24,22 @@ internal class SmtpEmailHostMapper(
         return SmtpEmailHostState(
             action = action,
             hostState = hostState,
-            portState = portState
+            portState = portState,
         )
     }
 
     fun mapHostError(
-        value: String,
+        portValue: String,
+        hostValue: String,
     ): String? {
-        val valueTrim = value.trim()
-        return if (valueTrim.isEmpty()) {
-            resProvider.getString(R.string.feature_email_smtp_host_error_empty)
-        } else {
-            null
+        val portTrim = portValue.trim()
+        val hostTrim = hostValue.trim()
+        val resId = when {
+            hostTrim.isEmpty() -> R.string.feature_email_smtp_host_error_empty
+            portTrim.isEmpty() -> R.string.feature_email_smtp_port_error_empty
+            portTrim.length < 3 -> R.string.feature_email_smtp_port_error_min_length
+            else -> null
         }
-    }
-
-    fun mapPortError(
-        value: String,
-    ): String? {
-        val valueTrim = value.trim()
-        return if (valueTrim.isEmpty()) {
-            resProvider.getString(R.string.feature_email_smtp_port_error_empty)
-        } else {
-            null
-        }
+        return resId?.let(resProvider::getString)
     }
 }

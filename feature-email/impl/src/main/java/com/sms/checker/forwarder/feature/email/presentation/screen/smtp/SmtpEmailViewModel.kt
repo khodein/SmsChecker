@@ -2,8 +2,10 @@ package com.sms.checker.forwarder.feature.email.presentation.screen.smtp
 
 import androidx.lifecycle.SavedStateHandle
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.bottombar.SmtpBottomBarBlock
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.host.SmtpEmailHostBlock
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.name.SmtpEmailNameBlock
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.topbar.SmtpTopBarBlock
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.user.SmtpEmailUserBlock
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.mapper.SmtpEmailMapper
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.state.SmtpEmailItemState
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.state.SmtpEmailState
@@ -15,6 +17,8 @@ internal class SmtpEmailViewModel(
     private val smtpBottomBarBlock: SmtpBottomBarBlock,
     private val smtpTopBarBlock: SmtpTopBarBlock,
     private val smtpEmailNameBlock: SmtpEmailNameBlock,
+    private val smtpEmailHostBlock: SmtpEmailHostBlock,
+    private val smtpEmailUserBlock: SmtpEmailUserBlock,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<SmtpEmailState>(savedStateHandle) {
 
@@ -43,7 +47,9 @@ internal class SmtpEmailViewModel(
 
     private fun getItems(): List<SmtpEmailItemState> {
         return smtpEmailMapper.mapSmtpEmailItems(
-            smtpEmailNameState = smtpEmailNameBlock.blockState.value
+            smtpEmailNameState = smtpEmailNameBlock.blockState.value,
+            smtpEmailHostState = smtpEmailHostBlock.blockState.value,
+            smtpEmailUserState = smtpEmailUserBlock.blockState.value
         )
     }
 
@@ -52,6 +58,8 @@ internal class SmtpEmailViewModel(
             add(smtpTopBarBlock)
             add(smtpBottomBarBlock)
             add(smtpEmailNameBlock)
+            add(smtpEmailHostBlock)
+            add(smtpEmailUserBlock)
         }
     }
 }

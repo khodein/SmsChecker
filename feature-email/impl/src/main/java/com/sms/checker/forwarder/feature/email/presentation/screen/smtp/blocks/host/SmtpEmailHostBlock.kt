@@ -10,9 +10,8 @@ internal class SmtpEmailHostBlock(
 ) : BaseBlock<SmtpEmailHostState, Unit>() {
 
     private var hostState: String = ""
-    private var hostErrorState: String? = null
     private var portState: String = ""
-    private var portErrorState: String? = null
+    private var errorState: String? = null
     private var isRequiredState: Boolean = false
 
     private val action = SmtpEmailHostAction(
@@ -21,9 +20,11 @@ internal class SmtpEmailHostBlock(
     )
 
     fun isRequired(): Boolean {
-        hostErrorState = smtpEmailHostMapper.mapHostError(hostState)
-        portErrorState = smtpEmailHostMapper.mapPortError(portState)
-        isRequiredState = hostErrorState == null && portErrorState == null
+        errorState = smtpEmailHostMapper.mapHostError(
+            hostValue = hostState,
+            portValue = portState
+        )
+        isRequiredState = errorState == null
         updateBlockState()
         return isRequiredState
     }
@@ -41,11 +42,11 @@ internal class SmtpEmailHostBlock(
             copy(
                 hostState = hostState.copy(
                     value = this@SmtpEmailHostBlock.hostState,
-                    error = this@SmtpEmailHostBlock.hostErrorState,
+                    error = this@SmtpEmailHostBlock.errorState,
                 ),
                 portState = portState.copy(
                     value = this@SmtpEmailHostBlock.portState,
-                    error = this@SmtpEmailHostBlock.portErrorState
+                    error = this@SmtpEmailHostBlock.errorState
                 )
             )
         }
@@ -57,7 +58,8 @@ internal class SmtpEmailHostBlock(
     }
 
     private fun onChangePort(value: String) {
-        this.portState = value
+        val validatePort = value.filter { it.isDigit() }
+        this.portState = validatePort
         updateBlockState()
     }
 }

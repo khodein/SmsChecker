@@ -10,14 +10,14 @@ internal data class SmtpEmailHostState(
 ) {
 
     @Immutable
-    data class HostState(
+    internal data class HostState(
         val placeholder: String,
         val value: String,
         val error: String? = null,
     )
 
     @Immutable
-    data class PortState(
+    internal data class PortState(
         val placeholder: String,
         val value: String,
         val error: String? = null,

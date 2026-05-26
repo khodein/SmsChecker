@@ -14,6 +14,8 @@ import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.n
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.name.mapper.SmtpEmailNameMapper
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.topbar.SmtpTopBarBlock
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.topbar.mapper.SmtpTopBarMapper
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.user.SmtpEmailUserBlock
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.user.mapper.SmtpEmailUserMapper
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.mapper.SmtpEmailMapper
 import com.sms.checker.forwarder.feature.email.router.EmailProviderImpl
 import com.sms.checker.forwarder.feature.email.router.EmailRouter
@@ -45,6 +47,7 @@ object EmailModule {
         factoryOf(::SmtpTopBarBlock)
         factoryOf(::SmtpEmailNameBlock)
         factoryOf(::SmtpEmailHostBlock)
+        factoryOf(::SmtpEmailUserBlock)
 
         // mappers
         singleOf(::SmtpTopBarMapper)
@@ -52,5 +55,6 @@ object EmailModule {
         singleOf(::SmtpEmailNameMapper)
         singleOf(::SmtpEmailMapper)
         singleOf(::SmtpEmailHostMapper)
+        singleOf(::SmtpEmailUserMapper)
     }
 }
