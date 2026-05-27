@@ -18,6 +18,13 @@
     <string name="feature_email_smtp_password_placeholder">Пароль</string>
     <string name="feature_email_smtp_password_error_empty">Поле не может быть пустым</string>
     <string name="feature_email_smtp_recipient_title">Получатель</string>
+    <string name="feature_email_smtp_recipient_email_placeholder">Email получателя</string>
+    <string name="feature_email_smtp_recipient_email_error_empty">Поле не может быть пустым</string>
+    <string name="feature_email_smtp_recipient_name_placeholder">Имя получателя</string>
+    <string name="feature_email_smtp_recipient_name_error_empty">Поле не может быть пустым</string>
     <string name="feature_email_smtp_name_error_empty">Поле не может быть пустым</string>
     <string name="feature_email_smtp_name_error_min_length">Минимум 3 символа</string>
+    <string name="feature_email_smtp_encryption_title">Шифрование</string>
+    <string name="feature_email_smtp_ssl_description">Использовать для порта 465</string>
+    <string name="feature_email_smtp_start_tls_description">Использовать для порта 587</string>
 </resources>

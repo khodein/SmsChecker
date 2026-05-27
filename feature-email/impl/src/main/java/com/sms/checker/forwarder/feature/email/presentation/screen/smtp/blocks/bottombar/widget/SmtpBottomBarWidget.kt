@@ -21,7 +21,6 @@ internal fun SmtpBottomBarWidget(
     DefaultButtonWidget(
         onClick = state.action.onClickAdd,
         caption = state.caption,
-        isEnabled = state.isEnabled,
         modifier = modifier
             .fillMaxWidth()
             .background(

@@ -64,7 +64,7 @@ private fun SmtpTopBarNoticeWidget(
             .clickable {
                 onClick.invoke()
             }
-            .padding(SmsCheckerTheme.padding.horizontalMedium(),)
+            .padding(paddingValues = SmsCheckerTheme.padding.horizontalMedium(),)
             .padding(bottom = SmsCheckerTheme.padding.medium())
             .padding(top = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(SmsCheckerTheme.padding.medium()),

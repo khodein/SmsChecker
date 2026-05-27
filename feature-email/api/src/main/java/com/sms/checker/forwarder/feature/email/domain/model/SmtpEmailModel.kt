@@ -11,5 +11,4 @@ data class SmtpEmailModel(
     val fromName: String,
     val sslEnabled: Boolean,
     val startTlsEnabled: Boolean,
-    val forwardingSources: List<ForwardingSource>,
 )

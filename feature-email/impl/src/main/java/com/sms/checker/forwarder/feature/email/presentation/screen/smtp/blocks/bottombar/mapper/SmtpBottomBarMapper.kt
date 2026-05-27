@@ -14,7 +14,6 @@ internal class SmtpBottomBarMapper(
         return SmtpBottomBarState(
             caption = resProvider.getString(R.string.feature_email_add_new),
             action = action,
-            isEnabled = false
         )
     }
 }

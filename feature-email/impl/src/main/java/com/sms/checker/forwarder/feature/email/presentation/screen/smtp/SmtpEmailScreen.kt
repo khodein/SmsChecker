@@ -1,29 +1,24 @@
 package com.sms.checker.forwarder.feature.email.presentation.screen.smtp
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.bottombar.state.SmtpBottomBarState
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.bottombar.widget.SmtpBottomBarWidget
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.host.widget.SmtpEmailHostWidget
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.name.widget.SmtpEmailNameWidget
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.recipient.widget.SmtpEmailRecipientWidget
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.topbar.widget.SmtpTopBarWidget
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.user.widget.SmtpEmailUserWidget
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.state.SmtpEmailItemState
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.state.SmtpEmailState
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
-import com.sms.checker.forwarder.framework.uikit.DefaultButtonWidget
-import com.sms.checker.forwarder.framework.uikit.TopAppBarWidget
 
 @Composable
 internal fun SmtpEmailScreen(
@@ -31,7 +26,7 @@ internal fun SmtpEmailScreen(
     state: SmtpEmailState,
 ) {
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.imePadding(),
         topBar = {
             SmtpTopBarWidget(
                 modifier = Modifier,
@@ -44,23 +39,23 @@ internal fun SmtpEmailScreen(
                 state = state.smtpBottomBarState,
             )
         }
-    ) {
-        SmtpBottomBarContent(
-            modifier = Modifier.padding(it),
+    ) { paddingValues ->
+        SmtpEmailContent(
+            modifier = Modifier.padding(paddingValues),
             items = state.items
         )
     }
 }
 
 @Composable
-private fun SmtpBottomBarContent(
+private fun SmtpEmailContent(
     modifier: Modifier = Modifier,
     items: List<SmtpEmailItemState>
 ) {
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(4.dp),
-        contentPadding = SmsCheckerTheme.padding.verticalExtraSmall()
+        contentPadding = SmsCheckerTheme.padding.allExtraSmall()
     ) {
         items(
             items = items,
@@ -88,8 +83,14 @@ private fun SmtpBottomBarContent(
                         state = item.state
                     )
                 }
+
+                is SmtpEmailItemState.RecipientState -> {
+                    SmtpEmailRecipientWidget(
+                        modifier = Modifier.fillMaxWidth(),
+                        state = item.state
+                    )
+                }
             }
         }
     }
 }
-

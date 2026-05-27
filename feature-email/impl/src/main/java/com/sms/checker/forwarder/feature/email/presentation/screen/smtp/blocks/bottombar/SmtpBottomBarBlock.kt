@@ -7,7 +7,7 @@ import com.sms.checker.forwarder.framework.block.BaseBlock
 
 internal class SmtpBottomBarBlock(
     private val smtpBottomBarMapper: SmtpBottomBarMapper,
-) : BaseBlock<SmtpBottomBarState, Unit>() {
+) : BaseBlock<SmtpBottomBarState, SmtpBottomBarBlock.Provider>() {
 
     private val action = SmtpBottomBarAction(
         onClickAdd = ::onClickAdd
@@ -22,6 +22,21 @@ internal class SmtpBottomBarBlock(
     }
 
     private fun onClickAdd() {
+        val requiredMap = blockProvider?.getRequired() ?: return
+        val isRequired = requiredMap.any { it.value }
+        if (isRequired) {
 
+        }
+    }
+
+    interface Provider {
+        fun getRequired(): Map<Required, Boolean>
+    }
+
+    enum class Required {
+        Host,
+        Recipient,
+        Name,
+        User,
     }
 }

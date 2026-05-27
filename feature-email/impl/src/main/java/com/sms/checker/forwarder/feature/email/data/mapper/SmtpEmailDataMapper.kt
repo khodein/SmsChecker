@@ -1,7 +1,6 @@
 package com.sms.checker.forwarder.feature.email.data.mapper
 
 import com.sms.checker.forwarder.feature.email.db.entity.SmtpEmailEntity
-import com.sms.checker.forwarder.feature.email.domain.model.ForwardingSource
 import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailModel
 
 internal class SmtpEmailDataMapper {
@@ -17,10 +16,6 @@ internal class SmtpEmailDataMapper {
         fromName = entity.fromName,
         sslEnabled = entity.sslEnabled,
         startTlsEnabled = entity.startTlsEnabled,
-        forwardingSources = entity.forwardingSources
-            .split(",")
-            .filter { it.isNotBlank() }
-            .map(ForwardingSource::valueOf),
     )
 
     fun toEntity(model: SmtpEmailModel): SmtpEmailEntity = SmtpEmailEntity(
@@ -34,6 +29,5 @@ internal class SmtpEmailDataMapper {
         fromName = model.fromName,
         sslEnabled = model.sslEnabled,
         startTlsEnabled = model.startTlsEnabled,
-        forwardingSources = model.forwardingSources.joinToString(",") { it.name },
     )
 }

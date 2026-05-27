@@ -27,6 +27,4 @@ class SmtpEmailEntity(
     val sslEnabled: Boolean,
     @ColumnInfo(name = "start_tls_enabled")
     val startTlsEnabled: Boolean,
-    @ColumnInfo(name = "forwarding_sources")
-    val forwardingSources: String,
 )

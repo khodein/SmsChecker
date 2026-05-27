@@ -20,10 +20,4 @@ interface SmtpEmailDao {
 
     @Query("DELETE FROM smtp_email_table WHERE id = :id")
     suspend fun deleteById(id: Long)
-
-    @Query("UPDATE smtp_email_table SET forwarding_sources = :forwardingSources WHERE id = :id")
-    suspend fun updateForwardingSources(id: Long, forwardingSources: String)
-
-    @Query("SELECT * FROM smtp_email_table WHERE ',' || forwarding_sources || ',' LIKE '%,' || :sourceName || ',%'")
-    suspend fun getByForwardingSource(sourceName: String): List<SmtpEmailEntity>
 }

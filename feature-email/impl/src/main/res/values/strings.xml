@@ -18,6 +18,13 @@
     <string name="feature_email_smtp_password_placeholder">SMTP password or app password</string>
     <string name="feature_email_smtp_password_error_empty">Field cannot be empty</string>
     <string name="feature_email_smtp_recipient_title">Recipient</string>
+    <string name="feature_email_smtp_recipient_email_placeholder">Recipient email address</string>
+    <string name="feature_email_smtp_recipient_email_error_empty">Field cannot be empty</string>
+    <string name="feature_email_smtp_recipient_name_placeholder">Recipient display name</string>
+    <string name="feature_email_smtp_recipient_name_error_empty">Field cannot be empty</string>
     <string name="feature_email_smtp_name_error_empty">Field cannot be empty</string>
     <string name="feature_email_smtp_name_error_min_length">Minimum 3 characters</string>
+    <string name="feature_email_smtp_encryption_title">Encryption</string>
+    <string name="feature_email_smtp_ssl_description">For port 465</string>
+    <string name="feature_email_smtp_start_tls_description">For port 587</string>
 </resources>

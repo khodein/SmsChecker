@@ -39,6 +39,7 @@ internal class SmtpEmailHostBlock(
 
     override fun updateBlockState() {
         setState {
+
             copy(
                 hostState = hostState.copy(
                     value = this@SmtpEmailHostBlock.hostState,

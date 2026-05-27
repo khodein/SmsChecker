@@ -74,10 +74,10 @@ private class LightAppColors : AppColors {
     override val onPrimary: Color by lazy { White }
     override val primaryContainer: Color by lazy { Orange100 }
     override val onPrimaryContainer: Color by lazy { Orange900 }
-    override val background: Color by lazy { Neutral50 }
+    override val background: Color by lazy { Neutral100 }
     override val onBackground: Color by lazy { Neutral900 }
     override val surface: Color by lazy { White }
-    override val surfaceVariant: Color by lazy { Neutral100 }
+    override val surfaceVariant: Color by lazy { Neutral200 }
     override val onSurface: Color by lazy { Neutral900 }
     override val onSurfaceVariant: Color by lazy { Neutral600 }
     override val outline: Color by lazy { Neutral300 }

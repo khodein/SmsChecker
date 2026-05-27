@@ -12,11 +12,19 @@
     <string name="feature_email_smtp_port_error_empty">Бос болмауы керек</string>
     <string name="feature_email_smtp_port_error_min_length">Кемінде 3 таңба</string>
     <string name="feature_email_smtp_port_error_invalid">Қате порт (1–65535)</string>
+    <string name="feature_email_smtp_user_title">Тіркелгі деректері</string>
     <string name="feature_email_smtp_username_placeholder">username@example.com</string>
     <string name="feature_email_smtp_username_error_empty">Өріс бос болмауы керек</string>
     <string name="feature_email_smtp_password_placeholder">Құпия сөз</string>
     <string name="feature_email_smtp_password_error_empty">Өріс бос болмауы керек</string>
     <string name="feature_email_smtp_recipient_title">Алушы</string>
+    <string name="feature_email_smtp_recipient_email_placeholder">Алушының email мекенжайы</string>
+    <string name="feature_email_smtp_recipient_email_error_empty">Өріс бос болмауы керек</string>
+    <string name="feature_email_smtp_recipient_name_placeholder">Алушының аты</string>
+    <string name="feature_email_smtp_recipient_name_error_empty">Өріс бос болмауы керек</string>
     <string name="feature_email_smtp_name_error_empty">Өріс бос болмауы керек</string>
     <string name="feature_email_smtp_name_error_min_length">Кемінде 3 таңба</string>
+    <string name="feature_email_smtp_encryption_title">Шифрлау</string>
+    <string name="feature_email_smtp_ssl_description">465 порты үшін қолдану</string>
+    <string name="feature_email_smtp_start_tls_description">587 порты үшін қолдану</string>
 </resources>
