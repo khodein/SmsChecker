@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlin.collections.map
 
-abstract class BaseViewModel<UiState : com.sms.checker.forwarder.framework.UiState, UiAction>(
+abstract class BaseViewModel<State : UiState, Action>(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -27,13 +27,13 @@ abstract class BaseViewModel<UiState : com.sms.checker.forwarder.framework.UiSta
         onEvent = ::onEvent
     )
 
-    abstract val action: UiAction
+    abstract val action: Action
 
     private val _viewState by lazy { MutableStateFlow(getInitialUiState()) }
-    val viewState: StateFlow<UiState>
+    val viewState: StateFlow<State>
         get() = _viewState
 
-    protected abstract fun getInitialUiState(): UiState
+    protected abstract fun getInitialUiState(): State
 
     protected fun registerBlocks(builder: BlockStore.() -> Unit) {
         if (blockStore.isRegister) return
@@ -50,7 +50,7 @@ abstract class BaseViewModel<UiState : com.sms.checker.forwarder.framework.UiSta
         }
     }
 
-    protected fun setState(reducer: UiState.() -> UiState) {
+    protected fun setState(reducer: State.() -> State) {
         val newState = viewState.value.reducer()
         _viewState.value = newState
     }
