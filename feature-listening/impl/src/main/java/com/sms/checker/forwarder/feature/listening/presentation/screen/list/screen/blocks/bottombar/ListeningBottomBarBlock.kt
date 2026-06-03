@@ -7,16 +7,14 @@ import com.sms.checker.forwarder.framework.block.BaseBlock
 
 internal class ListeningBottomBarBlock(
     private val listeningBottomBarMapper: ListeningBottomBarMapper,
-) : BaseBlock<ListeningBottomBarState, Unit>() {
+) : BaseBlock<ListeningBottomBarState, ListeningBottomBarAction, Unit>() {
 
-    private val action = ListeningBottomBarAction(
+    override val action = ListeningBottomBarAction(
         onClickForward = ::onClickForward
     )
 
     override fun getInitialUiState(): ListeningBottomBarState {
-        return listeningBottomBarMapper.map(
-            action = action,
-        )
+        return listeningBottomBarMapper.map()
     }
 
     private fun onClickForward() {

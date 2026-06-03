@@ -9,25 +9,34 @@ import com.sms.checker.forwarder.framework.router.Router
 internal class SmtpTopBarBlock(
     private val smtpTopBarMapper: SmtpTopBarMapper,
     private val router: Router,
-) : BaseBlock<SmtpTopBarState, Unit>() {
+) : BaseBlock<SmtpTopBarState, SmtpTopBarAction, Unit>() {
 
-    private val action = SmtpTopBarAction(
+    private var isUpdate: Boolean = false
+
+    override val action = SmtpTopBarAction(
         onClickBackPressed = ::onClickBackPressed,
         onClickNotice = ::onClickNotice
     )
 
     override fun getInitialUiState(): SmtpTopBarState {
-        return smtpTopBarMapper.map(
-            action = action
-        )
+        return buildState()
     }
 
     override fun updateBlockState() {
-
+        setState {
+            buildState()
+        }
     }
+
+    private fun buildState() = smtpTopBarMapper.map(isUpdate)
 
     private fun onClickBackPressed() {
         router.goBack()
+    }
+
+    fun setIsUpdate(isUpdate: Boolean) {
+        this.isUpdate = isUpdate
+        updateBlockState()
     }
 
     private fun onClickNotice() {

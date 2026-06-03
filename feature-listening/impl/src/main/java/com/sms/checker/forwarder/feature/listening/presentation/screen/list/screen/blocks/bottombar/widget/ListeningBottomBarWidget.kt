@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.bottombar.state.ListeningBottomBarAction
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.bottombar.state.ListeningBottomBarState
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
 import com.sms.checker.forwarder.framework.uikit.DefaultButtonWidget
@@ -14,9 +15,10 @@ import com.sms.checker.forwarder.framework.uikit.DefaultButtonWidget
 internal fun ListeningBottomBarWidget(
     modifier: Modifier = Modifier,
     state: ListeningBottomBarState,
+    action: ListeningBottomBarAction,
 ) {
     DefaultButtonWidget(
-        onClick = state.action.onClickForward,
+        onClick = action.onClickForward,
         caption = state.caption,
         modifier = modifier
             .fillMaxWidth()

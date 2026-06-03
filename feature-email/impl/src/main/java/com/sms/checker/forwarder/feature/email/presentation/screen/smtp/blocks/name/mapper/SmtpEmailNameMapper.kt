@@ -10,12 +10,10 @@ internal class SmtpEmailNameMapper(
 ) {
     fun map(
         value: String,
-        action: SmtpEmailNameAction
     ): SmtpEmailNameState {
         return SmtpEmailNameState(
             value = value,
             placeholder = resProvider.getString(R.string.feature_email_smtp_name_placeholder),
-            action = action,
         )
     }
 

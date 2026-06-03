@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.config.state.ListeningConfigAction
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.config.state.ListeningConfigState
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.config.state.ListeningConfigState.ConfigItemState
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
@@ -28,6 +29,7 @@ import com.sms.checker.forwarder.framework.uikit.DefaultButtonWidget
 internal fun ListeningConfigWidget(
     modifier: Modifier,
     state: ListeningConfigState,
+    action: ListeningConfigAction,
 ) {
     Column(
         modifier = modifier
@@ -43,7 +45,7 @@ internal fun ListeningConfigWidget(
                 ListeningConfigEmptyWidget(
                     title = state.title,
                     caption = state.actionText,
-                    onClickEmpty = state.action.onClickEmpty
+                    onClickEmpty = action.onClickEmpty
                 )
             }
 
@@ -51,7 +53,7 @@ internal fun ListeningConfigWidget(
                 ListeningConfigListWidget(
                     title = state.title,
                     items = state.items,
-                    onClickItem = state.action.onClickItem
+                    onClickItem = action.onClickItem
                 )
             }
         }

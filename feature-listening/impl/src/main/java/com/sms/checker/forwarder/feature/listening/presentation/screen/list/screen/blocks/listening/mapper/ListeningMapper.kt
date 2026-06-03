@@ -11,14 +11,12 @@ internal class ListeningMapper(
     fun map(
         isListening: Boolean,
         needPermissionState: ListeningState.NeedPermissionState?,
-        action: ListeningAction,
     ): ListeningState {
         return ListeningState(
             title = resProvider.getString(R.string.feature_listening_switch_title),
             description = resProvider.getString(R.string.feature_listening_switch_description),
             isListening = isListening,
             needPermissionState = needPermissionState,
-            action = action
         )
     }
 }

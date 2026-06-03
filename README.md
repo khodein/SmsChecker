@@ -42,6 +42,27 @@ SmsChecker
 └── build-logic           # Convention plugins
 ```
 
+## File Structure
+
+```
+SmsChecker/
+├── app/
+├── framework/
+│   ├── framework/
+│   ├── router/
+│   └── tools/
+├── feature-sms/
+│   ├── api/
+│   └── impl/
+├── feature-email/
+│   ├── api/
+│   └── impl/
+├── feature-listening/
+│   ├── api/
+│   └── impl/
+└── build-logic/
+```
+
 ## Build
 
 ```bash

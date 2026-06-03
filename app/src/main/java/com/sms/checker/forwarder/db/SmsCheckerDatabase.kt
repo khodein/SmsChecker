@@ -12,7 +12,7 @@ import com.sms.checker.forwarder.feature.sms.db.entity.SmsEntity
         SmsEntity::class,
         SmtpEmailEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class SmsCheckerDatabase : RoomDatabase() {

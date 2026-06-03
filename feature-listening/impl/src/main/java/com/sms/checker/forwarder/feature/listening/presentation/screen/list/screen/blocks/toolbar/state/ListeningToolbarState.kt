@@ -5,5 +5,4 @@ import androidx.compose.runtime.Immutable
 @Immutable
 internal data class ListeningToolbarState(
     val title: String,
-    val action: ListeningToolbarAction,
 )

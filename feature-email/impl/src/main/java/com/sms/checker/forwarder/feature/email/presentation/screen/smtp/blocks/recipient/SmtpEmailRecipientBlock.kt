@@ -7,30 +7,29 @@ import com.sms.checker.forwarder.framework.block.BaseBlock
 
 internal class SmtpEmailRecipientBlock(
     private val smtpEmailRecipientMapper: SmtpEmailRecipientMapper,
-) : BaseBlock<SmtpEmailRecipientState, Unit>() {
+) : BaseBlock<SmtpEmailRecipientState, SmtpEmailRecipientAction, Unit>() {
 
     private var emailState: String = ""
-    private var nameState: String = ""
+    private var subjectState: String = ""
     private var emailErrorState: String? = null
-    private var nameErrorState: String? = null
+    private var subjectErrorState: String? = null
 
-    private val action = SmtpEmailRecipientAction(
+    override val action = SmtpEmailRecipientAction(
         onChangeEmail = ::onChangeEmail,
-        onChangeName = ::onChangeName,
+        onChangeSubject = ::onChangeSubject,
     )
 
     fun isRequired(): Boolean {
         emailErrorState = smtpEmailRecipientMapper.mapEmailError(emailState)
-        nameErrorState = smtpEmailRecipientMapper.mapNameError(nameState)
+        subjectErrorState = smtpEmailRecipientMapper.mapSubjectError(subjectState)
         updateBlockState()
-        return emailErrorState == null && nameErrorState == null
+        return emailErrorState == null && subjectErrorState == null
     }
 
     override fun getInitialUiState(): SmtpEmailRecipientState {
         return smtpEmailRecipientMapper.map(
             email = emailState,
-            name = nameState,
-            action = action,
+            subject = subjectState,
         )
     }
 
@@ -41,21 +40,21 @@ internal class SmtpEmailRecipientBlock(
                     value = this@SmtpEmailRecipientBlock.emailState,
                     error = this@SmtpEmailRecipientBlock.emailErrorState,
                 ),
-                nameState = nameState.copy(
-                    value = this@SmtpEmailRecipientBlock.nameState,
-                    error = this@SmtpEmailRecipientBlock.nameErrorState,
+                subjectState = subjectState.copy(
+                    value = this@SmtpEmailRecipientBlock.subjectState,
+                    error = this@SmtpEmailRecipientBlock.subjectErrorState,
                 ),
             )
         }
     }
 
-    private fun onChangeEmail(value: String) {
+    fun onChangeEmail(value: String) {
         this.emailState = value
         updateBlockState()
     }
 
-    private fun onChangeName(value: String) {
-        this.nameState = value
+    fun onChangeSubject(value: String) {
+        this.subjectState = value
         updateBlockState()
     }
 }

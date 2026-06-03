@@ -5,5 +5,5 @@ import androidx.compose.runtime.Immutable
 @Immutable
 internal data class SmtpEmailRecipientAction(
     val onChangeEmail: (value: String) -> Unit,
-    val onChangeName: (value: String) -> Unit,
+    val onChangeSubject: (value: String) -> Unit,
 )

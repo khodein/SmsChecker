@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.listening.state.ListeningAction
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.listening.state.ListeningState
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
 
@@ -23,6 +24,7 @@ import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
 internal fun ListeningWidget(
     modifier: Modifier = Modifier,
     state: ListeningState,
+    action: ListeningAction,
 ) {
     Row(
         modifier = modifier
@@ -72,7 +74,7 @@ internal fun ListeningWidget(
                 uncheckedTrackColor = SmsCheckerTheme.color.surfaceVariant,
                 uncheckedBorderColor = SmsCheckerTheme.color.outline,
             ),
-            onCheckedChange = state.action.onClickListening
+            onCheckedChange = action.onClickListening
         )
     }
 }

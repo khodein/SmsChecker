@@ -4,19 +4,30 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sms.checker.forwarder.framework.block.BlockStore
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import kotlin.collections.map
 
-abstract class BaseViewModel<UiState : BaseUiState>(
+abstract class BaseViewModel<UiState : com.sms.checker.forwarder.framework.UiState, UiAction>(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private val _uiEvent = MutableSharedFlow<UiEvent>(extraBufferCapacity = 1)
+    val uiEvent: SharedFlow<UiEvent> = _uiEvent.asSharedFlow()
+
     private val blockStore = BlockStore(
         scope = viewModelScope,
         savedStateHandle = savedStateHandle,
+        onEvent = ::onEvent
     )
+
+    abstract val action: UiAction
 
     private val _viewState by lazy { MutableStateFlow(getInitialUiState()) }
     val viewState: StateFlow<UiState>
@@ -33,7 +44,7 @@ abstract class BaseViewModel<UiState : BaseUiState>(
 
         viewModelScope.launch {
             val flows = blocks.map { it.blockState }
-            combine(flows) { }.collect {
+            combine(flows) { }.collectLatest {
                 updateViewState()
             }
         }
@@ -45,6 +56,12 @@ abstract class BaseViewModel<UiState : BaseUiState>(
     }
 
     protected abstract fun updateViewState()
+
+    protected fun onEvent(event: UiEvent) {
+        viewModelScope.launch {
+            _uiEvent.emit(event)
+        }
+    }
 
     abstract fun attach()
 }

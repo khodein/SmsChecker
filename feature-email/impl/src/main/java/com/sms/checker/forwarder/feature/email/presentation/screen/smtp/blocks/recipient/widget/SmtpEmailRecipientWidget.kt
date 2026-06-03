@@ -8,8 +8,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.recipient.state.SmtpEmailRecipientAction
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.recipient.state.SmtpEmailRecipientState
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
 import com.sms.checker.forwarder.framework.uikit.FieldWidget
@@ -18,6 +20,7 @@ import com.sms.checker.forwarder.framework.uikit.FieldWidget
 internal fun SmtpEmailRecipientWidget(
     modifier: Modifier = Modifier,
     state: SmtpEmailRecipientState,
+    action: SmtpEmailRecipientAction,
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -40,16 +43,22 @@ internal fun SmtpEmailRecipientWidget(
             error = state.emailState.error,
             placeholder = state.emailState.placeholder,
             isError = state.emailState.error != null,
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
-            onValueChange = state.action.onChangeEmail,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next,
+            ),
+            onValueChange = action.onChangeEmail,
         )
         FieldWidget(
             modifier = Modifier.fillMaxWidth(),
-            value = state.nameState.value,
-            error = state.nameState.error,
-            placeholder = state.nameState.placeholder,
-            isError = state.nameState.error != null,
-            onValueChange = state.action.onChangeName,
+            value = state.subjectState.value,
+            error = state.subjectState.error,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Next,
+            ),
+            placeholder = state.subjectState.placeholder,
+            isError = state.subjectState.error != null,
+            onValueChange = action.onChangeSubject,
         )
     }
 }

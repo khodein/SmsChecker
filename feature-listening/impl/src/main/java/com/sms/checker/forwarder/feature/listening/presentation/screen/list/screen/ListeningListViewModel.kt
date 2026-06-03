@@ -7,6 +7,7 @@ import com.sms.checker.forwarder.feature.listening.presentation.screen.list.scre
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.config.ListeningConfigBlock
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.toolbar.ListeningToolbarBlock
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.mapper.ListeningListMapper
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.state.ListeningListAction
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.state.ListeningListItemState
 import com.sms.checker.forwarder.framework.BaseViewModel
 import com.sms.checker.forwarder.framework.Status
@@ -18,7 +19,14 @@ internal class ListeningListViewModel(
     private val listeningToolbarBlock: ListeningToolbarBlock,
     private val listeningConfigBlock: ListeningConfigBlock,
     savedStateHandle: SavedStateHandle,
-) : BaseViewModel<ListeningListState>(savedStateHandle) {
+) : BaseViewModel<ListeningListState, ListeningListAction>(savedStateHandle) {
+
+    override val action: ListeningListAction = ListeningListAction(
+        bottomBarAction = listeningBottomBarBlock.action,
+        listeningAction = listeningBlock.action,
+        toolbarAction = listeningToolbarBlock.action,
+        configAction = listeningConfigBlock.action
+    )
 
     init {
         attach()

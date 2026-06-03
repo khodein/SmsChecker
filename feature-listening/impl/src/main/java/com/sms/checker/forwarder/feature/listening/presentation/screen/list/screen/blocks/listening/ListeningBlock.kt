@@ -13,14 +13,14 @@ internal class ListeningBlock(
     private val startListeningUseCase: StartListeningUseCase,
     private val stopListeningUseCase: StopListeningUseCase,
     getListeningUseCase: GetListeningUseCase,
-): BaseBlock<ListeningState, Unit>() {
+): BaseBlock<ListeningState, ListeningAction, Unit>() {
 
     private var isListeningState: Boolean = getListeningUseCase.invoke()
 
     private var isGrantedPermissionState: Boolean = false
     private var needPermissionState: ListeningState.NeedPermissionState? = ListeningState.NeedPermissionState
 
-    private val action = ListeningAction(
+    override val action = ListeningAction(
         onClickListening = ::onClickListening,
         onPermissionListeningResult = ::onPermissionListeningResult
     )
@@ -29,7 +29,6 @@ internal class ListeningBlock(
         return listeningMapper.map(
             isListening = isListeningState,
             needPermissionState = needPermissionState,
-            action = action,
         )
     }
 

@@ -19,12 +19,13 @@ internal fun ListeningListRoute(
     viewModel: ListeningListViewModel,
 ) {
     val state by viewModel.viewState.collectAsState()
+    val action = viewModel.action
     val context = LocalContext.current
 
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
-        state.listeningState.action.onPermissionListeningResult.invoke(permissions.values.all { it })
+        action.listeningAction.onPermissionListeningResult.invoke(permissions.values.all { it })
     }
 
     val needPermissionState = state.listeningState.needPermissionState
@@ -40,11 +41,14 @@ internal fun ListeningListRoute(
             ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
         }
         if (allGranted) {
-            state.listeningState.action.onPermissionListeningResult.invoke(true)
+            action.listeningAction.onPermissionListeningResult.invoke(true)
         } else {
             permissionLauncher.launch(required.toTypedArray())
         }
     }
 
-    ListeningListScreen(state = state)
+    ListeningListScreen(
+        state = state,
+        action = action,
+    )
 }

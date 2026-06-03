@@ -6,7 +6,10 @@ import com.sms.checker.forwarder.framework.router.Router
 internal class EmailRouterImpl(
     private val router: Router,
 ) : EmailRouter {
-    override fun gotoSmtpEmail() {
-        router.goTo(SmtpEmailKey)
+    override fun gotoSmtpEmail(id: Long?) {
+        val key = SmtpEmailKey(
+            id = id
+        )
+        router.goTo(key)
     }
 }

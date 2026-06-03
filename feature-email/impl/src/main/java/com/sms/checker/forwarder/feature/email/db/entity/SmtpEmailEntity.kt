@@ -23,8 +23,8 @@ class SmtpEmailEntity(
     val fromEmail: String,
     @ColumnInfo(name = "from_name")
     val fromName: String,
-    @ColumnInfo(name = "ssl_enabled")
-    val sslEnabled: Boolean,
-    @ColumnInfo(name = "start_tls_enabled")
-    val startTlsEnabled: Boolean,
+    @ColumnInfo(name = "sender_email", defaultValue = "")
+    val senderEmail: String,
+    @ColumnInfo(name = "sender_name", defaultValue = "")
+    val senderName: String,
 )

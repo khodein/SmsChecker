@@ -3,7 +3,11 @@
     <string name="feature_email_new_smtp">Жаңа Smtp</string>
     <string name="feature_email_add_new">Жаңасын қосу</string>
     <string name="feature_email_smtp_instruction">Smtp қосу нұсқаулығын оқыңыз, қарау үшін хабарламаны басыңыз</string>
+
     <string name="feature_email_smtp_name_placeholder">Қайта жіберуші атауы</string>
+    <string name="feature_email_smtp_name_error_empty">Өріс бос болмауы керек</string>
+    <string name="feature_email_smtp_name_error_min_length">Кемінде 3 таңба</string>
+
     <string name="feature_email_smtp_host_title">Сервер</string>
     <string name="feature_email_smtp_host_placeholder">smtp.example.com</string>
     <string name="feature_email_smtp_host_error_empty">Өріс бос болмауы керек</string>
@@ -12,19 +16,48 @@
     <string name="feature_email_smtp_port_error_empty">Бос болмауы керек</string>
     <string name="feature_email_smtp_port_error_min_length">Кемінде 3 таңба</string>
     <string name="feature_email_smtp_port_error_invalid">Қате порт (1–65535)</string>
+
     <string name="feature_email_smtp_user_title">Тіркелгі деректері</string>
     <string name="feature_email_smtp_username_placeholder">username@example.com</string>
     <string name="feature_email_smtp_username_error_empty">Өріс бос болмауы керек</string>
     <string name="feature_email_smtp_password_placeholder">Құпия сөз</string>
     <string name="feature_email_smtp_password_error_empty">Өріс бос болмауы керек</string>
+
+    <string name="feature_email_smtp_from_title">Жіберуші</string>
+    <string name="feature_email_smtp_from_email_placeholder">your@email.com</string>
+    <string name="feature_email_smtp_from_email_error_empty">Өріс бос болмауы керек</string>
+    <string name="feature_email_smtp_from_name_placeholder">Қолданба атауы</string>
+    <string name="feature_email_smtp_from_name_error_empty">Өріс бос болмауы керек</string>
+
     <string name="feature_email_smtp_recipient_title">Алушы</string>
     <string name="feature_email_smtp_recipient_email_placeholder">Алушының email мекенжайы</string>
     <string name="feature_email_smtp_recipient_email_error_empty">Өріс бос болмауы керек</string>
-    <string name="feature_email_smtp_recipient_name_placeholder">Алушының аты</string>
-    <string name="feature_email_smtp_recipient_name_error_empty">Өріс бос болмауы керек</string>
-    <string name="feature_email_smtp_name_error_empty">Өріс бос болмауы керек</string>
-    <string name="feature_email_smtp_name_error_min_length">Кемінде 3 таңба</string>
+    <string name="feature_email_smtp_recipient_subject_placeholder">Хат тақырыбы</string>
+    <string name="feature_email_smtp_recipient_subject_error_empty">Өріс бос болмауы керек</string>
+
     <string name="feature_email_smtp_encryption_title">Шифрлау</string>
     <string name="feature_email_smtp_ssl_description">465 порты үшін қолдану</string>
     <string name="feature_email_smtp_start_tls_description">587 порты үшін қолдану</string>
+
+    <string name="feature_email_smtp_save_success">Конфигурация сәтті сақталды</string>
+    <string name="feature_email_smtp_save_error">Сақтау кезінде қате пайда болды, қайта көріңіз</string>
+    <string name="feature_email_smtp_send_again">Қайта жіберу</string>
+
+    <string name="feature_email_smtp_fields_invalid">Өрістер толтырылмаған немесе қате толтырылған</string>
+    <string name="feature_email_smtp_fields_valid">Өрістер дұрыс толтырылған</string>
+
+    <string name="feature_email_smtp_test_send_success">Хат поштаға сәтті жіберілді</string>
+    <string name="feature_email_smtp_test_send_error">Хат поштаға жіберілмеді</string>
+
+    <string name="feature_email_smtp_test_message">SMS Checker Тестовое сообщение!</string>
+    <string name="feature_email_smtp_test_subject">SMS Checker Тест</string>
+    <string name="feature_email_smtp_test_title_loading">Жіберілуде…</string>
+    <string name="feature_email_smtp_test_title_success">Сәтті жіберілді</string>
+    <string name="feature_email_smtp_test_title_error">Жіберу қатесі</string>
+    <string name="feature_email_smtp_test_description_loading">Күте тұрыңыз</string>
+    <string name="feature_email_smtp_test_description_success">Тесттік хат алушыға сәтті жеткізілді</string>
+    <string name="feature_email_smtp_test_description_error">SMTP баптауларын тексеріп, қайта көріңіз</string>
+    <string name="feature_email_smtp_test_status_loading">Жіберілуде...</string>
+    <string name="feature_email_smtp_test_status_success">Сұраныс орындалды, поштаңызды тексеріңіз. Егер бәрі жақсы болса, жаңа қосу түймесін қайта басыңыз</string>
+    <string name="feature_email_smtp_test_status_error">Қате пайда болды, деректерді тексеріңіз. Қате: %s</string>
 </resources>

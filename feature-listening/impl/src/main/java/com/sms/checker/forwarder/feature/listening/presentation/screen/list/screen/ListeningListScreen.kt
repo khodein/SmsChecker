@@ -21,22 +21,26 @@ import com.sms.checker.forwarder.feature.listening.presentation.screen.list.scre
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.listening.state.ListeningState
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.toolbar.state.ListeningToolbarState
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.bottombar.widget.ListeningBottomBarWidget
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.config.state.ListeningConfigAction
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.config.widget.ListeningConfigWidget
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.toolbar.widget.ListeningToolbarWidget
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.listening.widget.ListeningWidget
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.state.ListeningListAction
 import com.sms.checker.forwarder.framework.Status
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
 
 @Composable
 internal fun ListeningListScreen(
-    state: ListeningListState
+    state: ListeningListState,
+    action: ListeningListAction,
 ) {
     Scaffold(
         topBar = {
             ListeningListAppBarWidget(
                 modifier = Modifier.fillMaxWidth(),
                 listeningState = state.listeningState,
-                toolbarState = state.listeningToolbarState
+                toolbarState = state.listeningToolbarState,
+                action = action,
             )
         },
         bottomBar = {
@@ -44,6 +48,7 @@ internal fun ListeningListScreen(
                 ListeningBottomBarWidget(
                     modifier = Modifier.fillMaxWidth(),
                     state = state.listeningBottomBarState,
+                    action = action.bottomBarAction,
                 )
             }
         }
@@ -51,7 +56,8 @@ internal fun ListeningListScreen(
         ListeningListContent(
             modifier = Modifier.padding(it),
             status = state.status,
-            items = state.items
+            items = state.items,
+            configAction = action.configAction
         )
     }
 }
@@ -61,6 +67,7 @@ private fun ListeningListContent(
     modifier: Modifier = Modifier,
     status: Status,
     items: List<ListeningListItemState>,
+    configAction: ListeningConfigAction,
 ) {
     Box(
         modifier = modifier.fillMaxSize()
@@ -70,14 +77,19 @@ private fun ListeningListContent(
 
             }
 
-            Status.SUCCESS -> {
+            Status.IDLE -> {
                 ListeningListSuccessContent(
                     modifier = Modifier.fillMaxSize(),
                     items = items,
+                    configAction = configAction,
                 )
             }
 
             Status.ERROR -> {
+
+            }
+
+            Status.SUCCESS -> {
 
             }
         }
@@ -88,6 +100,7 @@ private fun ListeningListContent(
 private fun ListeningListSuccessContent(
     modifier: Modifier = Modifier,
     items: List<ListeningListItemState>,
+    configAction: ListeningConfigAction,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -103,7 +116,8 @@ private fun ListeningListSuccessContent(
                 is ListeningListItemState.ConfigItemState -> {
                     ListeningConfigWidget(
                         modifier = Modifier,
-                        state = item.listeningConfigState
+                        state = item.listeningConfigState,
+                        action = configAction,
                     )
                 }
             }
@@ -116,6 +130,7 @@ internal fun ListeningListAppBarWidget(
     modifier: Modifier = Modifier,
     listeningState: ListeningState,
     toolbarState: ListeningToolbarState,
+    action: ListeningListAction,
 ) {
     Column(
         modifier = modifier
@@ -127,11 +142,13 @@ internal fun ListeningListAppBarWidget(
     ) {
         ListeningToolbarWidget(
             modifier = Modifier.fillMaxWidth(),
-            state = toolbarState
+            state = toolbarState,
+            action = action.toolbarAction,
         )
         ListeningWidget(
             modifier = Modifier.fillMaxWidth(),
             state = listeningState,
+            action = action.listeningAction,
         )
     }
 }

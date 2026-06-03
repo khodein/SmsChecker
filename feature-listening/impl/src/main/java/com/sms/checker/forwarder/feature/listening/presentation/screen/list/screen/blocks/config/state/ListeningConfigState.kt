@@ -5,19 +5,16 @@ import androidx.compose.runtime.Immutable
 @Immutable
 internal sealed interface ListeningConfigState {
     val title: String
-    val action: ListeningConfigAction
 
     @Immutable
     data class EmptyConfig(
         override val title: String,
-        override val action: ListeningConfigAction,
         val actionText: String,
     ) : ListeningConfigState
 
     @Immutable
     data class ItemsConfig(
         override val title: String,
-        override val action: ListeningConfigAction,
         val items: List<ConfigItemState>
     ) : ListeningConfigState
 

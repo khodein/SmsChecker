@@ -7,21 +7,18 @@ import com.sms.checker.forwarder.framework.block.BaseBlock
 
 internal class SmtpEmailNameBlock(
     private val smtpEmailNameMapper: SmtpEmailNameMapper,
-) : BaseBlock<SmtpEmailNameState, Unit>() {
+) : BaseBlock<SmtpEmailNameState, SmtpEmailNameAction, Unit>() {
 
     private var valueState: String = ""
     private var errorState: String? = null
     private var isRequiredState: Boolean = false
 
-    private val action = SmtpEmailNameAction(
+    override val action = SmtpEmailNameAction(
         onChangeValue = ::onChangeValue
     )
 
     override fun getInitialUiState(): SmtpEmailNameState {
-        return smtpEmailNameMapper.map(
-            value = valueState,
-            action = action
-        )
+        return smtpEmailNameMapper.map(value = valueState,)
     }
 
     override fun updateBlockState() {
@@ -40,7 +37,7 @@ internal class SmtpEmailNameBlock(
         return isRequiredState
     }
 
-    private fun onChangeValue(value: String) {
+    fun onChangeValue(value: String) {
         this.valueState = value
         updateBlockState()
     }

@@ -2,12 +2,14 @@ package com.sms.checker.forwarder.framework.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
+import com.sms.checker.forwarder.framework.uikit.LocalSnackBarHostState
 
 object SmsCheckerTheme {
 
@@ -40,6 +42,11 @@ object SmsCheckerTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalAppPaddings.current
+
+    val snackBarHostState: SnackbarHostState
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalSnackBarHostState.current
 }
 
 @Composable
@@ -57,6 +64,7 @@ fun SmsCheckerTheme(
     val colors = if (darkTheme) darkAppColors() else lightAppColors()
 
     val languageController = remember { appLanguageController() }
+    val snackbarHostState = remember { SnackbarHostState() }
 
     CompositionLocalProvider(
         LocalAppThemeController provides controller,
@@ -65,6 +73,7 @@ fun SmsCheckerTheme(
         LocalAppTypography provides AppTypography(),
         LocalAppCorners provides AppCorners(),
         LocalAppPaddings provides AppPaddings(),
+        LocalSnackBarHostState provides snackbarHostState,
     ) {
         MaterialTheme(
             colorScheme = colors.toMaterialColorScheme(darkTheme),

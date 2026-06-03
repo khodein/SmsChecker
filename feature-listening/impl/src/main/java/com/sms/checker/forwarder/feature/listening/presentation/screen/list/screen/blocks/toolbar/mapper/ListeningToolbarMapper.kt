@@ -8,12 +8,9 @@ import com.sms.checker.forwarder.framework.tools.res.ResProvider
 internal class ListeningToolbarMapper(
     private val resProvider: ResProvider
 ) {
-    fun map(
-        action: ListeningToolbarAction,
-    ): ListeningToolbarState {
+    fun map(): ListeningToolbarState {
         return ListeningToolbarState(
             title = resProvider.getString(R.string.feature_listening_title),
-            action = action,
         )
     }
 }

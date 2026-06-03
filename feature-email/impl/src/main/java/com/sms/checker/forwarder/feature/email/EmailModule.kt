@@ -3,19 +3,29 @@ package com.sms.checker.forwarder.feature.email
 import com.sms.checker.forwarder.feature.email.data.EmailRepositoryImpl
 import com.sms.checker.forwarder.feature.email.data.mapper.SmtpEmailDataMapper
 import com.sms.checker.forwarder.feature.email.domain.EmailRepository
+import com.sms.checker.forwarder.feature.email.domain.usecase.GetSmtpConfigByIdUseCase
+import com.sms.checker.forwarder.feature.email.domain.usecase.GetSmtpConfigByIdUseCaseImpl
+import com.sms.checker.forwarder.feature.email.domain.usecase.SaveSmtpConfigUseCase
+import com.sms.checker.forwarder.feature.email.domain.usecase.SaveSmtpConfigUseCaseImpl
+import com.sms.checker.forwarder.feature.email.domain.usecase.SendSmtpMessageUseCase
+import com.sms.checker.forwarder.feature.email.domain.usecase.SendSmtpMessageUseCaseImpl
+import com.sms.checker.forwarder.feature.email.domain.usecase.UpdateSmtpConfigUseCase
+import com.sms.checker.forwarder.feature.email.domain.usecase.UpdateSmtpConfigUseCaseImpl
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.SmtpEmailViewModel
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.bottombar.SmtpBottomBarBlock
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.bottombar.mapper.SmtpBottomBarMapper
-import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.host.SmtpEmailHostBlock
-import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.host.mapper.SmtpEmailHostMapper
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.name.SmtpEmailNameBlock
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.name.mapper.SmtpEmailNameMapper
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.from.SmtpEmailFromBlock
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.from.mapper.SmtpEmailFromMapper
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.recipient.SmtpEmailRecipientBlock
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.recipient.mapper.SmtpEmailRecipientMapper
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.server.SmtpEmailServerBlock
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.server.mapper.SmtpEmailServerMapper
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.test.SmtpEmailTestBlock
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.test.mapper.SmtpEmailTestMapper
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.topbar.SmtpTopBarBlock
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.topbar.mapper.SmtpTopBarMapper
-import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.user.SmtpEmailUserBlock
-import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.user.mapper.SmtpEmailUserMapper
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.mapper.SmtpEmailMapper
 import com.sms.checker.forwarder.feature.email.router.EmailProviderImpl
 import com.sms.checker.forwarder.feature.email.router.EmailRouter
@@ -34,6 +44,12 @@ object EmailModule {
         singleOf(::EmailRepositoryImpl) bind EmailRepository::class
         singleOf(::SmtpEmailDataMapper)
 
+        // domain
+        singleOf(::SendSmtpMessageUseCaseImpl) bind SendSmtpMessageUseCase::class
+        singleOf(::SaveSmtpConfigUseCaseImpl) bind SaveSmtpConfigUseCase::class
+        singleOf(::UpdateSmtpConfigUseCaseImpl) bind UpdateSmtpConfigUseCase::class
+        singleOf(::GetSmtpConfigByIdUseCaseImpl) bind GetSmtpConfigByIdUseCase::class
+
         // navigation
         singleOf(::EmailRouterImpl) bind EmailRouter::class
         singleOf(::EmailProviderImpl) bind Router.Provider::class
@@ -43,17 +59,19 @@ object EmailModule {
         factoryOf(::SmtpBottomBarBlock)
         factoryOf(::SmtpTopBarBlock)
         factoryOf(::SmtpEmailNameBlock)
-        factoryOf(::SmtpEmailHostBlock)
-        factoryOf(::SmtpEmailUserBlock)
+        factoryOf(::SmtpEmailServerBlock)
+        factoryOf(::SmtpEmailFromBlock)
         factoryOf(::SmtpEmailRecipientBlock)
+        factoryOf(::SmtpEmailTestBlock)
 
         // mappers
         singleOf(::SmtpTopBarMapper)
         singleOf(::SmtpBottomBarMapper)
         singleOf(::SmtpEmailNameMapper)
-        singleOf(::SmtpEmailMapper)
-        singleOf(::SmtpEmailHostMapper)
-        singleOf(::SmtpEmailUserMapper)
+        singleOf(::SmtpEmailServerMapper)
+        singleOf(::SmtpEmailFromMapper)
         singleOf(::SmtpEmailRecipientMapper)
+        singleOf(::SmtpEmailTestMapper)
+        singleOf(::SmtpEmailMapper)
     }
 }

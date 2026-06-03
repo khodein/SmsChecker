@@ -8,11 +8,8 @@ import com.sms.checker.forwarder.framework.tools.res.ResProvider
 internal class ListeningConfigMapper(
     private val resProvider: ResProvider,
 ) {
-    fun mapConfigState(
-        action: ListeningConfigAction,
-    ): ListeningConfigState {
+    fun mapConfigState(): ListeningConfigState {
         return ListeningConfigState.EmptyConfig(
-            action = action,
             title = resProvider.getString(R.string.feature_listening_empty_configs),
             actionText = resProvider.getString(R.string.feature_listening_add_config),
         )

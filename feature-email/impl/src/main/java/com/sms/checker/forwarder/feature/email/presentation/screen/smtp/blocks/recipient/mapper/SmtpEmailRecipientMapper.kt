@@ -10,22 +10,20 @@ internal class SmtpEmailRecipientMapper(
 ) {
     fun map(
         email: String,
-        name: String,
-        action: SmtpEmailRecipientAction,
+        subject: String,
     ): SmtpEmailRecipientState {
         val emailState = SmtpEmailRecipientState.EmailState(
             placeholder = resProvider.getString(R.string.feature_email_smtp_recipient_email_placeholder),
             value = email,
         )
-        val nameState = SmtpEmailRecipientState.NameState(
-            placeholder = resProvider.getString(R.string.feature_email_smtp_recipient_name_placeholder),
-            value = name,
+        val subjectState = SmtpEmailRecipientState.SubjectState(
+            placeholder = resProvider.getString(R.string.feature_email_smtp_recipient_subject_placeholder),
+            value = subject,
         )
         return SmtpEmailRecipientState(
             title = resProvider.getString(R.string.feature_email_smtp_recipient_title),
-            action = action,
             emailState = emailState,
-            nameState = nameState,
+            subjectState = subjectState,
         )
     }
 
@@ -37,9 +35,9 @@ internal class SmtpEmailRecipientMapper(
         }
     }
 
-    fun mapNameError(value: String): String? {
+    fun mapSubjectError(value: String): String? {
         return if (value.trim().isEmpty()) {
-            resProvider.getString(R.string.feature_email_smtp_recipient_name_error_empty)
+            resProvider.getString(R.string.feature_email_smtp_recipient_subject_error_empty)
         } else {
             null
         }

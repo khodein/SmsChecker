@@ -10,11 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -23,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.topbar.state.SmtpTopBarAction
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.topbar.state.SmtpTopBarState
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
 import com.sms.checker.forwarder.framework.uikit.TopAppBarWidget
@@ -31,6 +28,7 @@ import com.sms.checker.forwarder.framework.uikit.TopAppBarWidget
 internal fun SmtpTopBarWidget(
     modifier: Modifier = Modifier,
     state: SmtpTopBarState,
+    action: SmtpTopBarAction,
 ) {
     Column(
         modifier = modifier
@@ -42,12 +40,12 @@ internal fun SmtpTopBarWidget(
     ) {
         TopAppBarWidget(
             title = state.title,
-            onClickBackPressed = state.action.onClickBackPressed
+            onClickBackPressed = action.onClickBackPressed
         )
         SmtpTopBarNoticeWidget(
             modifier = Modifier.fillMaxWidth(),
             description = state.notice,
-            onClick = state.action.onClickNotice
+            onClick = action.onClickNotice
         )
     }
 }

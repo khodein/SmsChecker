@@ -6,8 +6,7 @@ import androidx.compose.runtime.Immutable
 internal data class SmtpEmailRecipientState(
     val title: String,
     val emailState: EmailState,
-    val nameState: NameState,
-    val action: SmtpEmailRecipientAction,
+    val subjectState: SubjectState,
 ) {
     @Immutable
     data class EmailState(
@@ -17,7 +16,7 @@ internal data class SmtpEmailRecipientState(
     )
 
     @Immutable
-    data class NameState(
+    data class SubjectState(
         val value: String,
         val placeholder: String,
         val error: String? = null

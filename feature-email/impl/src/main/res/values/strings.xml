@@ -3,28 +3,57 @@
     <string name="feature_email_new_smtp">New Smtp</string>
     <string name="feature_email_add_new">Add New</string>
     <string name="feature_email_smtp_instruction">Study the instructions for adding Smtp, click on the message to view</string>
+
     <string name="feature_email_smtp_name_placeholder">SMTP forwarder name</string>
-    <string name="feature_email_smtp_host_title">Server</string>
-    <string name="feature_email_smtp_host_placeholder">SMTP host smtp.example.com</string>
+    <string name="feature_email_smtp_name_error_empty">Field cannot be empty</string>
+    <string name="feature_email_smtp_name_error_min_length">Minimum 3 characters</string>
+
+    <string name="feature_email_smtp_host_title">SMTP</string>
+    <string name="feature_email_smtp_host_placeholder">smtp.example.com</string>
     <string name="feature_email_smtp_host_error_empty">Field cannot be empty</string>
     <string name="feature_email_smtp_host_error_invalid">Invalid host format</string>
     <string name="feature_email_smtp_port_placeholder">465</string>
     <string name="feature_email_smtp_port_error_empty">Cannot be empty</string>
     <string name="feature_email_smtp_port_error_min_length">Minimum 3 characters</string>
     <string name="feature_email_smtp_port_error_invalid">Invalid port (1–65535)</string>
+
     <string name="feature_email_smtp_user_title">Credentials</string>
-    <string name="feature_email_smtp_username_placeholder">SMTP login username@example.com</string>
+    <string name="feature_email_smtp_username_placeholder">username@example.com</string>
     <string name="feature_email_smtp_username_error_empty">Field cannot be empty</string>
-    <string name="feature_email_smtp_password_placeholder">SMTP password or app password</string>
+    <string name="feature_email_smtp_password_placeholder">password or app password</string>
     <string name="feature_email_smtp_password_error_empty">Field cannot be empty</string>
+
+    <string name="feature_email_smtp_from_title">Sender</string>
+    <string name="feature_email_smtp_from_email_placeholder">your@email.com</string>
+    <string name="feature_email_smtp_from_email_error_empty">Field cannot be empty</string>
+    <string name="feature_email_smtp_from_name_placeholder">App Name</string>
+    <string name="feature_email_smtp_from_name_error_empty">Field cannot be empty</string>
+
     <string name="feature_email_smtp_recipient_title">Recipient</string>
-    <string name="feature_email_smtp_recipient_email_placeholder">Recipient email address</string>
+    <string name="feature_email_smtp_recipient_email_placeholder">email address</string>
     <string name="feature_email_smtp_recipient_email_error_empty">Field cannot be empty</string>
-    <string name="feature_email_smtp_recipient_name_placeholder">Recipient display name</string>
-    <string name="feature_email_smtp_recipient_name_error_empty">Field cannot be empty</string>
-    <string name="feature_email_smtp_name_error_empty">Field cannot be empty</string>
-    <string name="feature_email_smtp_name_error_min_length">Minimum 3 characters</string>
-    <string name="feature_email_smtp_encryption_title">Encryption</string>
-    <string name="feature_email_smtp_ssl_description">For port 465</string>
-    <string name="feature_email_smtp_start_tls_description">For port 587</string>
+    <string name="feature_email_smtp_recipient_subject_placeholder">Email subject</string>
+    <string name="feature_email_smtp_recipient_subject_error_empty">Field cannot be empty</string>
+
+    <string name="feature_email_smtp_save_success">Configuration saved successfully</string>
+    <string name="feature_email_smtp_save_error">An error occurred while saving, please try again</string>
+    <string name="feature_email_smtp_send_again">Send again</string>
+
+    <string name="feature_email_smtp_fields_invalid">Fields are not filled in or filled in incorrectly</string>
+    <string name="feature_email_smtp_fields_valid">Fields are filled in correctly</string>
+
+    <string name="feature_email_smtp_test_send_success">The email was sent successfully</string>
+    <string name="feature_email_smtp_test_send_error">The email was not sent, Error!</string>
+
+    <string name="feature_email_smtp_test_message">SMS Checker Test message!</string>
+    <string name="feature_email_smtp_test_subject">SMS Checker Test</string>
+    <string name="feature_email_smtp_test_title_loading">Sending…</string>
+    <string name="feature_email_smtp_test_title_success">Sent successfully</string>
+    <string name="feature_email_smtp_test_title_error">Sending failed</string>
+    <string name="feature_email_smtp_test_description_loading">Please wait</string>
+    <string name="feature_email_smtp_test_description_success">The test email was delivered to the recipient</string>
+    <string name="feature_email_smtp_test_description_error">Check your SMTP settings and try again</string>
+    <string name="feature_email_smtp_test_status_loading">Sending…</string>
+    <string name="feature_email_smtp_test_status_success">Request completed, check your email. If everything is fine, press the Add New button again</string>
+    <string name="feature_email_smtp_test_status_error">An error occurred, check the data. Error: %s</string>
 </resources>

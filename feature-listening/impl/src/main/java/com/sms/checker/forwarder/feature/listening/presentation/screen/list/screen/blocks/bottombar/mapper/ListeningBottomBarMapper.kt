@@ -8,12 +8,9 @@ import com.sms.checker.forwarder.framework.tools.res.ResProvider
 internal class ListeningBottomBarMapper(
     private val resProvider: ResProvider
 ) {
-    fun map(
-        action: ListeningBottomBarAction,
-    ): ListeningBottomBarState {
+    fun map(): ListeningBottomBarState {
         return ListeningBottomBarState(
             caption = resProvider.getString(R.string.feature_listening_add_forward),
-            action = action,
         )
     }
 }

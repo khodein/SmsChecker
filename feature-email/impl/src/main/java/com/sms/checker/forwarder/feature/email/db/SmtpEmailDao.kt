@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.sms.checker.forwarder.feature.email.db.entity.SmtpEmailEntity
 
 @Dao
@@ -11,6 +12,9 @@ interface SmtpEmailDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: SmtpEmailEntity): Long
+
+    @Update
+    suspend fun update(entity: SmtpEmailEntity): Int
 
     @Query("SELECT * FROM smtp_email_table WHERE id = :id")
     suspend fun getById(id: Long): SmtpEmailEntity?

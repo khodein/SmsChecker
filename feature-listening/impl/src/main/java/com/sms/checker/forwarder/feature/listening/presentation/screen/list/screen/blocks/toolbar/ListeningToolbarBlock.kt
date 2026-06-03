@@ -7,14 +7,14 @@ import com.sms.checker.forwarder.framework.block.BaseBlock
 
 internal class ListeningToolbarBlock(
     private val listeningToolbarMapper: ListeningToolbarMapper,
-): BaseBlock<ListeningToolbarState, Unit>() {
+): BaseBlock<ListeningToolbarState, ListeningToolbarAction, Unit>() {
 
-    private val action = ListeningToolbarAction(
+    override val action = ListeningToolbarAction(
         onClickSettings = ::onClickSettings
     )
 
     override fun getInitialUiState(): ListeningToolbarState {
-        return listeningToolbarMapper.map(action)
+        return listeningToolbarMapper.map()
     }
 
     override fun updateBlockState() {

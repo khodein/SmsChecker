@@ -3,7 +3,11 @@
     <string name="feature_email_new_smtp">Новый Smtp</string>
     <string name="feature_email_add_new">Добавить новый</string>
     <string name="feature_email_smtp_instruction">Изучите инструкцию по добавлению Smtp, чтобы посмотреть кликните на сообщение</string>
+
     <string name="feature_email_smtp_name_placeholder">Название пересыльщика</string>
+    <string name="feature_email_smtp_name_error_empty">Поле не может быть пустым</string>
+    <string name="feature_email_smtp_name_error_min_length">Минимум 3 символа</string>
+
     <string name="feature_email_smtp_host_title">Сервер</string>
     <string name="feature_email_smtp_host_placeholder">smtp.example.com</string>
     <string name="feature_email_smtp_host_error_empty">Поле не может быть пустым</string>
@@ -12,19 +16,44 @@
     <string name="feature_email_smtp_port_error_empty">Не может быть пустым</string>
     <string name="feature_email_smtp_port_error_min_length">Минимум 3 символа</string>
     <string name="feature_email_smtp_port_error_invalid">Неверный порт (1–65535)</string>
+
     <string name="feature_email_smtp_user_title">Учётные данные</string>
     <string name="feature_email_smtp_username_placeholder">username@example.com</string>
     <string name="feature_email_smtp_username_error_empty">Поле не может быть пустым</string>
     <string name="feature_email_smtp_password_placeholder">Пароль</string>
     <string name="feature_email_smtp_password_error_empty">Поле не может быть пустым</string>
+
+    <string name="feature_email_smtp_from_title">Отправитель</string>
+    <string name="feature_email_smtp_from_email_placeholder">your@email.com</string>
+    <string name="feature_email_smtp_from_email_error_empty">Поле не может быть пустым</string>
+    <string name="feature_email_smtp_from_name_placeholder">Название приложения</string>
+    <string name="feature_email_smtp_from_name_error_empty">Поле не может быть пустым</string>
+
     <string name="feature_email_smtp_recipient_title">Получатель</string>
     <string name="feature_email_smtp_recipient_email_placeholder">Email получателя</string>
     <string name="feature_email_smtp_recipient_email_error_empty">Поле не может быть пустым</string>
-    <string name="feature_email_smtp_recipient_name_placeholder">Имя получателя</string>
-    <string name="feature_email_smtp_recipient_name_error_empty">Поле не может быть пустым</string>
-    <string name="feature_email_smtp_name_error_empty">Поле не может быть пустым</string>
-    <string name="feature_email_smtp_name_error_min_length">Минимум 3 символа</string>
-    <string name="feature_email_smtp_encryption_title">Шифрование</string>
-    <string name="feature_email_smtp_ssl_description">Использовать для порта 465</string>
-    <string name="feature_email_smtp_start_tls_description">Использовать для порта 587</string>
+    <string name="feature_email_smtp_recipient_subject_placeholder">Тема письма</string>
+    <string name="feature_email_smtp_recipient_subject_error_empty">Поле не может быть пустым</string>
+
+    <string name="feature_email_smtp_save_success">Конфигурация успешно сохранена</string>
+    <string name="feature_email_smtp_save_error">Произошла ошибка при сохранении, попробуйте еще раз</string>
+    <string name="feature_email_smtp_send_again">Отправить еще раз</string>
+
+    <string name="feature_email_smtp_fields_invalid">Поля не заполнены или заполнены неверно</string>
+    <string name="feature_email_smtp_fields_valid">Поля заполнены правильно</string>
+
+    <string name="feature_email_smtp_test_send_success">Письмо на почту было успешно отправлено</string>
+    <string name="feature_email_smtp_test_send_error">Письмо на почту не было отправлено, ошибка!</string>
+
+    <string name="feature_email_smtp_test_message">SMS Checker Тестовое сообщение!</string>
+    <string name="feature_email_smtp_test_subject">SMS Checker Тест</string>
+    <string name="feature_email_smtp_test_title_loading">Отправка…</string>
+    <string name="feature_email_smtp_test_title_success">Успешно отправлено</string>
+    <string name="feature_email_smtp_test_title_error">Ошибка отправки</string>
+    <string name="feature_email_smtp_test_description_loading">Пожалуйста, подождите</string>
+    <string name="feature_email_smtp_test_description_success">Тестовое письмо успешно доставлено получателю</string>
+    <string name="feature_email_smtp_test_description_error">Проверьте настройки SMTP и попробуйте снова</string>
+    <string name="feature_email_smtp_test_status_loading">Отправляю...</string>
+    <string name="feature_email_smtp_test_status_success">Запрос выполнен, проверьте почту. Если всё хорошо, нажмите кнопку добавить новый ещё раз</string>
+    <string name="feature_email_smtp_test_status_error">Произошла ошибка, проверьте данные. Ошибка: %s</string>
 </resources>

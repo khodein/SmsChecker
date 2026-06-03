@@ -9,12 +9,11 @@ internal class SmtpTopBarMapper(
     private val resProvider: ResProvider,
 ) {
     fun map(
-        action: SmtpTopBarAction
+        isUpdate: Boolean,
     ): SmtpTopBarState {
         return SmtpTopBarState(
             title = resProvider.getString(R.string.feature_email_new_smtp),
             notice = resProvider.getString(R.string.feature_email_smtp_instruction),
-            action = action,
         )
     }
 }

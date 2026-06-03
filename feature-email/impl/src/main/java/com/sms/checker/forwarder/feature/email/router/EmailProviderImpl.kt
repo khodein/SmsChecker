@@ -10,8 +10,10 @@ import org.koin.compose.viewmodel.koinViewModel
 
 internal class EmailProviderImpl : Router.Provider {
     override fun invoke(): EntryProviderInstaller = {
-        entry<SmtpEmailKey> {
-            val viewModel = koinViewModel<SmtpEmailViewModel>()
+        entry<SmtpEmailKey> { key ->
+            val viewModel = koinViewModel<SmtpEmailViewModel>().also {
+                it.setSmtpId(key.id)
+            }
             SmtpEmailRoute(
                 modifier = Modifier,
                 viewModel = viewModel

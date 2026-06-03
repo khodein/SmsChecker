@@ -9,6 +9,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.toolbar.state.ListeningToolbarAction
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.toolbar.state.ListeningToolbarState
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
 import com.sms.checker.forwarder.framework.uikit.IconButtonWidget
@@ -18,6 +19,7 @@ import com.sms.checker.forwarder.framework.uikit.IconButtonWidget
 internal fun ListeningToolbarWidget(
     modifier: Modifier = Modifier,
     state: ListeningToolbarState,
+    action: ListeningToolbarAction,
 ) {
     TopAppBar(
         modifier = modifier.fillMaxWidth(),
@@ -32,7 +34,7 @@ internal fun ListeningToolbarWidget(
             IconButtonWidget(
                 imageVector = Icons.Default.Settings,
                 tint = SmsCheckerTheme.color.onSurface,
-                onClick = state.action.onClickSettings
+                onClick = action.onClickSettings
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(

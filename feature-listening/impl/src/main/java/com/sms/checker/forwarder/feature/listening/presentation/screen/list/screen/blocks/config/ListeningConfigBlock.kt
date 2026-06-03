@@ -7,20 +7,20 @@ import com.sms.checker.forwarder.framework.block.BaseBlock
 
 internal class ListeningConfigBlock(
     private val listeningConfigMapper: ListeningConfigMapper,
-) : BaseBlock<ListeningConfigState, Unit>() {
+) : BaseBlock<ListeningConfigState, ListeningConfigAction, Unit>() {
 
-    private val action = ListeningConfigAction(
+    override val action = ListeningConfigAction(
         onClickEmpty = ::onClickEmpty,
         onClickItem = ::onClickItem,
     )
 
     override fun getInitialUiState(): ListeningConfigState {
-        return listeningConfigMapper.mapConfigState(action = action)
+        return listeningConfigMapper.mapConfigState()
     }
 
     override fun updateBlockState() {
         setState {
-            listeningConfigMapper.mapConfigState(action = action)
+            listeningConfigMapper.mapConfigState()
         }
     }
 
