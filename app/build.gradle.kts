@@ -32,6 +32,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.core.splashscreen)
     implementation(project(":framework"))
     implementation(project(":framework:tools"))
     implementation(project(":framework:router"))

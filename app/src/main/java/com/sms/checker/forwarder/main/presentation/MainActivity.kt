@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -41,12 +42,19 @@ import com.sms.checker.forwarder.framework.uikit.AppSnackBarVisuals
 import com.sms.checker.forwarder.framework.uikit.SnackBarPosition
 import com.sms.checker.forwarder.framework.uikit.SnackBarWidget
 import org.koin.androidx.compose.koinViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.compose.getKoin
 import kotlin.comparisons.then
 
 class MainActivity : ComponentActivity() {
+
+    private val mainViewModel: MainViewModel by viewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        // условие проверяется каждый кадр; splash закрывается когда вернёт false
+        splashScreen.setKeepOnScreenCondition { mainViewModel.isLoading.value }
         enableEdgeToEdge()
         setContent {
             setContent {
@@ -65,7 +73,7 @@ private fun SmsCheckerRoute() {
     val snackbarHostState = SmsCheckerTheme.snackBarHostState
     val currentData = snackbarHostState.currentSnackbarData
     var lastData by remember { mutableStateOf<SnackbarData?>(null) }
-    var snackbarAlignment by remember { mutableStateOf<Alignment>(Alignment.BottomCenter) }
+    var snackbarAlignment by remember { mutableStateOf(Alignment.BottomCenter) }
 
     LaunchedEffect(currentData) {
         if (currentData != null) {

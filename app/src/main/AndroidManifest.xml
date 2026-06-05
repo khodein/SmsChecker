@@ -29,7 +29,7 @@
             android:launchMode="singleTask"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/Theme.SmsChecker">
+            android:theme="@style/Theme.SmsChecker.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
