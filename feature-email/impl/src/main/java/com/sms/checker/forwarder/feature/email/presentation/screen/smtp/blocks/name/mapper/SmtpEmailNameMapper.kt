@@ -10,9 +10,11 @@ internal class SmtpEmailNameMapper(
 ) {
     fun map(
         value: String,
+        error: String?,
     ): SmtpEmailNameState {
         return SmtpEmailNameState(
             value = value,
+            error = error,
             placeholder = resProvider.getString(R.string.feature_email_smtp_name_placeholder),
         )
     }

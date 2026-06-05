@@ -5,5 +5,6 @@ import androidx.compose.runtime.Immutable
 @Immutable
 internal data class SmtpTopBarState(
     val title: String,
-    val notice: String,
+    val statusLabel: String,
+    val isStatus: Boolean? = null,
 )

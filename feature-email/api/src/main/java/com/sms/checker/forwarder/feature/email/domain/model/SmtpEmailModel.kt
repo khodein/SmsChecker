@@ -7,4 +7,5 @@ data class SmtpEmailModel(
     val user: SmtpEmailUserModel,
     val from: SmtpEmailFromModel,
     val recipient: SmtpEmailRecipientModel,
+    val status: SmtpEmailStatus = SmtpEmailStatus.Disable,
 )

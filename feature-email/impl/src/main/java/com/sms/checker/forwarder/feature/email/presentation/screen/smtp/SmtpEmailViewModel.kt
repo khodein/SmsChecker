@@ -2,10 +2,11 @@ package com.sms.checker.forwarder.feature.email.presentation.screen.smtp
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailModel
 import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailFromModel
+import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailModel
 import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailRecipientModel
 import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailServerModel
+import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailStatus
 import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailUserModel
 import com.sms.checker.forwarder.feature.email.domain.usecase.GetSmtpConfigByIdUseCase
 import com.sms.checker.forwarder.feature.email.domain.usecase.SaveSmtpConfigUseCase
@@ -20,12 +21,9 @@ import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.t
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.topbar.SmtpTopBarBlock
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.mapper.SmtpEmailMapper
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.state.SmtpEmailAction
-import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.state.SmtpEmailEvent
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.state.SmtpEmailState
 import com.sms.checker.forwarder.framework.BaseViewModel
 import com.sms.checker.forwarder.framework.Status
-import com.sms.checker.forwarder.framework.UiEvent
-import com.sms.checker.forwarder.framework.router.Router
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -44,7 +42,8 @@ internal class SmtpEmailViewModel(
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<SmtpEmailState, SmtpEmailAction>(savedStateHandle),
     SmtpBottomBarBlock.Provider,
-    SmtpEmailTestBlock.Provider {
+    SmtpEmailTestBlock.Provider,
+    SmtpTopBarBlock.Provider {
 
     private var model: SmtpEmailModel? = null
     private var status: Status = Status.IDLE
@@ -66,16 +65,17 @@ internal class SmtpEmailViewModel(
     }
 
     fun setSmtpId(id: Long?) {
-        if (id == null || model != null) return
+        if (id == null) return
         smtpBottomBarBlock.setIsUpdate(true)
-        smtpTopBarBlock.setIsUpdate(true)
         loadById?.cancel()
         loadById = viewModelScope.launch {
-            updateLoading()
+            status = Status.LOADING
+            updateViewState()
             runCatching {
                 getSmtpConfigByIdUseCase.invoke(id)
             }.onSuccess { model ->
                 smtpEmailNameBlock.onChangeValue(model.name)
+                smtpTopBarBlock.onChangeValue(model.status)
                 smtpEmailServerBlock.run {
                     onChangeUserName(model.user.name)
                     onChangePassword(model.user.password)
@@ -91,10 +91,12 @@ internal class SmtpEmailViewModel(
                     onChangeSubject(model.recipient.subject)
                 }
                 this@SmtpEmailViewModel.model = model
-                updateSuccess(id)
+                status = Status.SUCCESS
+                updateViewState()
             }.onFailure {
                 smtpBottomBarBlock.setIsUpdate(false)
-                updateError(it)
+                status = Status.ERROR
+                updateViewState()
             }
         }
     }
@@ -120,28 +122,30 @@ internal class SmtpEmailViewModel(
 
     override fun attach() {
         registerBlocks {
-            add(smtpTopBarBlock)
+            add(smtpTopBarBlock, this@SmtpEmailViewModel)
             add(smtpBottomBarBlock, this@SmtpEmailViewModel)
+            add(smtpEmailTestBlock, this@SmtpEmailViewModel)
             add(smtpEmailNameBlock)
             add(smtpEmailServerBlock)
             add(smtpEmailFromBlock)
             add(smtpEmailRecipientBlock)
-            add(smtpEmailTestBlock, this@SmtpEmailViewModel)
         }
     }
 
     override fun getRequired(): Map<SmtpBottomBarBlock.Required, Boolean> {
         return mapOf(
-            SmtpBottomBarBlock.Required.Name to smtpEmailNameBlock.isRequired(),
-            SmtpBottomBarBlock.Required.Server to smtpEmailServerBlock.isRequired(),
-            SmtpBottomBarBlock.Required.From to smtpEmailFromBlock.isRequired(),
-            SmtpBottomBarBlock.Required.Recipient to smtpEmailRecipientBlock.isRequired(),
-            SmtpBottomBarBlock.Required.Test to smtpEmailTestBlock.isRequired()
+            SmtpBottomBarBlock.Required.Name to smtpEmailNameBlock.isRequiredState,
+            SmtpBottomBarBlock.Required.Server to smtpEmailServerBlock.isRequiredState,
+            SmtpBottomBarBlock.Required.From to smtpEmailFromBlock.isRequiredState,
+            SmtpBottomBarBlock.Required.Recipient to smtpEmailRecipientBlock.isRequiredState,
+            SmtpBottomBarBlock.Required.Test to smtpEmailTestBlock.isRequiredState
         )
     }
 
     override fun onRequired() {
         val model = SmtpEmailModel(
+            id = model?.id,
+            status = smtpTopBarBlock.status ?: SmtpEmailStatus.Disable,
             name = smtpEmailNameBlock.blockState.value.value,
             server = SmtpEmailServerModel(
                 host = smtpEmailServerBlock.blockState.value.hostState.value,
@@ -168,51 +172,43 @@ internal class SmtpEmailViewModel(
 
     override fun onSave() {
         val model = this@SmtpEmailViewModel.model ?: return
+        status = Status.LOADING
+        updateViewState()
         viewModelScope.launch {
             runCatching {
                 saveSmtpConfigUseCase.invoke(model)
+            }.onSuccess {
+                onEvent(mapper.mapSuccessEvent())
+            }.onFailure {
+                onEvent(mapper.mapErrorEvent())
             }
-                .onSuccess {
-                    onEvent(mapper.mapSuccessEvent())
-                }
-                .onFailure {
-                    onEvent(mapper.mapErrorEvent())
-                }
         }
     }
 
+    override fun onChangeStatus() {
+        val model = this@SmtpEmailViewModel.model ?: return
+        this@SmtpEmailViewModel.model?.id ?: return
+        val status = smtpTopBarBlock.status ?: return
+        this@SmtpEmailViewModel.model = model.copy(status = status)
+        onUpdate()
+    }
+
     override fun onReload() {
-        action.bottomBarAction.onClickAdd.invoke()
+        smtpBottomBarBlock.onClickAdd()
     }
 
     override fun onUpdate() {
         val model = this@SmtpEmailViewModel.model ?: return
-        updateLoading()
+        status = Status.LOADING
+        updateViewState()
         viewModelScope.launch {
             runCatching {
                 updateSmtpConfigUseCase.invoke(model)
+            }.onSuccess { _ ->
+                onEvent(mapper.mapSuccessEvent())
+            }.onFailure {
+                onEvent(mapper.mapErrorEvent())
             }
-                .onSuccess { id ->
-                    onEvent(mapper.mapSuccessEvent())
-                }
-                .onFailure {
-                    onEvent(mapper.mapErrorEvent())
-                }
         }
-    }
-
-    private fun updateLoading() {
-        status = Status.LOADING
-        updateViewState()
-    }
-
-    private fun updateSuccess(id: Long) {
-        status = Status.SUCCESS
-        updateViewState()
-    }
-
-    private fun updateError(throwable: Throwable) {
-        status = Status.ERROR
-        updateViewState()
     }
 }

@@ -9,9 +9,14 @@ import com.sms.checker.forwarder.framework.tools.res.ResProvider
 internal class SmtpBottomBarMapper(
     private val resProvider: ResProvider,
 ) {
-    fun map(): SmtpBottomBarState {
+    fun map(isUpdate: Boolean): SmtpBottomBarState {
+        val resId = if (isUpdate) {
+            R.string.feature_email_update
+        } else {
+            R.string.feature_email_add_new
+        }
         return SmtpBottomBarState(
-            caption = resProvider.getString(R.string.feature_email_add_new),
+            caption = resProvider.getString(resId),
         )
     }
 

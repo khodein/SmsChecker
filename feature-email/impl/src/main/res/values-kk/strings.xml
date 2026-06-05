@@ -2,6 +2,7 @@
 <resources>
     <string name="feature_email_new_smtp">Жаңа Smtp</string>
     <string name="feature_email_add_new">Жаңасын қосу</string>
+    <string name="feature_email_update">Жаңарту</string>
     <string name="feature_email_smtp_instruction">Smtp қосу нұсқаулығын оқыңыз, қарау үшін хабарламаны басыңыз</string>
 
     <string name="feature_email_smtp_name_placeholder">Қайта жіберуші атауы</string>
@@ -60,4 +61,6 @@
     <string name="feature_email_smtp_test_status_loading">Жіберілуде...</string>
     <string name="feature_email_smtp_test_status_success">Сұраныс орындалды, поштаңызды тексеріңіз. Егер бәрі жақсы болса, жаңа қосу түймесін қайта басыңыз</string>
     <string name="feature_email_smtp_test_status_error">Қате пайда болды, деректерді тексеріңіз. Қате: %s</string>
+
+    <string name="feature_email_smtp_enable_sending">Жіберуді қосу</string>
 </resources>

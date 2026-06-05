@@ -36,8 +36,6 @@ import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.state.Sm
 import com.sms.checker.forwarder.framework.Status
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
 import com.sms.checker.forwarder.framework.uikit.AppSnackBarVisuals
-import com.sms.checker.forwarder.framework.uikit.LoadingWidget
-import com.sms.checker.forwarder.framework.uikit.ScreenLoadingWidget
 import com.sms.checker.forwarder.framework.uikit.SnackBarPosition
 import com.sms.checker.forwarder.framework.uikit.SnackBarType
 import com.sms.checker.forwarder.framework.uikit.showAppSnackBar
@@ -80,7 +78,9 @@ internal fun SmtpEmailScreen(
         }
     ) { paddingValues ->
         SmtpEmailContent(
-            modifier = Modifier.padding(paddingValues),
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
             state = state,
             lazyListState = lazyListState,
             action = action
@@ -95,52 +95,47 @@ private fun SmtpEmailContent(
     state: SmtpEmailState,
     action: SmtpEmailAction,
 ) {
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        state = lazyListState,
+        verticalArrangement = Arrangement.spacedBy(SmsCheckerTheme.padding.extraSmall()),
+        contentPadding = SmsCheckerTheme.padding.allExtraSmall()
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            state = lazyListState,
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            contentPadding = SmsCheckerTheme.padding.allExtraSmall()
-        ) {
-            item(key = "name", contentType = "name") {
-                SmtpEmailNameWidget(
+        item(key = "name", contentType = "name") {
+            SmtpEmailNameWidget(
+                modifier = Modifier.fillMaxWidth(),
+                state = state.nameState,
+                action = action.nameAction
+            )
+        }
+        item(key = "server", contentType = "server") {
+            SmtpEmailServerWidget(
+                modifier = Modifier.fillMaxWidth(),
+                state = state.serverState,
+                action = action.serverAction,
+            )
+        }
+        item(key = "from", contentType = "from") {
+            SmtpEmailFromWidget(
+                modifier = Modifier.fillMaxWidth(),
+                state = state.fromState,
+                action = action.fromAction,
+            )
+        }
+        item(key = "recipient", contentType = "recipient") {
+            SmtpEmailRecipientWidget(
+                modifier = Modifier.fillMaxWidth(),
+                state = state.recipientState,
+                action = action.recipientAction
+            )
+        }
+        state.testState?.let { testState ->
+            item(key = "test", contentType = "test") {
+                SmtpEmailTestWidget(
                     modifier = Modifier.fillMaxWidth(),
-                    state = state.nameState,
-                    action = action.nameAction
+                    state = testState,
+                    action = action.testAction
                 )
-            }
-            item(key = "server", contentType = "server") {
-                SmtpEmailServerWidget(
-                    modifier = Modifier.fillMaxWidth(),
-                    state = state.serverState,
-                    action = action.serverAction,
-                )
-            }
-            item(key = "from", contentType = "from") {
-                SmtpEmailFromWidget(
-                    modifier = Modifier.fillMaxWidth(),
-                    state = state.fromState,
-                    action = action.fromAction,
-                )
-            }
-            item(key = "recipient", contentType = "recipient") {
-                SmtpEmailRecipientWidget(
-                    modifier = Modifier.fillMaxWidth(),
-                    state = state.recipientState,
-                    action = action.recipientAction
-                )
-            }
-            state.testState?.let { testState ->
-                item(key = "test", contentType = "test") {
-                    SmtpEmailTestWidget(
-                        modifier = Modifier.fillMaxWidth(),
-                        state = testState,
-                        action = action.testAction
-                    )
-                }
             }
         }
     }

@@ -11,30 +11,33 @@ internal class SmtpEmailNameBlock(
 
     private var valueState: String = ""
     private var errorState: String? = null
-    private var isRequiredState: Boolean = false
+
+    val isRequiredState: Boolean
+        get() {
+            errorState = smtpEmailNameMapper.mapError(valueState)
+            updateBlockState()
+            return errorState == null
+        }
 
     override val action = SmtpEmailNameAction(
         onChangeValue = ::onChangeValue
     )
 
     override fun getInitialUiState(): SmtpEmailNameState {
-        return smtpEmailNameMapper.map(value = valueState,)
+        return buildState()
     }
 
     override fun updateBlockState() {
         setState {
-            copy(
-                value = valueState,
-                error = errorState
-            )
+            buildState()
         }
     }
 
-    fun isRequired(): Boolean {
-        errorState = smtpEmailNameMapper.mapError(valueState)
-        isRequiredState = errorState == null
-        updateBlockState()
-        return isRequiredState
+    private fun buildState(): SmtpEmailNameState {
+        return  smtpEmailNameMapper.map(
+            value = valueState,
+            error = errorState
+        )
     }
 
     fun onChangeValue(value: String) {

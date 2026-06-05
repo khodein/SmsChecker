@@ -5,5 +5,5 @@ import androidx.compose.runtime.Immutable
 @Immutable
 internal data class SmtpTopBarAction(
     val onClickBackPressed: () -> Unit,
-    val onClickNotice: () -> Unit,
+    val onChangeValue: (Boolean) -> Unit,
 )

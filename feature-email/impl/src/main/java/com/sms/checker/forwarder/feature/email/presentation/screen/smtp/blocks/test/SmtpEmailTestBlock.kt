@@ -22,7 +22,8 @@ internal class SmtpEmailTestBlock(
         onClickReload = ::onClickReload
     )
 
-    private var isRequiredState: Boolean = false
+    var isRequiredState: Boolean = false
+        private set
 
     private var statusState: SmtpEmailTestState.TestStatus = SmtpEmailTestState.TestStatus.None
         set(value) {
@@ -33,23 +34,10 @@ internal class SmtpEmailTestBlock(
             field = value
         }
 
-    override fun getInitialUiState(): SmtpEmailTestState = SmtpEmailTestState(
-        status = statusState,
-        title = "",
-        description = "",
-        notice = "",
-        buttonText = smtpEmailTestMapper.mapButton()
-    )
+    override fun getInitialUiState(): SmtpEmailTestState = buildState()
 
     override fun updateBlockState() {
-        setState {
-            copy(
-                status = statusState,
-                title = smtpEmailTestMapper.mapTitle(statusState),
-                description = smtpEmailTestMapper.mapDescription(statusState),
-                notice = smtpEmailTestMapper.mapNotice(statusState)
-            )
-        }
+        setState { buildState() }
     }
 
     fun onTest(model: SmtpEmailModel) {
@@ -62,28 +50,46 @@ internal class SmtpEmailTestBlock(
     private fun load(model: SmtpEmailModel) {
         loadJob?.cancel()
         loadJob = blockScope?.launch {
-            onEvent(SmtpEmailTestEvent.Scroll)
-            statusState = SmtpEmailTestState.TestStatus.Loading
-            updateBlockState()
+            updateLoading()
             runCatching {
                 sendSmtpMessageUseCase.invoke(
                     message = smtpEmailTestMapper.getTestMessage(),
                     model = model,
                 )
             }.onSuccess {
-                statusState = SmtpEmailTestState.TestStatus.Succuss
-                onEvent(smtpEmailTestMapper.mapSuccessEvent())
-                updateBlockState()
+                updateSuccess()
             }.onFailure {
-                statusState = SmtpEmailTestState.TestStatus.Error
-                onEvent(smtpEmailTestMapper.mapErrorEvent())
-                updateBlockState()
+                updateError()
             }
         }
     }
 
-    fun isRequired(): Boolean {
-        return isRequiredState
+    private fun buildState(): SmtpEmailTestState {
+        return SmtpEmailTestState(
+            status = statusState,
+            title = smtpEmailTestMapper.mapTitle(statusState),
+            description = smtpEmailTestMapper.mapDescription(statusState),
+            notice = smtpEmailTestMapper.mapNotice(statusState),
+            buttonText = smtpEmailTestMapper.mapButton()
+        )
+    }
+
+    private fun updateLoading() {
+        onEvent(SmtpEmailTestEvent.Scroll)
+        statusState = SmtpEmailTestState.TestStatus.Loading
+        updateBlockState()
+    }
+
+    private fun updateSuccess() {
+        statusState = SmtpEmailTestState.TestStatus.Succuss
+        onEvent(smtpEmailTestMapper.mapSuccessEvent())
+        updateBlockState()
+    }
+
+    private fun updateError() {
+        statusState = SmtpEmailTestState.TestStatus.Error
+        onEvent(smtpEmailTestMapper.mapErrorEvent())
+        updateBlockState()
     }
 
     private fun onClickReload() {

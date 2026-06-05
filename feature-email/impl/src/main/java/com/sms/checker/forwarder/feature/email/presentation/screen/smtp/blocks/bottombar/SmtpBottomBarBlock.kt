@@ -13,19 +13,24 @@ internal class SmtpBottomBarBlock(
 
     private var isUpdate: Boolean = false
 
+    fun setIsUpdate(isUpdate: Boolean) {
+        this.isUpdate = isUpdate
+        updateBlockState()
+    }
+
     override val action = SmtpBottomBarAction(
         onClickAdd = ::onClickAdd
     )
 
     override fun getInitialUiState(): SmtpBottomBarState {
-        return smtpBottomBarMapper.map()
+        return buildState()
     }
 
     override fun updateBlockState() {
-
+        setState { buildState() }
     }
 
-    private fun onClickAdd() {
+    fun onClickAdd() {
         val requiredMap = blockProvider?.getRequired() ?: return
         val requiredWithoutTest = requiredMap.filter { it.key != Required.Test }
         val isRequired = requiredWithoutTest.any { it.value }
@@ -47,9 +52,7 @@ internal class SmtpBottomBarBlock(
         blockProvider?.onRequired()
     }
 
-    fun setIsUpdate(isUpdate: Boolean) {
-        this.isUpdate = isUpdate
-    }
+    private fun buildState() = smtpBottomBarMapper.map(isUpdate)
 
     interface Provider {
         fun getRequired(): Map<Required, Boolean>

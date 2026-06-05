@@ -27,4 +27,6 @@ class SmtpEmailEntity(
     val senderEmail: String,
     @ColumnInfo(name = "sender_name", defaultValue = "")
     val senderName: String,
+    @ColumnInfo(name = "status", defaultValue = "Disable")
+    val status: String,
 )

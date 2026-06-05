@@ -14,17 +14,18 @@ internal class SmtpEmailRecipientBlock(
     private var emailErrorState: String? = null
     private var subjectErrorState: String? = null
 
+    val isRequiredState: Boolean
+        get() {
+            emailErrorState = smtpEmailRecipientMapper.mapEmailError(emailState)
+            subjectErrorState = smtpEmailRecipientMapper.mapSubjectError(subjectState)
+            updateBlockState()
+            return emailErrorState == null && subjectErrorState == null
+        }
+
     override val action = SmtpEmailRecipientAction(
         onChangeEmail = ::onChangeEmail,
         onChangeSubject = ::onChangeSubject,
     )
-
-    fun isRequired(): Boolean {
-        emailErrorState = smtpEmailRecipientMapper.mapEmailError(emailState)
-        subjectErrorState = smtpEmailRecipientMapper.mapSubjectError(subjectState)
-        updateBlockState()
-        return emailErrorState == null && subjectErrorState == null
-    }
 
     override fun getInitialUiState(): SmtpEmailRecipientState {
         return smtpEmailRecipientMapper.map(

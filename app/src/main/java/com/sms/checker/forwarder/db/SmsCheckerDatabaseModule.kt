@@ -12,7 +12,7 @@ object SmsCheckerDatabaseModule {
                 klass = SmsCheckerDatabase::class.java,
                 name = "sms_checker_forwarder_db"
             )
-                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigration(false)
                 .build()
         }
 

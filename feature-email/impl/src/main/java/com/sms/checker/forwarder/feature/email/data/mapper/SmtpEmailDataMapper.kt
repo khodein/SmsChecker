@@ -1,10 +1,11 @@
 package com.sms.checker.forwarder.feature.email.data.mapper
 
 import com.sms.checker.forwarder.feature.email.db.entity.SmtpEmailEntity
-import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailModel
 import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailFromModel
+import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailModel
 import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailRecipientModel
 import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailServerModel
+import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailStatus
 import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailUserModel
 import java.util.Properties
 import javax.mail.Session
@@ -30,6 +31,7 @@ internal class SmtpEmailDataMapper {
             email = entity.fromEmail,
             subject = entity.fromName,
         ),
+        status = SmtpEmailStatus.entries.find { it.name == entity.status } ?: SmtpEmailStatus.Disable,
     )
 
     fun toEntity(model: SmtpEmailModel): SmtpEmailEntity = SmtpEmailEntity(
@@ -43,5 +45,6 @@ internal class SmtpEmailDataMapper {
         senderName = model.from.name,
         fromEmail = model.recipient.email,
         fromName = model.recipient.subject,
+        status = model.status.name,
     )
 }

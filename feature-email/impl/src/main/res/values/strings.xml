@@ -2,6 +2,7 @@
 <resources>
     <string name="feature_email_new_smtp">New Smtp</string>
     <string name="feature_email_add_new">Add New</string>
+    <string name="feature_email_update">Update</string>
     <string name="feature_email_smtp_instruction">Study the instructions for adding Smtp, click on the message to view</string>
 
     <string name="feature_email_smtp_name_placeholder">SMTP forwarder name</string>
@@ -56,4 +57,6 @@
     <string name="feature_email_smtp_test_status_loading">Sending…</string>
     <string name="feature_email_smtp_test_status_success">Request completed, check your email. If everything is fine, press the Add New button again</string>
     <string name="feature_email_smtp_test_status_error">An error occurred, check the data. Error: %s</string>
+
+    <string name="feature_email_smtp_enable_sending">Enable sending</string>
 </resources>

@@ -2,6 +2,7 @@
 <resources>
     <string name="feature_email_new_smtp">Новый Smtp</string>
     <string name="feature_email_add_new">Добавить новый</string>
+    <string name="feature_email_update">Обновить</string>
     <string name="feature_email_smtp_instruction">Изучите инструкцию по добавлению Smtp, чтобы посмотреть кликните на сообщение</string>
 
     <string name="feature_email_smtp_name_placeholder">Название пересыльщика</string>
@@ -56,4 +57,6 @@
     <string name="feature_email_smtp_test_status_loading">Отправляю...</string>
     <string name="feature_email_smtp_test_status_success">Запрос выполнен, проверьте почту. Если всё хорошо, нажмите кнопку добавить новый ещё раз</string>
     <string name="feature_email_smtp_test_status_error">Произошла ошибка, проверьте данные. Ошибка: %s</string>
+
+    <string name="feature_email_smtp_enable_sending">Включить отправку</string>
 </resources>

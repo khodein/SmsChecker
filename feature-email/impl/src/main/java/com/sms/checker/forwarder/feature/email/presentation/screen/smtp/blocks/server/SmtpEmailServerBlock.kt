@@ -25,16 +25,17 @@ internal class SmtpEmailServerBlock(
         onChangePassword = ::onChangePassword,
     )
 
-    fun isRequired(): Boolean {
-        hostErrorState = smtpEmailServerMapper.mapHostError(
-            hostValue = hostState,
-            portValue = portState,
-        )
-        userNameErrorState = smtpEmailServerMapper.mapNameError(userNameState)
-        passwordErrorState = smtpEmailServerMapper.mapPasswordError(passwordState)
-        updateBlockState()
-        return hostErrorState == null && userNameErrorState == null && passwordErrorState == null
-    }
+    val isRequiredState: Boolean
+        get() {
+            hostErrorState = smtpEmailServerMapper.mapHostError(
+                hostValue = hostState,
+                portValue = portState,
+            )
+            userNameErrorState = smtpEmailServerMapper.mapNameError(userNameState)
+            passwordErrorState = smtpEmailServerMapper.mapPasswordError(passwordState)
+            updateBlockState()
+            return hostErrorState == null && userNameErrorState == null && passwordErrorState == null
+        }
 
     override fun getInitialUiState(): SmtpEmailServerState {
         return smtpEmailServerMapper.map(
