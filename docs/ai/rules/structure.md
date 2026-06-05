@@ -4,140 +4,231 @@
 
 ### Назначение
 Определяет стандартную файловую структуру внутри feature-модуля.
-Единое соглашение по расположению и именованию файлов делает навигацию по коду предсказуемой.
+Единое соглашение по расположению и именованию файлов делает навигацию по коду предсказуемой, а добавление новых фич — механической операцией.
 
 ### Делает
-- Описывает расположение всех файлов внутри фичи
-- Определяет именование файлов по слоям
-- Задаёт вложенность папок внутри `presentation`
+- Описывает расположение всех файлов внутри фичи: что лежит в `api`, что в `impl`.
+- Определяет правила видимости (`public` / `internal`) для каждой группы классов.
+- Задаёт именование файлов по слоям и по экранам.
+- Задаёт вложенность папок внутри `presentation`.
 
 ### Не делает
-- Не описывает содержимое файлов — это задача правил `screen.md`, `viewmodel.md`, `navigation.md`, `di.md`
+- Не описывает содержимое и логику отдельных файлов — это задача правил `screen.md`, `viewmodel.md`, `block.md`, `navigation.md`, `usecase.md`, `repository.md`, `db.md`, `di.md`.
+- Не описывает что лежит в `framework/*` — это задача `framework.md`.
 
-### Структура
+### Базовая схема
 
-Каждый feature-модуль — это папка без собственного `build.gradle.kts`, внутри которой два Gradle-субмодуля:
+Каждая фича — это папка-контейнер `feature-<name>/` (не Gradle-модуль), внутри которой два Gradle-субмодуля: `api` и `impl`.
 
 ```text
-feature-x/                            — папка-контейнер, не Gradle-модуль
-  api/                                — публичные контракты фичи
-    build.gradle.kts                  — plugin: smschecker.android.feature.api
+feature-<name>/                                — папка-контейнер, не Gradle-модуль
+  api/                                         — публичный контракт фичи
+    build.gradle.kts                           — plugin: <prefix>.android.feature.api
     src/main/AndroidManifest.xml
-    src/main/java/.../feature/x/
-      XRouter.kt                      — интерфейс роутера (если нужна навигация извне)
-      (другие публичные интерфейсы)
-  impl/                               — реализация фичи
-    build.gradle.kts                  — plugin: smschecker.android.feature; depends on :feature-x:api
-    src/main/java/.../feature/x/
-      XModule.kt                      — Koin DI
-      presentation/
-        screen/
-          {screenName}/               — папка на каждый экран (list, detail, edit и т.д.)
-            route/
-              XScreenNameKey.kt       — NavKey экрана
-              XScreenNameRoute.kt     — Route composable
-            screen/
-              state/
-                XScreenNameState.kt   — UiState экрана
-                XScreenNameItemState.kt — UI-модель элемента (опционально)
-                XScreenNameAction.kt  — Action экрана (опционально)
-              mapper/
-                XScreenNameMapper.kt  — маппер экрана (опционально)
-              blocks/                 — блоки — самостоятельные части экрана
-                {blockName}/
-                  XBlockNameBlock.kt  — логика блока
-                  state/
-                    XBlockNameState.kt
-                    XBlockNameAction.kt
-                  mapper/
-                    XBlockNameMapper.kt
-                  widget/
-                    XBlockNameWidget.kt
-              XScreenNameScreen.kt    — Screen composable
-              XScreenNameViewModel.kt — ViewModel
+    src/main/java/<root.package>/feature/<name>/
+      router/
+        XRouter.kt                             — public interface (нужен, если фича навигируема извне)
       domain/
-        XUseCase.kt
-        XModel.kt
-        XRepository.kt               — интерфейс репозитория
+        model/
+          XModel.kt                            — public data class (domain-модель)
+        usecase/
+          XUseCase.kt                          — public interface (контракт UseCase)
+        exception/
+          XException.kt                        — public sealed class (domain-исключения)
+  impl/                                        — реализация фичи
+    build.gradle.kts                           — plugin: <prefix>.android.feature; зависит от своего api
+    src/main/AndroidManifest.xml
+    src/main/res/                              — locale-папки строк (см. strings.md)
+    src/main/java/<root.package>/feature/<name>/
+      XModule.kt                               — public Koin object XModule
+      router/
+        XRouterImpl.kt                         — internal class XRouterImpl : XRouter
+        XProviderImpl.kt                       — internal class XProviderImpl : Router.Provider
       data/
-        XRepositoryImpl.kt           — реализация репозитория
+        XRepositoryImpl.kt                     — internal class XRepositoryImpl : XRepository
+        mapper/
+          XDataMapper.kt                       — internal class, маппит entity ↔ domain-model
+      db/
+        XDao.kt                                — public @Dao interface (видим app для AppDatabase)
+        entity/
+          XEntity.kt                           — public @Entity class (видим app для AppDatabase)
+      domain/
+        XRepository.kt                         — internal interface XRepository
+        usecase/
+          XUseCaseImpl.kt                      — internal class XUseCaseImpl : XUseCase
+      presentation/
+        route/
+          <screen>/
+            XScreenKey.kt                      — internal @Serializable data class XScreenKey : NavKey
+            XScreenRoute.kt                    — @Composable internal fun XScreenRoute(...)
+        screen/
+          <screen>/
+            XScreenScreen.kt                   — @Composable internal fun XScreenScreen(state, action, ...)
+            XScreenViewModel.kt                — internal class XScreenViewModel : BaseViewModel<State, Action>
+            mapper/
+              XScreenMapper.kt                 — internal class
+            state/
+              XScreenState.kt                  — internal @Immutable data class : UiState
+              XScreenAction.kt                 — internal @Immutable data class
+              XScreenEvent.kt                  — internal interface : UiEvent (опционально)
+            blocks/
+              <block>/
+                XBlockBlock.kt                 — internal class XBlockBlock : BaseBlock<State, Action, Provider>
+                mapper/
+                  XBlockMapper.kt
+                state/
+                  XBlockState.kt
+                  XBlockAction.kt
+                  XBlockEvent.kt               — опционально, если у блока есть собственные one-time события
+                widget/
+                  XBlockWidget.kt              — @Composable, принимает state и action
 ```
+
+### Что лежит в `api`
+
+Только то, что фича выставляет наружу — другим фичам или `app`:
+
+- `router/XRouter.kt` — навигационный контракт фичи (методы вида `gotoXList()`, `gotoXDetail(id)`).
+- `domain/model/*.kt` — domain-модели, если они нужны соседним фичам или `app` (как входные/выходные параметры `UseCase`).
+- `domain/usecase/*.kt` — интерфейсы `UseCase`, которые могут использоваться другими фичами.
+- `domain/exception/*.kt` — domain-исключения, которые соседние фичи могут перехватывать.
+
+В `api` **не должно быть**: `RepositoryImpl`, `Repository` interface, `DAO`, `Entity`, `ViewModel`, `UiState`, мапперов, Composable-функций, Koin-модулей.
+
+### Что лежит в `impl`
+
+Всё остальное: реализация контрактов из `api` плюс presentation-слой.
+
+- `XModule.kt` — Koin-модуль фичи (`object XModule { fun get(): Module }`). **public**, так как вызывается из `AppModule` в `app`.
+- `router/XRouterImpl.kt` — реализация `XRouter`, использует `Router` из `framework/router`.
+- `router/XProviderImpl.kt` — `Router.Provider`, регистрирует `entry<XScreenKey>` фичи.
+- `data/XRepositoryImpl.kt` — реализация `XRepository`, использует `XDao` и/или внешние API.
+- `data/mapper/XDataMapper.kt` — мапперы между `XEntity`/response/request и domain-моделями.
+- `db/XDao.kt` — Room `@Dao interface` (только декларация запросов). **public**, так как `AppDatabase` в `app` его агрегирует.
+- `db/entity/XEntity.kt` — Room `@Entity`. **public**, так как `AppDatabase` его агрегирует.
+- `domain/XRepository.kt` — `internal interface`, описывает контракт data-слоя для domain.
+- `domain/usecase/XUseCaseImpl.kt` — реализация `XUseCase`, использует `XRepository`.
+- `presentation/route/<screen>/XScreenKey.kt` — `@Serializable internal data class XScreenKey : NavKey`. Помечается `@Serializable`, поскольку Navigation 3 сериализует state.
+- `presentation/route/<screen>/XScreenRoute.kt` — Composable, который получает `ViewModel` через Koin, подписывается на `viewState` и `uiEvent`, передаёт `state` и `action` в `XScreenScreen`.
+- `presentation/screen/<screen>/XScreenViewModel.kt` — `internal class XScreenViewModel(...) : BaseViewModel<XScreenState, XScreenAction>(savedStateHandle)`.
+- `presentation/screen/<screen>/XScreenScreen.kt` — чистый Composable-экран, принимает `state` и `action` параметрами.
+- `presentation/screen/<screen>/state/` — `XScreenState : UiState`, `XScreenAction`, опционально `XScreenEvent : UiEvent`.
+- `presentation/screen/<screen>/mapper/XScreenMapper.kt` — преобразует domain-модель или другое в `UiState` либо в `UiEvent`.
+- `presentation/screen/<screen>/blocks/<block>/` — самостоятельный кусок экрана со своими `Block`, `State`, `Action`, `Mapper`, опционально `Event`, и `Widget` (Composable).
 
 ### api vs impl
 
-- `api` — только публичные интерфейсы и контракты, которые нужны другим модулям или `app`
-- `impl` зависит от своего `api` через `implementation(project(":feature-x:api"))`
-- `app` подключает оба субмодуля автоматически через `implementationFeatureModules()`
-- Содержимое `api` должно быть минимальным — только то, что реально нужно снаружи
+- `api` — только публичные интерфейсы, domain-модели, исключения, навигационный контракт. Содержимое минимально и стабильно.
+- `impl` зависит от своего `api` через `implementation(project(":feature-<name>:api"))`.
+- `app` подключает оба субмодуля автоматически через `implementationFeatureModules()` — добавлять `include` или `implementation(project(...))` руками не нужно.
+- Другие feature-модули зависят только от `:feature-<name>:api`, никогда от `:feature-<name>:impl`.
 
 ### Видимость
 
-- `XModule` и публичные интерфейсы в `api` — `public`, доступны из других модулей
-- Всё остальное в `impl` — `internal`
-- Классы, вложенные внутрь `object XModule` (`RouterImpl`, `ProviderImpl`) — `private`
+| Где | Что | Модификатор |
+|---|---|---|
+| `api/**` | всё содержимое (router interface, models, usecase interfaces, exceptions) | `public` (по умолчанию) |
+| `impl/XModule.kt` | `object XModule` | `public` (вызывается из `AppModule`) |
+| `impl/db/XDao.kt` | `@Dao interface XDao` | `public` (агрегируется в `AppDatabase`) |
+| `impl/db/entity/XEntity.kt` | `@Entity class XEntity` | `public` (агрегируется в `AppDatabase`) |
+| `impl/**` всё остальное | `RepositoryImpl`, `Repository` interface, `UseCaseImpl`, `XRouterImpl`, `XProviderImpl`, `ViewModel`, `Screen`, `Route`, `NavKey`, `Block`, `State`, `Action`, `Event`, `Mapper`, `Widget`, `Data*Mapper` | `internal` |
+
+Старый паттерн «`private` classes внутри `object XModule`» **не используется**. Классы располагаются в собственных файлах и помечаются `internal`.
 
 ### Именование файлов
-- `{screenName}` — название экрана строчными буквами: `list`, `detail`, `edit`
-- `{blockName}` — название блока строчными буквами: `toolbar`, `bottombar`, `listening`
-- `XModule.kt` — `Feature` + `Module`, например `ListeningModule.kt`
-- `XScreenNameKey.kt` — `Feature` + `ScreenName` + `Key`, например `ListeningListKey.kt`
-- `XScreenNameState.kt` — `Feature` + `ScreenName` + `State`, например `ListeningListState.kt`
-- `XScreenNameRoute.kt` — `Feature` + `ScreenName` + `Route`, например `ListeningListRoute.kt`
-- `XScreenNameScreen.kt` — `Feature` + `ScreenName` + `Screen`, например `ListeningListScreen.kt`
-- `XScreenNameViewModel.kt` — `Feature` + `ScreenName` + `ViewModel`, например `ListeningListViewModel.kt`
-- `XBlockNameBlock.kt` — `Feature` + `BlockName` + `Block`, например `ListeningToolbarBlock.kt`
-- `XBlockNameState.kt` — `Feature` + `BlockName` + `State`, например `ListeningToolbarState.kt`
-- `XBlockNameAction.kt` — `Feature` + `BlockName` + `Action`, например `ListeningToolbarAction.kt`
-- `XBlockNameMapper.kt` — `Feature` + `BlockName` + `Mapper`, например `ListeningToolbarMapper.kt`
-- `XBlockNameWidget.kt` — `Feature` + `BlockName` + `Widget`, например `ListeningToolbarWidget.kt`
+
+`X` ниже — это PascalCase-имя фичи (например, `Home`, `Notes`, `Cart`). `<name>` — то же самое в kebab-case для имени папки (`home`, `notes`, `cart`). `<screen>` и `<block>` — короткие имена в lowercase (`list`, `detail`, `edit`, `toolbar`, `bottombar`).
+
+- `XModule.kt` — `Feature` + `Module`, например `HomeModule.kt`.
+- `XRouter.kt` (api) / `XRouterImpl.kt`, `XProviderImpl.kt` (impl) — навигация фичи.
+- `XRepository.kt` (impl/domain) / `XRepositoryImpl.kt` (impl/data) — пара контракт + реализация.
+- `XUseCase.kt` (api) / `XUseCaseImpl.kt` (impl) — пара контракт + реализация. Имя начинается с глагола: `GetHomeUseCase`, `SaveNoteUseCase`, `DeleteCartItemUseCase`.
+- `XModel.kt` (api) — domain-модель. Имя обязательно заканчивается на `Model`: `HomeModel`, `NoteModel`, `CartItemModel`.
+- `XException.kt` (api) — `sealed class XException : Exception()`, варианты — `data class` / `object`.
+- `XDao.kt`, `XEntity.kt` — Room-объекты в `impl/db/`.
+- `XDataMapper.kt` — маппер data-слоя.
+- `X<Screen>Key.kt` — `Feature` + `Screen` + `Key`, например `HomeListKey.kt`.
+- `X<Screen>Route.kt`, `X<Screen>Screen.kt`, `X<Screen>ViewModel.kt`, `X<Screen>State.kt`, `X<Screen>Action.kt`, `X<Screen>Event.kt`, `X<Screen>Mapper.kt` — пер-screen файлы.
+- `X<Block>Block.kt`, `X<Block>State.kt`, `X<Block>Action.kt`, `X<Block>Event.kt`, `X<Block>Mapper.kt`, `X<Block>Widget.kt` — пер-block файлы.
+
+### Несколько экранов в одной фиче
+
+Если у фичи несколько экранов, каждый экран — отдельная папка внутри `presentation/route/` и `presentation/screen/`. Общие domain/data слои разделяются между экранами.
+
+```text
+impl/src/main/java/<root.package>/feature/home/
+  presentation/
+    route/
+      list/   HomeListKey.kt   HomeListRoute.kt
+      detail/ HomeDetailKey.kt HomeDetailRoute.kt
+    screen/
+      list/   HomeListScreen.kt   HomeListViewModel.kt   state/...   blocks/...
+      detail/ HomeDetailScreen.kt HomeDetailViewModel.kt state/...   blocks/...
+```
 
 ### Пример
 
+Для фичи `home` с одним экраном `list`:
+
 ```text
-feature-listening/
+feature-home/
   api/
     build.gradle.kts
     src/main/AndroidManifest.xml
-    src/main/java/.../feature/listening/
-      ListeningRouter.kt              — интерфейс роутера (публичный контракт)
+    src/main/java/<root.package>/feature/home/
+      router/HomeRouter.kt
+      domain/
+        model/HomeModel.kt
+        usecase/GetHomeUseCase.kt
+        exception/HomeException.kt
   impl/
     build.gradle.kts
     src/main/AndroidManifest.xml
-    src/main/java/.../feature/listening/
-      ListeningModule.kt
+    src/main/res/values/strings.xml
+    src/main/res/values-ru/strings.xml
+    src/main/res/values-kk/strings.xml
+    src/main/java/<root.package>/feature/home/
+      HomeModule.kt
+      router/
+        HomeRouterImpl.kt
+        HomeProviderImpl.kt
+      data/
+        HomeRepositoryImpl.kt
+        mapper/HomeDataMapper.kt
+      db/
+        HomeDao.kt
+        entity/HomeEntity.kt
+      domain/
+        HomeRepository.kt
+        usecase/GetHomeUseCaseImpl.kt
       presentation/
+        route/
+          list/
+            HomeListKey.kt
+            HomeListRoute.kt
         screen/
           list/
-            route/
-              ListeningListKey.kt
-              ListeningListRoute.kt
-            screen/
-              state/
-                ListeningListState.kt
-                ListeningListItemState.kt
-              blocks/
-                toolbar/
-                  ListeningToolbarBlock.kt
-                  state/
-                    ListeningToolbarState.kt
-                    ListeningToolbarAction.kt
-                  mapper/
-                    ListeningToolbarMapper.kt
-                  widget/
-                    ListeningToolbarWidget.kt
-                listening/
-                  ListeningBlock.kt
-                  state/
-                    ListeningState.kt
-                    ListeningAction.kt
-                  mapper/
-                    ListeningMapper.kt
-                  widget/
-                    ListeningWidget.kt
-              ListeningListScreen.kt
-              ListeningListViewModel.kt
-      domain/
-        ...
-      data/
-        ...
+            HomeListScreen.kt
+            HomeListViewModel.kt
+            mapper/HomeListMapper.kt
+            state/
+              HomeListState.kt
+              HomeListAction.kt
+              HomeListEvent.kt
+            blocks/
+              toolbar/
+                HomeToolbarBlock.kt
+                mapper/HomeToolbarMapper.kt
+                state/
+                  HomeToolbarState.kt
+                  HomeToolbarAction.kt
+                widget/HomeToolbarWidget.kt
+              bottombar/
+                HomeBottomBarBlock.kt
+                mapper/HomeBottomBarMapper.kt
+                state/
+                  HomeBottomBarState.kt
+                  HomeBottomBarAction.kt
+                  HomeBottomBarEvent.kt
+                widget/HomeBottomBarWidget.kt
 ```

@@ -1,114 +1,223 @@
 # screen.md
 
 ## Purpose
-Это правило описывает, как должны быть устроены экран и UI-компоненты в слое presentation
+Это правило описывает, как должны быть устроены `Route`-Composable и `Screen`-Composable в слое presentation: их ответственности, передача состояния и `Action`, обработка one-time `UiEvent`.
 
 ## Scope
 Где применяется:
-- Presentation
-- Правило распространяется на экраны, Composable-функции и структуру UI в слое presentation
+- Presentation — `impl/presentation/route/<screen>/` и `impl/presentation/screen/<screen>/`.
+- Правило распространяется на `Route`, `Screen`, `Widget`-композиции и подписку на `viewState` / `uiEvent`.
 
 ## Principles
-- Экран отвечает только за отображение состояния и пользовательские события
-- UI не должен содержать бизнес-логику и прямую работу с данными
-- Composable-функции должны работать через `UiState` и callbacks, а доступ к `ViewModel` должен оставаться во внешнем `Route`
-- Экран должен оставаться простым по структуре и ответственности
+- Экран разделён на два уровня:
+  - `XScreenRoute` — связка `ViewModel` и UI. Подписывается на `viewState` и `uiEvent`, передаёт `state` и `action` в `XScreenScreen`.
+  - `XScreenScreen` — чистый Composable. Принимает только `state` и `action`, не знает про `ViewModel` и Koin.
+- UI не содержит бизнес-логики и прямой работы с данными.
+- Все пользовательские действия идут через callbacks из `Action` — никаких прямых вызовов методов `ViewModel`.
+- One-time события (snackbar, прокрутка, навигация) обрабатываются в `Route` через `LaunchedEffect`.
 
-## Rules
-- Создавай экран только как часть слоя presentation
-- Разделяй `Route`-Composable и `Screen`-Composable по их ответственности
-- Используй `Composable`-функции только для отображения UI и обработки пользовательских событий
-- Используй для экрана `UiState`, который наследуется от `BaseUiState`
-- Получай данные для экрана только из `UiState`
-- Передавай пользовательские действия из экрана только в `ViewModel`
-- Не обращайся к `Repository`, API, базе данных и `UseCase` напрямую из экрана
-- Не размещай бизнес-логику в экране и Composable-функциях
-- Не выполняй запросы к API и базе данных из Composable-функций
-- Не передавай `request`, `response`, `entity` и domain-модели напрямую в Composable-функции
-- Используй только `UiState` и UI-модели, если они нужны для отображения
-- Разделяй крупный экран на небольшие Composable-компоненты, если это улучшает читаемость
-- Храни навигационные действия в соответствии с правилами `navigation.md`
-- Храни логику состояния экрана в соответствии с правилами `viewmodel.md`
-- Следуй структуре файлов из `docs/ai/rules/structure.md`
-
-## Do
-- Создавай внешний `Route`-Composable для работы с `ViewModel`
-- Получай `UiState` во внешнем `Route`-Composable и передавай его в экран
-- Создавай `UiState` экрана как часть framework-контракта на основе `BaseUiState`
-- Создавай `Screen`-Composable как чистую UI-функцию, которая принимает `UiState`
-- Передавай пользовательские действия из `Screen` наружу через callbacks
-- Разделяй экран на небольшие Composable-компоненты, если это улучшает читаемость
-- Выноси повторно используемые UI-части в отдельные Composable-функции
-- Передавай в UI только данные, подготовленные для отображения
-- Отображай загрузку, ошибку и успешное состояние через `UiState`
-- Используй `MaterialTheme` для цветов, типографики и стандартных UI-стилей
-- Следуй правилам `viewmodel.md` для работы с состоянием и `navigation.md` для навигации
-
-## Don't
-- Не используй для экрана `UiState`, который не наследуется от `BaseUiState`
-- Не передавай `ViewModel` напрямую в `Screen`-Composable
-- Не получай `UiState` внутри `Screen` через `ViewModel`
-- Не подписывайся на `Flow`, `StateFlow` и другие источники состояния внутри `Screen`
-- Не вызывай методы `ViewModel` напрямую из вложенных UI-компонентов, если можно передать callback
-- Не передавай `Repository`, `UseCase`, API и другие зависимости в `Screen`
-- Не выполняй навигацию напрямую из `Screen`, если она должна быть обработана на уровне `Route`
-- Не размещай бизнес-логику в `Screen` и других Composable-функциях
-- Не выполняй запросы к API и базе данных из `Screen`
-- Не передавай `request`, `response`, `entity` и domain-модели напрямую в `Screen`
-- Не перегружай `Screen` ответственностью за получение состояния, навигацию и бизнес-логику одновременно
-
-## Examples
-### ✅ Correct
-
-`Route` получает состояние из `ViewModel` и передает в `Screen` только `UiState`. Callbacks содержатся в состояниях блоков внутри `UiState`.
+## Базовый шаблон
 
 ```kotlin
 @Composable
-internal fun ListeningListRoute(
-    viewModel: ListeningListViewModel,
+internal fun XScreenRoute(
+    modifier: Modifier = Modifier,
+    viewModel: XScreenViewModel,
 ) {
     val state by viewModel.viewState.collectAsState()
+    val action = viewModel.action
+    val snackbarHostState = AppTheme.snackBarHostState
 
-    ListeningListScreen(state = state)
+    LaunchedEffect(Unit) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is XScreenEvent -> event.handle(snackbarHostState)
+                is XBlockEvent -> event.handle(snackbarHostState)
+            }
+        }
+    }
+
+    XScreenScreen(
+        modifier = modifier,
+        state = state,
+        action = action,
+    )
 }
 
 @Composable
-internal fun ListeningListScreen(
-    state: ListeningListState
+internal fun XScreenScreen(
+    modifier: Modifier = Modifier,
+    state: XScreenState,
+    action: XScreenAction,
 ) {
     Scaffold(
+        modifier = modifier,
         topBar = {
-            ListeningToolbarWidget(
-                modifier = Modifier.fillMaxWidth(),
-                state = state.listeningToolbarState,
+            XToolbarWidget(
+                state = state.toolbarState,
+                action = action.toolbarAction,
             )
         },
         bottomBar = {
-            ListeningBottomBarWidget(
-                modifier = Modifier.fillMaxWidth(),
-                state = state.listeningBottomBarState,
+            XBottomBarWidget(
+                state = state.bottomBarState,
+                action = action.bottomBarAction,
             )
         }
-    ) {
-        // content
+    ) { padding ->
+        XContentWidget(
+            modifier = Modifier.padding(padding),
+            state = state.contentState,
+            action = action.contentAction,
+        )
+    }
+}
+```
+
+## Rules
+- Создавай `XScreenRoute` в `impl/presentation/route/<screen>/XScreenRoute.kt`.
+- Создавай `XScreenScreen` в `impl/presentation/screen/<screen>/XScreenScreen.kt`.
+- Помечай обе функции `internal` и `@Composable`.
+- Получай `ViewModel` только в `XScreenRoute` (через параметр; экземпляр приходит из `koinViewModel<XScreenViewModel>()` в `XProviderImpl`).
+- Подписывайся на `viewModel.viewState` через `collectAsState()` только в `XScreenRoute`.
+- Подписывайся на `viewModel.uiEvent` только в `XScreenRoute` через `LaunchedEffect(Unit) { viewModel.uiEvent.collect { ... } }`.
+- Передавай в `XScreenScreen` только `state: XScreenState` и `action: XScreenAction` (плюс `modifier`).
+- `XScreenScreen` композирует Widget-функции блоков, передавая каждому соответствующий `state.<X>State` и `action.<X>Action`.
+- Используй `Scaffold`, `LazyColumn`, `Box` и стандартные Material3 контейнеры для верстки.
+- Используй цвета, типографику и отступы из `AppTheme` / `MaterialTheme`.
+- Не обращайся к `Repository`, API, базе данных и `UseCase` напрямую из `Route` или `Screen`.
+- Не размещай бизнес-логику в Composable-функциях.
+- Не выполняй API/DB-запросы из Composable-функций.
+- Не передавай `Request` / `Response` / `Entity` или domain-модели в `Screen` — только UI-модели внутри `UiState`.
+- Не подписывайся на `Flow` / `StateFlow` внутри `XScreenScreen` или Widget-функций.
+- Не вызывай методы `ViewModel` напрямую из вложенных Composable — пробрасывай callback через `Action`.
+- Не передавай `Router` в `Screen` — навигация инициируется блоками через `XRouter` или через подписку на `UiEvent` в `Route`.
+
+## Do
+- Разделяй `XScreenRoute` (связка с `ViewModel`) и `XScreenScreen` (чистый UI).
+- Передавай `state` и `action` в `XScreenScreen` отдельными параметрами.
+- Обрабатывай `UiEvent` в `XScreenRoute` через `LaunchedEffect`.
+- Размещай обработку events в виде extension/local функций: `internal suspend fun XScreenEvent.handle(...)`.
+- Используй `SnackbarHostState` из общей `AppTheme`-обёртки для показа snackbar.
+- Делай `Widget`-функции блоков частью самих блоков (`impl/.../blocks/<block>/widget/XBlockWidget.kt`) и принимай в них `state: XBlockState` и `action: XBlockAction`.
+- Если экрану нужны несколько `LazyListState`, `ScrollState` и т.п. — создавай их в `Route` через `remember` и пробрасывай вниз.
+- Следуй правилам `viewmodel.md` для работы с состоянием, `block.md` для блоков и `navigation.md` для навигации.
+
+## Don't
+- Не используй `UiState`, который не наследуется от `UiState` (`framework`).
+- Не передавай `ViewModel` напрямую в `XScreenScreen`.
+- Не получай `UiState` внутри `XScreenScreen` через `ViewModel`.
+- Не подписывайся на `Flow`, `StateFlow` и другие источники состояния внутри `XScreenScreen` или Widget-функций.
+- Не вызывай методы `ViewModel` напрямую из вложенных UI-компонентов — пробрасывай callback через `Action`.
+- Не передавай `Repository`, `UseCase`, API и другие зависимости в `Screen`.
+- Не выполняй навигацию напрямую из `Screen` — навигация инициируется блоком через `XRouter` или через `UiEvent`.
+- Не размещай бизнес-логику в `Screen` и других Composable-функциях.
+- Не выполняй запросы к API и базе данных из `Screen`.
+- Не передавай `Request`, `Response`, `Entity` и domain-модели напрямую в `Screen`.
+- Не перегружай `Screen` ответственностью за получение состояния, навигацию и бизнес-логику одновременно.
+- Не встраивай `Action` внутрь `UiState` как поле — `Screen` принимает `state` и `action` отдельными параметрами.
+
+## Examples
+
+### ✅ Correct
+
+Полный пример экрана `XList`, у которого есть `toolbar` и `content` блоки, и one-time события — snackbar при ошибке.
+
+```kotlin
+// impl/presentation/screen/list/state/XListEvent.kt
+@Immutable
+internal data class XListEvent(
+    val message: String,
+    val isSuccess: Boolean,
+) : UiEvent
+
+internal suspend fun XListEvent.handle(snackbarHostState: SnackbarHostState) {
+    snackbarHostState.showAppSnackBar(
+        AppSnackBarVisuals(
+            message = message,
+            type = if (isSuccess) SnackBarType.Success else SnackBarType.Error,
+        )
+    )
+}
+
+// impl/presentation/route/list/XListRoute.kt
+@Composable
+internal fun XListRoute(
+    modifier: Modifier = Modifier,
+    viewModel: XListViewModel,
+) {
+    val state by viewModel.viewState.collectAsState()
+    val action = viewModel.action
+    val snackbarHostState = AppTheme.snackBarHostState
+
+    LaunchedEffect(Unit) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is XListEvent -> event.handle(snackbarHostState)
+            }
+        }
+    }
+
+    XListScreen(
+        modifier = modifier,
+        state = state,
+        action = action,
+    )
+}
+
+// impl/presentation/screen/list/XListScreen.kt
+@Composable
+internal fun XListScreen(
+    modifier: Modifier = Modifier,
+    state: XListState,
+    action: XListAction,
+) {
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            XToolbarWidget(
+                state = state.toolbarState,
+                action = action.toolbarAction,
+            )
+        }
+    ) { padding ->
+        XContentWidget(
+            modifier = Modifier.padding(padding),
+            state = state.contentState,
+            action = action.contentAction,
+        )
     }
 }
 ```
 
 ### ❌ Incorrect
-```kotlin
-@Composable
-fun HomeScreen(
-    viewModel: HomeViewModel
-) {
-    val state = viewModel.uiState.collectAsState()
 
+```kotlin
+// ViewModel внутри Screen
+@Composable
+fun XListScreen(
+    viewModel: XListViewModel,                   // ❌ Screen не должен принимать ViewModel
+) {
+    val state by viewModel.viewState.collectAsState()
     LazyColumn {
-        items(state.value.numbers) { number ->
-            Button(onClick = { viewModel.onNumberClick(number) }) {
-                Text(text = number.toString())
+        items(state.items) { item ->
+            Button(onClick = { viewModel.onClick(item.id) }) {   // ❌ прямой вызов ViewModel
+                Text(item.title)
             }
         }
     }
 }
+
+// Бизнес-логика и подписка в Composable
+@Composable
+fun XListScreen(state: XListState, action: XListAction) {
+    val items by getXListUseCase().collectAsState(initial = emptyList())   // ❌ UseCase в Composable
+    LaunchedEffect(Unit) {
+        repository.refresh()                          // ❌ Repository в UI
+    }
+}
+
+// Передача domain-модели в Screen
+@Composable
+fun XListScreen(items: List<XModel>) { ... }          // ❌ только UI-модели через UiState
 ```
