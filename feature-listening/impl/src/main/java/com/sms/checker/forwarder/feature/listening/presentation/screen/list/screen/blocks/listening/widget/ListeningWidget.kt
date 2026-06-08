@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.listening.state.ListeningAction
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.listening.state.ListeningState
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
+import com.sms.checker.forwarder.framework.uikit.SwitchWidget
 
 @Composable
 internal fun ListeningWidget(
@@ -36,7 +37,7 @@ internal fun ListeningWidget(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .size(24.dp),
-            tint = if (state.isListening == true) {
+            tint = if (state.isListening) {
                 SmsCheckerTheme.color.primary
             } else {
                 SmsCheckerTheme.color.onSurfaceVariant
@@ -57,24 +58,16 @@ internal fun ListeningWidget(
                 color = SmsCheckerTheme.color.onSurface
             )
             Text(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 text = state.description,
                 style = SmsCheckerTheme.typography.bodyMedium,
                 color = SmsCheckerTheme.color.onSurfaceVariant
             )
         }
-        Switch(
+        SwitchWidget(
             modifier = Modifier.align(Alignment.CenterVertically),
-            checked = state.isListening ?: false,
-            colors = SwitchDefaults.colors().copy(
-                checkedThumbColor = SmsCheckerTheme.color.onPrimary,
-                checkedTrackColor = SmsCheckerTheme.color.primary,
-                uncheckedThumbColor = SmsCheckerTheme.color.onSurfaceVariant,
-                uncheckedTrackColor = SmsCheckerTheme.color.surfaceVariant,
-                uncheckedBorderColor = SmsCheckerTheme.color.outline,
-            ),
-            onCheckedChange = action.onClickListening
+            isValue = state.isListening,
+            onChangeValue = action.onClickListening
         )
     }
 }

@@ -1,6 +1,5 @@
 package com.sms.checker.forwarder.feature.email.presentation.screen.smtp
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailFromModel
 import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailModel
@@ -24,10 +23,12 @@ import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.state.Sm
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.state.SmtpEmailState
 import com.sms.checker.forwarder.framework.BaseViewModel
 import com.sms.checker.forwarder.framework.Status
+import com.sms.checker.forwarder.framework.router.Router
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 internal class SmtpEmailViewModel(
+    private val smtpId: Long?,
     private val smtpBottomBarBlock: SmtpBottomBarBlock,
     private val smtpTopBarBlock: SmtpTopBarBlock,
     private val smtpEmailNameBlock: SmtpEmailNameBlock,
@@ -39,8 +40,8 @@ internal class SmtpEmailViewModel(
     private val updateSmtpConfigUseCase: UpdateSmtpConfigUseCase,
     private val getSmtpConfigByIdUseCase: GetSmtpConfigByIdUseCase,
     private val mapper: SmtpEmailMapper,
-    savedStateHandle: SavedStateHandle,
-) : BaseViewModel<SmtpEmailState, SmtpEmailAction>(savedStateHandle),
+    private val router: Router,
+) : BaseViewModel<SmtpEmailState, SmtpEmailAction>(),
     SmtpBottomBarBlock.Provider,
     SmtpEmailTestBlock.Provider,
     SmtpTopBarBlock.Provider {
@@ -62,10 +63,11 @@ internal class SmtpEmailViewModel(
 
     init {
         attach()
+        loadById()
     }
 
-    fun setSmtpId(id: Long?) {
-        if (id == null) return
+    private fun loadById() {
+        val id = smtpId ?: return
         smtpBottomBarBlock.setIsUpdate(true)
         loadById?.cancel()
         loadById = viewModelScope.launch {
@@ -178,9 +180,24 @@ internal class SmtpEmailViewModel(
             runCatching {
                 saveSmtpConfigUseCase.invoke(model)
             }.onSuccess {
-                onEvent(mapper.mapSuccessEvent())
+                updateSaveSuccess()
             }.onFailure {
-                onEvent(mapper.mapErrorEvent())
+                updateSaveError()
+            }
+        }
+    }
+
+    override fun onUpdate() {
+        val model = this@SmtpEmailViewModel.model ?: return
+        status = Status.LOADING
+        updateViewState()
+        viewModelScope.launch {
+            runCatching {
+                updateSmtpConfigUseCase.invoke(model)
+            }.onSuccess { _ ->
+                updateSaveSuccess()
+            }.onFailure {
+                updateSaveError()
             }
         }
     }
@@ -197,18 +214,12 @@ internal class SmtpEmailViewModel(
         smtpBottomBarBlock.onClickAdd()
     }
 
-    override fun onUpdate() {
-        val model = this@SmtpEmailViewModel.model ?: return
-        status = Status.LOADING
-        updateViewState()
-        viewModelScope.launch {
-            runCatching {
-                updateSmtpConfigUseCase.invoke(model)
-            }.onSuccess { _ ->
-                onEvent(mapper.mapSuccessEvent())
-            }.onFailure {
-                onEvent(mapper.mapErrorEvent())
-            }
-        }
+    private fun updateSaveSuccess() {
+        onEvent(mapper.mapSuccessEvent())
+        router.goBack()
+    }
+
+    private fun updateSaveError() {
+        onEvent(mapper.mapErrorEvent())
     }
 }

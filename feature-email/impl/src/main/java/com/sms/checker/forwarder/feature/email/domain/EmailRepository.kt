@@ -14,4 +14,6 @@ internal interface EmailRepository {
     suspend fun setSmtpConfig(model: SmtpEmailModel): Long
 
     suspend fun updateSmtpConfig(model: SmtpEmailModel): Long
+
+    suspend fun getSmtpList(): List<SmtpEmailModel>
 }

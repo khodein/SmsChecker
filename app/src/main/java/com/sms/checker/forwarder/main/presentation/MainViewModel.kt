@@ -24,8 +24,7 @@ class MainViewModel(
 
     private fun setStartAppRouting() {
         if (router.getBackStack().isEmpty()) {
-//            listeningRouter.gotoListening()
-            emailRouter.gotoSmtpEmail()
+            listeningRouter.gotoListening()
         }
     }
 

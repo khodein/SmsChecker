@@ -10,4 +10,7 @@
     <string name="feature_listening_config_apply">Применённые конфигурации</string>
     <string name="feature_listening_empty_configs">У вас нет конфигураций, на которые можно переслать sms, добавьте их</string>
     <string name="feature_listening_add_config">Добавить конфигурацию</string>
+    <string name="feature_listening_add_disabled_hint">Добавить можно только при выключенном прослушивании</string>
+    <string name="feature_listening_error_update_state">Произошла ошибка при обновлении состояния, элемент не найден или не правильно сохранен</string>
+    <string name="feature_listening_status_updated_success">Статус успешно обновлен!</string>
 </resources>

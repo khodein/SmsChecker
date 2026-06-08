@@ -6,6 +6,10 @@ import androidx.compose.runtime.Immutable
 internal sealed interface ListeningConfigState {
     val title: String
 
+    data object None : ListeningConfigState {
+        override val title: String = ""
+    }
+
     @Immutable
     data class EmptyConfig(
         override val title: String,
@@ -15,15 +19,17 @@ internal sealed interface ListeningConfigState {
     @Immutable
     data class ItemsConfig(
         override val title: String,
-        val items: List<ConfigItemState>
-    ) : ListeningConfigState
+        val items: List<Item>,
+    ) : ListeningConfigState {
 
-    @Immutable
-    data class ConfigItemState(
-        val id: String,
-        val name: String,
-        val type: ConfigType,
-    )
+        @Immutable
+        data class Item(
+            val id: Long,
+            val name: String,
+            val type: ConfigType,
+            val isStatus: Boolean,
+        )
+    }
 
     @Immutable
     enum class ConfigType {

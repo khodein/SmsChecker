@@ -5,5 +5,10 @@ import androidx.compose.runtime.Immutable
 @Immutable
 internal data class ListeningConfigAction(
     val onClickEmpty: () -> Unit,
-    val onClickItem: (id: String) -> Unit
+    val onClickConfig: (id: Long, type: ListeningConfigState.ConfigType) -> Unit,
+    val onChangeConfigStatus: (
+        id: Long,
+        type: ListeningConfigState.ConfigType,
+        isStatus: Boolean
+    ) -> Unit,
 )

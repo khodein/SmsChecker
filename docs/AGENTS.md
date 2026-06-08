@@ -77,7 +77,7 @@
 ## Core Rules
 - UI-логика не должна содержать бизнес-логику.
 - Для хранения состояния в оперативной памяти и работы с состоянием используй `ViewModel`.
-- Каждая `ViewModel` должна наследоваться от `BaseViewModel<State, Action>` и принимать `SavedStateHandle` в конструкторе.
+- Каждая `ViewModel` должна наследоваться от `BaseViewModel<State, Action>`.
 - Состояние каждой `ViewModel` должно наследоваться от `UiState`.
 - Логика частей экрана инкапсулируется в блоках `BaseBlock<State, Action, Provider>`, которые регистрируются в `ViewModel` через `registerBlocks { add(block) }` или `add(block, provider)`.
 - Если блок зависит от внешних callbacks, объявляй интерфейс `Provider` внутри самого Block-класса; `ViewModel` (или другой объект) реализует этот интерфейс и передаётся при `add(block, provider)`.

@@ -5,6 +5,8 @@ import com.sms.checker.forwarder.feature.email.data.mapper.SmtpEmailDataMapper
 import com.sms.checker.forwarder.feature.email.domain.EmailRepository
 import com.sms.checker.forwarder.feature.email.domain.usecase.GetSmtpConfigByIdUseCase
 import com.sms.checker.forwarder.feature.email.domain.usecase.GetSmtpConfigByIdUseCaseImpl
+import com.sms.checker.forwarder.feature.email.domain.usecase.GetSmtpConfigUseCase
+import com.sms.checker.forwarder.feature.email.domain.usecase.GetSmtpConfigUseCaseImpl
 import com.sms.checker.forwarder.feature.email.domain.usecase.SaveSmtpConfigUseCase
 import com.sms.checker.forwarder.feature.email.domain.usecase.SaveSmtpConfigUseCaseImpl
 import com.sms.checker.forwarder.feature.email.domain.usecase.SendSmtpMessageUseCase
@@ -33,6 +35,7 @@ import com.sms.checker.forwarder.feature.email.router.EmailRouterImpl
 import com.sms.checker.forwarder.framework.router.Router
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -49,13 +52,30 @@ object EmailModule {
         singleOf(::SaveSmtpConfigUseCaseImpl) bind SaveSmtpConfigUseCase::class
         singleOf(::UpdateSmtpConfigUseCaseImpl) bind UpdateSmtpConfigUseCase::class
         singleOf(::GetSmtpConfigByIdUseCaseImpl) bind GetSmtpConfigByIdUseCase::class
+        singleOf(::GetSmtpConfigUseCaseImpl) bind GetSmtpConfigUseCase::class
 
         // navigation
         singleOf(::EmailRouterImpl) bind EmailRouter::class
         singleOf(::EmailProviderImpl) bind Router.Provider::class
 
         // presentation
-        viewModelOf(::SmtpEmailViewModel)
+        viewModel { params ->
+            SmtpEmailViewModel(
+                smtpId = params.getOrNull<Long>(),
+                smtpBottomBarBlock = get(),
+                smtpTopBarBlock = get(),
+                smtpEmailNameBlock = get(),
+                smtpEmailServerBlock = get(),
+                smtpEmailFromBlock = get(),
+                smtpEmailRecipientBlock = get(),
+                smtpEmailTestBlock = get(),
+                saveSmtpConfigUseCase = get(),
+                updateSmtpConfigUseCase = get(),
+                getSmtpConfigByIdUseCase = get(),
+                router = get(),
+                mapper = get(),
+            )
+        }
         factoryOf(::SmtpBottomBarBlock)
         factoryOf(::SmtpTopBarBlock)
         factoryOf(::SmtpEmailNameBlock)

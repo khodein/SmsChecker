@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="feature_email_new_smtp">Жаңа Smtp</string>
+    <string name="feature_email_update_smtp">Smtp жаңарту</string>
     <string name="feature_email_add_new">Жаңасын қосу</string>
     <string name="feature_email_update">Жаңарту</string>
     <string name="feature_email_smtp_instruction">Smtp қосу нұсқаулығын оқыңыз, қарау үшін хабарламаны басыңыз</string>

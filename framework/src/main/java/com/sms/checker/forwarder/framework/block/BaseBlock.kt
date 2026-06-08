@@ -1,13 +1,10 @@
 package com.sms.checker.forwarder.framework.block
 
-import androidx.annotation.CallSuper
-import androidx.lifecycle.SavedStateHandle
 import com.sms.checker.forwarder.framework.UiEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 
 abstract class BaseBlock<State : Any, Action, Provider> {
 
@@ -20,9 +17,6 @@ abstract class BaseBlock<State : Any, Action, Provider> {
     protected var blockProvider: Provider? = null
         private set
 
-    protected var savedStateHandle: SavedStateHandle? = null
-        private set
-
     protected abstract fun getInitialUiState(): State
 
     private val _blockState by lazy { MutableStateFlow(getInitialUiState()) }
@@ -31,12 +25,10 @@ abstract class BaseBlock<State : Any, Action, Provider> {
 
     fun attach(
         scope: CoroutineScope,
-        savedStateHandle: SavedStateHandle,
         provider: Provider,
         onEvent: (UiEvent) -> Unit,
     ) {
         this.blockScope = scope
-        this.savedStateHandle = savedStateHandle
         this.blockProvider = provider
         this.onEvent = onEvent
     }
@@ -52,4 +44,8 @@ abstract class BaseBlock<State : Any, Action, Provider> {
     }
 
     protected abstract fun updateBlockState()
+
+    open fun onUiStart() = Unit
+
+    open fun onUiStop() = Unit
 }

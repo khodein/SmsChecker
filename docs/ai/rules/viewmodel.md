@@ -21,9 +21,7 @@
 `ViewModel` наследуется от `BaseViewModel<State, Action>`:
 
 ```kotlin
-abstract class BaseViewModel<State : UiState, Action>(
-    savedStateHandle: SavedStateHandle,
-) : ViewModel() {
+abstract class BaseViewModel<State : UiState, Action> : ViewModel() {
 
     val uiEvent: SharedFlow<UiEvent>
     val viewState: StateFlow<State>
@@ -42,11 +40,10 @@ abstract class BaseViewModel<State : UiState, Action>(
 
 - `State` обязательно наследуется от `UiState` (из `framework`), а не от `BaseUiState`.
 - `Action` — произвольный immutable класс со всеми callbacks экрана и его блоков.
-- `SavedStateHandle` обязателен в конструкторе.
 
 ## Rules
 - Создавай `ViewModel` только как часть слоя presentation (`impl/presentation/screen/<screen>/`).
-- Наследуй каждую `ViewModel` от `BaseViewModel<XScreenState, XScreenAction>` с `SavedStateHandle` в конструкторе.
+- Наследуй каждую `ViewModel` от `BaseViewModel<XScreenState, XScreenAction>`.
 - Помечай `ViewModel` модификатором `internal`.
 - Используй `UiState` (из `framework`) как базовый класс для `XScreenState`.
 - Помечай `XScreenState`, `XScreenAction` и любые внутренние UI-модели аннотацией `@Immutable`.
@@ -61,7 +58,7 @@ abstract class BaseViewModel<State : UiState, Action>(
 - Не обращайся к `Repository`, API и базе данных напрямую из `ViewModel` — только через `UseCase`.
 - Не используй `Request`, `Response`, `Entity` модели во `ViewModel`.
 - Не передавай `ViewModel` напрямую в `Screen`-Composable — Composable должен получать `state` и `action` отдельными параметрами.
-- Не используй Android-, Compose- и UI-типы в бизнес-логике внутри `ViewModel`, кроме базовых контрактов `framework` (`BaseViewModel`, `SavedStateHandle`).
+- Не используй Android-, Compose- и UI-типы в бизнес-логике внутри `ViewModel`, кроме базового контракта `framework` (`BaseViewModel`).
 - Не размещай логику частей экрана напрямую во `ViewModel` — выноси в `Block`.
 
 ## Do
@@ -82,7 +79,6 @@ abstract class BaseViewModel<State : UiState, Action>(
 - Не создавай `ViewModel`, не наследующуюся от `BaseViewModel<State, Action>`.
 - Не наследуй `UiState` от `BaseUiState` — такого класса в `framework` нет; базовый класс — `UiState`.
 - Не используй сигнатуру `BaseViewModel<UiState>` или `BaseViewModel<State>` без `Action` — она устарела.
-- Не забывай `SavedStateHandle` в конструкторе.
 - Не используй `XScreenState` и UI-модели без `@Immutable`.
 - Не используй больше одной `ViewModel` для одного экрана.
 - Не используй больше одного основного `UiState` для одного экрана.
@@ -118,8 +114,7 @@ internal data class XListAction(
 internal class XListViewModel(
     private val xToolbarBlock: XToolbarBlock,
     private val xContentBlock: XContentBlock,
-    savedStateHandle: SavedStateHandle,
-) : BaseViewModel<XListState, XListAction>(savedStateHandle) {
+) : BaseViewModel<XListState, XListAction>() {
 
     override val action = XListAction(
         toolbarAction = xToolbarBlock.action,
@@ -160,8 +155,7 @@ internal class XEditViewModel(
     private val xFormBlock: XFormBlock,
     private val saveXUseCase: SaveXUseCase,
     private val mapper: XEditMapper,
-    savedStateHandle: SavedStateHandle,
-) : BaseViewModel<XEditState, XEditAction>(savedStateHandle),
+) : BaseViewModel<XEditState, XEditAction>(),
     XFormBlock.Provider {
 
     override val action = XEditAction(
@@ -210,8 +204,7 @@ internal class XEditViewModel(
 // Бизнес-логика напрямую во ViewModel вместо блока
 internal class XListViewModel(
     private val getXUseCase: GetXUseCase,
-    savedStateHandle: SavedStateHandle,
-) : BaseViewModel<XListState, XListAction>(savedStateHandle) {
+) : BaseViewModel<XListState, XListAction>() {
 
     override fun attach() {
         viewModelScope.launch {                     // ❌ логика должна быть в блоке

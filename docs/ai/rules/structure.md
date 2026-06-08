@@ -110,7 +110,7 @@ feature-<name>/                                — папка-контейнер
 - `domain/usecase/XUseCaseImpl.kt` — реализация `XUseCase`, использует `XRepository`.
 - `presentation/route/<screen>/XScreenKey.kt` — `@Serializable internal data class XScreenKey : NavKey`. Помечается `@Serializable`, поскольку Navigation 3 сериализует state.
 - `presentation/route/<screen>/XScreenRoute.kt` — Composable, который получает `ViewModel` через Koin, подписывается на `viewState` и `uiEvent`, передаёт `state` и `action` в `XScreenScreen`.
-- `presentation/screen/<screen>/XScreenViewModel.kt` — `internal class XScreenViewModel(...) : BaseViewModel<XScreenState, XScreenAction>(savedStateHandle)`.
+- `presentation/screen/<screen>/XScreenViewModel.kt` — `internal class XScreenViewModel(...) : BaseViewModel<XScreenState, XScreenAction>()`.
 - `presentation/screen/<screen>/XScreenScreen.kt` — чистый Composable-экран, принимает `state` и `action` параметрами.
 - `presentation/screen/<screen>/state/` — `XScreenState : UiState`, `XScreenAction`, опционально `XScreenEvent : UiEvent`.
 - `presentation/screen/<screen>/mapper/XScreenMapper.kt` — преобразует domain-модель или другое в `UiState` либо в `UiEvent`.

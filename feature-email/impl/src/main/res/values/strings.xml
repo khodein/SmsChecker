@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="feature_email_new_smtp">New Smtp</string>
+    <string name="feature_email_update_smtp">Update Smtp</string>
     <string name="feature_email_add_new">Add New</string>
     <string name="feature_email_update">Update</string>
     <string name="feature_email_smtp_instruction">Study the instructions for adding Smtp, click on the message to view</string>

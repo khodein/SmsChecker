@@ -10,4 +10,7 @@
     <string name="feature_listening_config_apply">Config Apply</string>
     <string name="feature_listening_empty_configs">You have no configurations to forward SMS to, please add them</string>
     <string name="feature_listening_add_config">Add Configuration</string>
+    <string name="feature_listening_add_disabled_hint">You can add only when listening is disabled</string>
+    <string name="feature_listening_error_update_state">An error occurred while updating the state, the item was not found or was saved incorrectly</string>
+    <string name="feature_listening_status_updated_success">Status successfully updated!</string>
 </resources>

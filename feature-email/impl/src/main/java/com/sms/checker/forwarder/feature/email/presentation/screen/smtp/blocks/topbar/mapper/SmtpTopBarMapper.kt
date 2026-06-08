@@ -10,9 +10,16 @@ internal class SmtpTopBarMapper(
 ) {
     fun map(
         status: SmtpEmailStatus? = null,
-    ): SmtpTopBarState = SmtpTopBarState(
-        title = resProvider.getString(R.string.feature_email_new_smtp),
-        statusLabel = resProvider.getString(R.string.feature_email_smtp_enable_sending),
-        isStatus = status?.let { it == SmtpEmailStatus.Enable },
-    )
+    ): SmtpTopBarState {
+        val titleRes = if (status == null) {
+            R.string.feature_email_new_smtp
+        } else {
+            R.string.feature_email_update_smtp
+        }
+        return SmtpTopBarState(
+            title = resProvider.getString(titleRes),
+            statusLabel = resProvider.getString(R.string.feature_email_smtp_enable_sending),
+            isStatus = status?.let { it == SmtpEmailStatus.Enable },
+        )
+    }
 }

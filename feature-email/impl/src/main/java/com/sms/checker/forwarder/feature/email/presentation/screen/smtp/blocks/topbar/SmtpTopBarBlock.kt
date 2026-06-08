@@ -44,6 +44,7 @@ internal class SmtpTopBarBlock(
             SmtpEmailStatus.Disable
         }
         this@SmtpTopBarBlock.onChangeValue(status)
+        blockProvider?.onChangeStatus()
     }
 
     interface Provider {

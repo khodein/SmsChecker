@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,17 +22,42 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.config.state.ListeningConfigAction
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.config.state.ListeningConfigEvent
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.config.state.ListeningConfigState
-import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.config.state.ListeningConfigState.ConfigItemState
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
+import com.sms.checker.forwarder.framework.uikit.AppSnackBarVisuals
 import com.sms.checker.forwarder.framework.uikit.DefaultButtonWidget
+import com.sms.checker.forwarder.framework.uikit.SnackBarPosition
+import com.sms.checker.forwarder.framework.uikit.SnackBarType
+import com.sms.checker.forwarder.framework.uikit.SwitchWidget
+import com.sms.checker.forwarder.framework.uikit.showAppSnackBar
+
+internal suspend fun ListeningConfigEvent.onEvent(
+    snackbarHostState: SnackbarHostState,
+) {
+    when (this) {
+        is ListeningConfigEvent.SnackBarEvent -> {
+            val visuals = AppSnackBarVisuals(
+                position = SnackBarPosition.Top,
+                message = value,
+                type = when (status) {
+                    ListeningConfigEvent.Status.Info -> SnackBarType.Info
+                    ListeningConfigEvent.Status.Error -> SnackBarType.Error
+                    ListeningConfigEvent.Status.Success -> SnackBarType.Success
+                }
+            )
+            snackbarHostState.showAppSnackBar(visuals)
+        }
+    }
+}
 
 @Composable
 internal fun ListeningConfigWidget(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     state: ListeningConfigState,
     action: ListeningConfigAction,
 ) {
+    if (state is ListeningConfigState.None) return
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -53,7 +80,7 @@ internal fun ListeningConfigWidget(
                 ListeningConfigListWidget(
                     title = state.title,
                     items = state.items,
-                    onClickItem = action.onClickItem
+                    action = action,
                 )
             }
         }
@@ -63,8 +90,8 @@ internal fun ListeningConfigWidget(
 @Composable
 private fun ColumnScope.ListeningConfigListWidget(
     title: String,
-    items: List<ConfigItemState>,
-    onClickItem: (id: String) -> Unit
+    items: List<ListeningConfigState.ItemsConfig.Item>,
+    action: ListeningConfigAction,
 ) {
     Text(
         modifier = Modifier
@@ -76,38 +103,59 @@ private fun ColumnScope.ListeningConfigListWidget(
         style = SmsCheckerTheme.typography.titleMedium,
         color = SmsCheckerTheme.color.onSurface
     )
-    items.forEach { item ->
+    items.forEachIndexed { index, item ->
         ListeningConfigItemWidget(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    action.onClickConfig.invoke(
+                        item.id,
+                        item.type
+                    )
+                }
+                .padding(SmsCheckerTheme.padding.horizontalSmall()),
             item = item,
-            onClickItem = onClickItem,
+            onChangeConfig = { isStatus ->
+                action.onChangeConfigStatus(
+                    item.id,
+                    item.type,
+                    isStatus
+                )
+            }
         )
+        if (index != items.lastIndex) {
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 1.dp,
+                color = SmsCheckerTheme.color.onSurfaceVariant
+            )
+        }
     }
 }
 
 @Composable
-private fun ColumnScope.ListeningConfigItemWidget(
-    item: ConfigItemState,
-    onClickItem: (id: String) -> Unit
+private fun ListeningConfigItemWidget(
+    modifier: Modifier,
+    item: ListeningConfigState.ItemsConfig.Item,
+    onChangeConfig: (isStatus: Boolean) -> Unit
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClickItem.invoke(item.id) }
+        modifier = modifier
+            .padding(paddingValues = SmsCheckerTheme.padding.verticalExtraSmall())
     ) {
-        Icon(
+        Text(
             modifier = Modifier
-                .size(32.dp)
+                .weight(1f)
                 .align(Alignment.CenterVertically),
-            imageVector = getIcon(item.type),
-            tint = SmsCheckerTheme.color.onSurfaceVariant,
-            contentDescription = "ConfigItemIconWidget"
+            text = item.name,
+            style = SmsCheckerTheme.typography.bodyMedium,
+            color = SmsCheckerTheme.color.onSurface
         )
-    }
-}
-
-private fun getIcon(type: ListeningConfigState.ConfigType): ImageVector {
-    return when (type) {
-        ListeningConfigState.ConfigType.SMTP -> Icons.Default.Email
+        SwitchWidget(
+            modifier = Modifier.align(Alignment.CenterVertically),
+            isValue = item.isStatus,
+            onChangeValue = onChangeConfig
+        )
     }
 }
 
@@ -127,12 +175,25 @@ private fun ColumnScope.ListeningConfigEmptyWidget(
         style = SmsCheckerTheme.typography.bodyMedium,
         color = SmsCheckerTheme.color.onSurfaceVariant,
     )
-    DefaultButtonWidget(
+    ListeningConfigAddNewButtonWidget(
         modifier = Modifier
             .wrapContentSize()
             .align(Alignment.CenterHorizontally),
         caption = caption,
-        onClick = onClickEmpty,
+        onClickAdd = onClickEmpty
+    )
+}
+
+@Composable
+private fun ListeningConfigAddNewButtonWidget(
+    modifier: Modifier,
+    caption: String,
+    onClickAdd: () -> Unit
+) {
+    DefaultButtonWidget(
+        modifier = modifier,
+        caption = caption,
+        onClick = onClickAdd,
         content = {
             Text(
                 text = caption,

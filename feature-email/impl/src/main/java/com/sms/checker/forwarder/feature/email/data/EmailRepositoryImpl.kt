@@ -71,4 +71,8 @@ internal class EmailRepositoryImpl(
         if (rowsAffected == 0) throw EmailException.SmtpConfigNotUpdated(entity.id)
         return entity.id
     }
+
+    override suspend fun getSmtpList(): List<SmtpEmailModel> {
+        return smtpEmailDao.getAll().map(smtpEmailDataMapper::toModel)
+    }
 }

@@ -12,10 +12,14 @@ internal class ListeningBlock(
     private val listeningMapper: ListeningMapper,
     private val startListeningUseCase: StartListeningUseCase,
     private val stopListeningUseCase: StopListeningUseCase,
-    getListeningUseCase: GetListeningUseCase,
-): BaseBlock<ListeningState, ListeningAction, Unit>() {
+    private val getListeningUseCase: GetListeningUseCase,
+): BaseBlock<ListeningState, ListeningAction, ListeningBlock.Provider>() {
 
-    private var isListeningState: Boolean = getListeningUseCase.invoke()
+    var isListeningState: Boolean = false
+        private set(value) {
+            blockProvider?.onUpdateListening(value)
+            field = value
+        }
 
     private var isGrantedPermissionState: Boolean = false
     private var needPermissionState: ListeningState.NeedPermissionState? = ListeningState.NeedPermissionState
@@ -25,24 +29,18 @@ internal class ListeningBlock(
         onPermissionListeningResult = ::onPermissionListeningResult
     )
 
-    override fun getInitialUiState(): ListeningState {
-        return listeningMapper.map(
-            isListening = isListeningState,
-            needPermissionState = needPermissionState,
-        )
+    override fun onUiStart() {
+        super.onUiStart()
+        isListeningState = getListeningUseCase.invoke()
+        updateBlockState()
     }
 
-    override fun start() {
-
+    override fun getInitialUiState(): ListeningState {
+        return buildState()
     }
 
     override fun updateBlockState() {
-        setState {
-            copy(
-                isListening = isListeningState,
-                needPermissionState = needPermissionState
-            )
-        }
+        setState { buildState() }
     }
 
     private fun onClickListening(isListening: Boolean) {
@@ -56,6 +54,7 @@ internal class ListeningBlock(
         }
 
         updateBlockState()
+        blockProvider?.onUpdateListening(isListeningState)
     }
 
     private fun onListening() {
@@ -66,9 +65,20 @@ internal class ListeningBlock(
         }
     }
 
+    private fun buildState(): ListeningState {
+        return listeningMapper.map(
+            isListening = isListeningState,
+            needPermissionState = needPermissionState,
+        )
+    }
+
     private fun onPermissionListeningResult(isGranted: Boolean) {
         needPermissionState = null
         isGrantedPermissionState = isGranted
         updateBlockState()
+    }
+
+    interface Provider {
+        fun onUpdateListening(isListening: Boolean)
     }
 }

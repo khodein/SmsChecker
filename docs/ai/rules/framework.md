@@ -23,13 +23,13 @@
 framework/                                          ← базовые контракты presentation + тема + UI-kit
   build.gradle.kts                                  ← plugin: <prefix>.android.library, .android.core, .android.compose
   src/main/java/<root.package>/framework/
-    BaseViewModel.kt                                ← abstract class BaseViewModel<State : UiState, Action>(savedStateHandle)
+    BaseViewModel.kt                                ← abstract class BaseViewModel<State : UiState, Action>
     UiState.kt                                      ← abstract class UiState(open val status: Status = Status.LOADING)
     UiEvent.kt                                      ← @Immutable interface UiEvent
     Status.kt                                       ← enum class Status { LOADING, ERROR, SUCCESS, IDLE }
     block/
       BaseBlock.kt                                  ← abstract class BaseBlock<State : Any, Action, Provider>
-      BlockStore.kt                                 ← регистрация блоков, attach к scope/savedStateHandle/onEvent
+      BlockStore.kt                                 ← регистрация блоков, attach к scope/onEvent
       BlockProvider.kt                              ← marker interface
     theme/
       AppTheme.kt                                   ← entry-point темы и shared state (snackbarHostState и т.п.)
@@ -68,9 +68,7 @@ framework/tools/                                    ← служебные ут�
 ### BaseViewModel
 
 ```kotlin
-abstract class BaseViewModel<State : UiState, Action>(
-    savedStateHandle: SavedStateHandle,
-) : ViewModel() {
+abstract class BaseViewModel<State : UiState, Action> : ViewModel() {
 
     val uiEvent: SharedFlow<UiEvent>
     val viewState: StateFlow<State>
@@ -135,7 +133,6 @@ abstract class BaseBlock<State : Any, Action, Provider> {
 
     protected val blockScope: CoroutineScope?
     protected val blockProvider: Provider?
-    protected val savedStateHandle: SavedStateHandle?
 
     val blockState: StateFlow<State>
 
@@ -285,8 +282,7 @@ internal data class XListEvent(
 internal class XListViewModel(
     private val getXListUseCase: GetXListUseCase,
     private val mapper: XListMapper,
-    savedStateHandle: SavedStateHandle,
-) : BaseViewModel<XListState, XListAction>(savedStateHandle) {
+) : BaseViewModel<XListState, XListAction>() {
 
     override val action = XListAction(onClickItem = ::onClickItem)
 

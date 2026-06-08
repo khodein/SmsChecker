@@ -24,7 +24,6 @@ abstract class BaseBlock<State : Any, Action, Provider> {
 
     protected val blockScope: CoroutineScope?
     protected val blockProvider: Provider?
-    protected val savedStateHandle: SavedStateHandle?
 
     val blockState: StateFlow<State>
 
@@ -41,7 +40,6 @@ abstract class BaseBlock<State : Any, Action, Provider> {
 - Три generic-параметра: `State` (тип состояния блока), `Action` (тип callbacks), `Provider` (тип внешних зависимостей или `Unit`, если их нет).
 - `blockScope` — корутинный scope, привязанный к `ViewModel`; используется для асинхронных операций блока.
 - `blockProvider` — объект, который снаружи реализует `Provider`-контракт блока; равен `Unit`, если блок не требует внешних зависимостей.
-- `savedStateHandle` — для сохранения состояния между процессами (если блоку нужно).
 - `start()` — переопределяется, если блоку нужно запустить подписки или async-инициализацию после регистрации.
 
 ## Rules

@@ -7,9 +7,7 @@ internal class EmailRouterImpl(
     private val router: Router,
 ) : EmailRouter {
     override fun gotoSmtpEmail(id: Long?) {
-        val key = SmtpEmailKey(
-            id = id
-        )
+        val key = SmtpEmailKey(id = id)
         router.goTo(key)
     }
 }

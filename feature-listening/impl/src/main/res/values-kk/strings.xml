@@ -10,4 +10,7 @@
     <string name="feature_listening_config_apply">Қолданылған конфигурациялар</string>
     <string name="feature_listening_empty_configs">SMS жіберуге арналған конфигурациялар жоқ, оларды қосыңыз</string>
     <string name="feature_listening_add_config">Конфигурация қосу</string>
+    <string name="feature_listening_add_disabled_hint">Қосу тек тыңдау өшірілген кезде ғана мүмкін</string>
+    <string name="feature_listening_error_update_state">Күйді жаңарту кезінде қате орын алды, элемент табылмады немесе дұрыс сақталмаған</string>
+    <string name="feature_listening_status_updated_success">Күй сәтті жаңартылды!</string>
 </resources>

@@ -1,12 +1,11 @@
 package com.sms.checker.forwarder.framework.block
 
-import androidx.lifecycle.SavedStateHandle
+import androidx.annotation.CallSuper
 import com.sms.checker.forwarder.framework.UiEvent
 import kotlinx.coroutines.CoroutineScope
 
 class BlockStore(
     private val scope: CoroutineScope,
-    private val savedStateHandle: SavedStateHandle,
     private val onEvent: (UiEvent) -> Unit,
 ) {
     private val blocks = mutableListOf<BaseBlock<*, *, *>>()
@@ -17,7 +16,6 @@ class BlockStore(
         if (isRegister) return
         block.attach(
             scope = scope,
-            savedStateHandle = savedStateHandle,
             provider = provider,
             onEvent = onEvent,
         )
@@ -29,7 +27,6 @@ class BlockStore(
         if (isRegister) return
         block.attach(
             scope = scope,
-            savedStateHandle = savedStateHandle,
             provider = Unit,
             onEvent = onEvent,
         )
@@ -39,5 +36,13 @@ class BlockStore(
     internal fun build(): List<BaseBlock<*, *, *>> {
         if (blocks.isNotEmpty()) isRegister = true
         return blocks.toList()
+    }
+
+    internal fun onUiStart() {
+        blocks.forEach { it.onUiStart() }
+    }
+
+    internal fun onUiStop() {
+        blocks.forEach { it.onUiStop() }
     }
 }

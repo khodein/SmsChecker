@@ -1,6 +1,6 @@
 package com.sms.checker.forwarder.framework
 
-import androidx.lifecycle.SavedStateHandle
+import androidx.annotation.CallSuper
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sms.checker.forwarder.framework.block.BlockStore
@@ -14,16 +14,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlin.collections.map
 
-abstract class BaseViewModel<State : UiState, Action>(
-    savedStateHandle: SavedStateHandle,
-) : ViewModel() {
+abstract class BaseViewModel<State : UiState, Action> : ViewModel() {
 
     private val _uiEvent = MutableSharedFlow<UiEvent>(extraBufferCapacity = 1)
     val uiEvent: SharedFlow<UiEvent> = _uiEvent.asSharedFlow()
 
     private val blockStore = BlockStore(
         scope = viewModelScope,
-        savedStateHandle = savedStateHandle,
         onEvent = ::onEvent
     )
 
@@ -61,6 +58,16 @@ abstract class BaseViewModel<State : UiState, Action>(
         viewModelScope.launch {
             _uiEvent.emit(event)
         }
+    }
+
+    @CallSuper
+    open fun onUiStart() {
+        blockStore.onUiStart()
+    }
+
+    @CallSuper
+    open fun onUiStop() {
+        blockStore.onUiStop()
     }
 
     abstract fun attach()

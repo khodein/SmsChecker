@@ -1,5 +1,9 @@
 package com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,7 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.state.ListeningListItemState
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.state.ListeningListState
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.listening.state.ListeningState
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.toolbar.state.ListeningToolbarState
@@ -44,7 +47,11 @@ internal fun ListeningListScreen(
             )
         },
         bottomBar = {
-            if (state.status == Status.SUCCESS) {
+            AnimatedVisibility(
+                visible = state.listeningBottomBarState.isVisible,
+                enter = slideInVertically(animationSpec = tween(300)) { fullHeight -> fullHeight },
+                exit = slideOutVertically(animationSpec = tween(300)) { fullHeight -> fullHeight },
+            ) {
                 ListeningBottomBarWidget(
                     modifier = Modifier.fillMaxWidth(),
                     state = state.listeningBottomBarState,
@@ -55,9 +62,8 @@ internal fun ListeningListScreen(
     ) {
         ListeningListContent(
             modifier = Modifier.padding(it),
-            status = state.status,
-            items = state.items,
-            configAction = action.configAction
+            state = state,
+            action = action,
         )
     }
 }
@@ -65,62 +71,22 @@ internal fun ListeningListScreen(
 @Composable
 private fun ListeningListContent(
     modifier: Modifier = Modifier,
-    status: Status,
-    items: List<ListeningListItemState>,
-    configAction: ListeningConfigAction,
-) {
-    Box(
-        modifier = modifier.fillMaxSize()
-    ) {
-        when (status) {
-            Status.LOADING -> {
-
-            }
-
-            Status.IDLE -> {
-                ListeningListSuccessContent(
-                    modifier = Modifier.fillMaxSize(),
-                    items = items,
-                    configAction = configAction,
-                )
-            }
-
-            Status.ERROR -> {
-
-            }
-
-            Status.SUCCESS -> {
-
-            }
-        }
-    }
-}
-
-@Composable
-private fun ListeningListSuccessContent(
-    modifier: Modifier = Modifier,
-    items: List<ListeningListItemState>,
-    configAction: ListeningConfigAction,
+    state: ListeningListState,
+    action: ListeningListAction,
 ) {
     LazyColumn(
         modifier = modifier,
         contentPadding = SmsCheckerTheme.padding.verticalExtraSmall(),
         verticalArrangement = Arrangement.spacedBy(SmsCheckerTheme.padding.extraSmall())
     ) {
-        items(
-            items = items,
-            key = { item -> item.id },
-            contentType = { item -> item.contentType }
-        ) { item ->
-            when (item) {
-                is ListeningListItemState.ConfigItemState -> {
-                    ListeningConfigWidget(
-                        modifier = Modifier,
-                        state = item.listeningConfigState,
-                        action = configAction,
-                    )
-                }
-            }
+        item(
+            key = "config",
+            contentType = "config"
+        ) {
+            ListeningConfigWidget(
+                state = state.listeningConfigState,
+                action = action.configAction
+            )
         }
     }
 }

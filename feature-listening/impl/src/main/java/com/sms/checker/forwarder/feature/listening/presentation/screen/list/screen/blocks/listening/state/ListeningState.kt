@@ -7,8 +7,8 @@ internal data class ListeningState(
     val title: String,
     val description: String,
     val needPermissionState: NeedPermissionState? = null,
-    val isListening: Boolean? = null,
+    val isListening: Boolean,
 ) {
     @Immutable
-    data object NeedPermissionState
+    internal data object NeedPermissionState
 }
