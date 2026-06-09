@@ -15,8 +15,4 @@ data class SmsEntity(
     val body: String,
     @ColumnInfo(name = "timestamp")
     val timestamp: Long,
-    @ColumnInfo(name = "forwarded_to")
-    val forwardedTo: String = "",
-    @ColumnInfo(name = "forward_status")
-    val forwardStatus: String,
 )

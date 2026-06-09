@@ -3,6 +3,12 @@ package com.sms.checker.forwarder.feature.email
 import com.sms.checker.forwarder.feature.email.data.EmailRepositoryImpl
 import com.sms.checker.forwarder.feature.email.data.mapper.SmtpEmailDataMapper
 import com.sms.checker.forwarder.feature.email.domain.EmailRepository
+import com.sms.checker.forwarder.feature.email.domain.usecase.DeleteSmtpConfigByIdUseCase
+import com.sms.checker.forwarder.feature.email.domain.usecase.DeleteSmtpConfigByIdUseCaseImpl
+import com.sms.checker.forwarder.feature.email.domain.usecase.GetEnabledSmtpConfigUseCase
+import com.sms.checker.forwarder.feature.email.domain.usecase.GetEnabledSmtpConfigUseCaseImpl
+import com.sms.checker.forwarder.feature.email.domain.usecase.GetEnabledSmtpIdsUseCase
+import com.sms.checker.forwarder.feature.email.domain.usecase.GetEnabledSmtpIdsUseCaseImpl
 import com.sms.checker.forwarder.feature.email.domain.usecase.GetSmtpConfigByIdUseCase
 import com.sms.checker.forwarder.feature.email.domain.usecase.GetSmtpConfigByIdUseCaseImpl
 import com.sms.checker.forwarder.feature.email.domain.usecase.GetSmtpConfigUseCase
@@ -13,6 +19,8 @@ import com.sms.checker.forwarder.feature.email.domain.usecase.SendSmtpMessageUse
 import com.sms.checker.forwarder.feature.email.domain.usecase.SendSmtpMessageUseCaseImpl
 import com.sms.checker.forwarder.feature.email.domain.usecase.UpdateSmtpConfigUseCase
 import com.sms.checker.forwarder.feature.email.domain.usecase.UpdateSmtpConfigUseCaseImpl
+import com.sms.checker.forwarder.feature.email.infrastructure.SmtpEmailDelegate
+import com.sms.checker.forwarder.feature.email.infrastructure.SmtpEmailDelegateImpl
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.SmtpEmailViewModel
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.bottombar.SmtpBottomBarBlock
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.bottombar.mapper.SmtpBottomBarMapper
@@ -53,6 +61,10 @@ object EmailModule {
         singleOf(::UpdateSmtpConfigUseCaseImpl) bind UpdateSmtpConfigUseCase::class
         singleOf(::GetSmtpConfigByIdUseCaseImpl) bind GetSmtpConfigByIdUseCase::class
         singleOf(::GetSmtpConfigUseCaseImpl) bind GetSmtpConfigUseCase::class
+        singleOf(::GetEnabledSmtpConfigUseCaseImpl) bind GetEnabledSmtpConfigUseCase::class
+        singleOf(::GetEnabledSmtpIdsUseCaseImpl) bind GetEnabledSmtpIdsUseCase::class
+        singleOf(::DeleteSmtpConfigByIdUseCaseImpl) bind DeleteSmtpConfigByIdUseCase::class
+        singleOf(::GetEnabledSmtpIdsUseCaseImpl) bind GetEnabledSmtpIdsUseCase::class
 
         // navigation
         singleOf(::EmailRouterImpl) bind EmailRouter::class
@@ -72,6 +84,7 @@ object EmailModule {
                 saveSmtpConfigUseCase = get(),
                 updateSmtpConfigUseCase = get(),
                 getSmtpConfigByIdUseCase = get(),
+                deleteSmtpConfigByIdUseCase = get(),
                 router = get(),
                 mapper = get(),
             )
@@ -83,6 +96,9 @@ object EmailModule {
         factoryOf(::SmtpEmailFromBlock)
         factoryOf(::SmtpEmailRecipientBlock)
         factoryOf(::SmtpEmailTestBlock)
+
+        // infrastructure
+        factoryOf(::SmtpEmailDelegateImpl) bind SmtpEmailDelegate::class
 
         // mappers
         singleOf(::SmtpTopBarMapper)

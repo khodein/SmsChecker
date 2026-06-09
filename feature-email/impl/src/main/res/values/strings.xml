@@ -39,6 +39,8 @@
 
     <string name="feature_email_smtp_save_success">Configuration saved successfully</string>
     <string name="feature_email_smtp_save_error">An error occurred while saving, please try again</string>
+    <string name="feature_email_smtp_delete_success">Configuration deleted successfully</string>
+    <string name="feature_email_smtp_delete_error">The configuration was not deleted, an error occurred</string>
     <string name="feature_email_smtp_send_again">Send again</string>
 
     <string name="feature_email_smtp_fields_invalid">Fields are not filled in or filled in incorrectly</string>

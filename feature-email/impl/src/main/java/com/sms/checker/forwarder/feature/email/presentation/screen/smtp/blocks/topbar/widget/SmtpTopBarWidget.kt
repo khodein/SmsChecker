@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,6 +16,7 @@ import androidx.compose.ui.Modifier
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.topbar.state.SmtpTopBarAction
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.topbar.state.SmtpTopBarState
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
+import com.sms.checker.forwarder.framework.uikit.IconButtonWidget
 import com.sms.checker.forwarder.framework.uikit.SwitchWidget
 import com.sms.checker.forwarder.framework.uikit.TopAppBarWidget
 
@@ -32,7 +36,16 @@ internal fun SmtpTopBarWidget(
     ) {
         TopAppBarWidget(
             title = state.title,
-            onClickBackPressed = action.onClickBackPressed
+            actions = {
+                if (state.isStatus != null) {
+                    IconButtonWidget(
+                        tint = SmsCheckerTheme.color.onBackground,
+                        imageVector = Icons.Default.Delete,
+                        onClick = action.onClickDelete
+                    )
+                }
+            },
+            onClickBackPressed = action.onClickBackPressed,
         )
         if (state.isStatus != null) {
             SmtpTopBarStatusWidget(

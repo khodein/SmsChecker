@@ -18,6 +18,7 @@ internal class SmtpTopBarBlock(
     override val action = SmtpTopBarAction(
         onClickBackPressed = ::onClickBackPressed,
         onChangeValue = ::onChangeValue,
+        onClickDelete = ::onClickDelete
     )
 
     override fun getInitialUiState(): SmtpTopBarState = buildState()
@@ -47,7 +48,12 @@ internal class SmtpTopBarBlock(
         blockProvider?.onChangeStatus()
     }
 
+    private fun onClickDelete() {
+        blockProvider?.onClickDelete()
+    }
+
     interface Provider {
         fun onChangeStatus()
+        fun onClickDelete()
     }
 }

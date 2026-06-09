@@ -6,7 +6,9 @@ import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.ServiceCompat
+import com.sms.checker.forwarder.feature.email.infrastructure.SmtpEmailDelegate
 import com.sms.checker.forwarder.feature.listening.infrastructure.management.ListeningNotificationDelegate
+import com.sms.checker.forwarder.feature.listening.infrastructure.management.sending.ListeningSendingDelegate
 import com.sms.checker.forwarder.feature.sms.domain.infrastructure.SmsBroadcastDelegate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,11 +20,13 @@ internal class ListeningService : Service(), KoinComponent, SmsBroadcastDelegate
 
     private val smsNotificationDelegate by inject<ListeningNotificationDelegate>()
     private val smsBroadcastDelegate by inject<SmsBroadcastDelegate>()
+    private val listeningSendingDelegate by inject<ListeningSendingDelegate>()
 
     override fun onCreate() {
         super.onCreate()
         smsNotificationDelegate.onCreate()
         smsBroadcastDelegate.onCreate(this)
+        listeningSendingDelegate.onCreate()
         _isRunning.value = true
     }
 
@@ -51,12 +55,13 @@ internal class ListeningService : Service(), KoinComponent, SmsBroadcastDelegate
         super.onDestroy()
         smsBroadcastDelegate.onDestroy()
         smsNotificationDelegate.onDestroy()
+        listeningSendingDelegate.onDestroy()
         _isRunning.value = false
         stopForeground(STOP_FOREGROUND_REMOVE)
     }
 
     override fun onReceiveSmsId(id: Long) {
-
+        listeningSendingDelegate.send(id)
     }
 
     companion object {

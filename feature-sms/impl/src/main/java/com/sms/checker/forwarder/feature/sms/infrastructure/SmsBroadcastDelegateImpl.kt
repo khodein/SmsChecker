@@ -7,6 +7,7 @@ import android.telephony.SmsMessage
 import androidx.core.content.ContextCompat
 import com.sms.checker.forwarder.feature.sms.domain.infrastructure.SmsBroadcastDelegate
 import com.sms.checker.forwarder.feature.sms.domain.usecase.SetSmsUseCase
+import com.sms.checker.forwarder.feature.sms.domain.usecase.SetSmsUseCaseImpl
 import com.sms.checker.forwarder.feature.sms.infrastructure.mapper.SmsBroadcastMapper
 import com.sms.checker.forwarder.feature.sms.infrastructure.receiver.SmsBroadcastReceiver
 import kotlinx.coroutines.CoroutineScope
@@ -53,8 +54,6 @@ internal class SmsBroadcastDelegateImpl(
                 setSmsUseCase.invoke(model)
             }.onSuccess { smsId ->
                 provider?.onReceiveSmsId(smsId)
-            }.onFailure {
-
             }
         }
     }

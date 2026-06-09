@@ -21,4 +21,18 @@ internal class SmtpEmailMapper(
             message = resProvider.getString(R.string.feature_email_smtp_save_error)
         )
     }
+
+    fun mapDeleteSuccess(): SmtpEmailEvent {
+        return SmtpEmailEvent(
+            isSuccess = true,
+            message = resProvider.getString(R.string.feature_email_smtp_delete_success)
+        )
+    }
+
+    fun mapDeleteError(): SmtpEmailEvent {
+        return SmtpEmailEvent(
+            isSuccess = false,
+            message = resProvider.getString(R.string.feature_email_smtp_delete_error)
+        )
+    }
 }

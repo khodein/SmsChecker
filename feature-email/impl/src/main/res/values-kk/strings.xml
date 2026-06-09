@@ -43,6 +43,8 @@
 
     <string name="feature_email_smtp_save_success">Конфигурация сәтті сақталды</string>
     <string name="feature_email_smtp_save_error">Сақтау кезінде қате пайда болды, қайта көріңіз</string>
+    <string name="feature_email_smtp_delete_success">Конфигурация сәтті жойылды</string>
+    <string name="feature_email_smtp_delete_error">Конфигурация жойылған жоқ, қате пайда болды</string>
     <string name="feature_email_smtp_send_again">Қайта жіберу</string>
 
     <string name="feature_email_smtp_fields_invalid">Өрістер толтырылмаған немесе қате толтырылған</string>

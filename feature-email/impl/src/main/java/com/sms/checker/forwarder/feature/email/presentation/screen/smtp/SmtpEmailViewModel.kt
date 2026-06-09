@@ -7,6 +7,7 @@ import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailRecipientMo
 import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailServerModel
 import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailStatus
 import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailUserModel
+import com.sms.checker.forwarder.feature.email.domain.usecase.DeleteSmtpConfigByIdUseCase
 import com.sms.checker.forwarder.feature.email.domain.usecase.GetSmtpConfigByIdUseCase
 import com.sms.checker.forwarder.feature.email.domain.usecase.SaveSmtpConfigUseCase
 import com.sms.checker.forwarder.feature.email.domain.usecase.UpdateSmtpConfigUseCase
@@ -39,6 +40,7 @@ internal class SmtpEmailViewModel(
     private val saveSmtpConfigUseCase: SaveSmtpConfigUseCase,
     private val updateSmtpConfigUseCase: UpdateSmtpConfigUseCase,
     private val getSmtpConfigByIdUseCase: GetSmtpConfigByIdUseCase,
+    private val deleteSmtpConfigByIdUseCase: DeleteSmtpConfigByIdUseCase,
     private val mapper: SmtpEmailMapper,
     private val router: Router,
 ) : BaseViewModel<SmtpEmailState, SmtpEmailAction>(),
@@ -50,6 +52,7 @@ internal class SmtpEmailViewModel(
     private var status: Status = Status.IDLE
 
     private var loadById: Job? = null
+    private var deleteById: Job? = null
 
     override val action: SmtpEmailAction = SmtpEmailAction(
         bottomBarAction = smtpBottomBarBlock.action,
@@ -210,6 +213,20 @@ internal class SmtpEmailViewModel(
         onUpdate()
     }
 
+    override fun onClickDelete() {
+        val id = smtpId ?: return
+        deleteById?.cancel()
+        deleteById = viewModelScope.launch {
+            runCatching {
+                deleteSmtpConfigByIdUseCase.invoke(id)
+            }.onSuccess {
+                updateDeleteSuccess()
+            }.onFailure {
+                updateDeleteError()
+            }
+        }
+    }
+
     override fun onReload() {
         smtpBottomBarBlock.onClickAdd()
     }
@@ -221,5 +238,14 @@ internal class SmtpEmailViewModel(
 
     private fun updateSaveError() {
         onEvent(mapper.mapErrorEvent())
+    }
+
+    private fun updateDeleteSuccess() {
+        onEvent(mapper.mapDeleteSuccess())
+        router.goBack()
+    }
+
+    private fun updateDeleteError() {
+        onEvent(mapper.mapDeleteError())
     }
 }

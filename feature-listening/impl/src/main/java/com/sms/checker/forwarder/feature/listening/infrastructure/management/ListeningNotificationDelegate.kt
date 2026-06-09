@@ -15,19 +15,16 @@ internal class ListeningNotificationDelegate(
     private val context: Context,
 ) {
 
-    init {
-        createNotificationChannel()
-    }
-
     fun onCreate() {}
 
     fun onDestroy() {}
 
     fun getNotification(): Notification {
+        createNotificationChannel()
         return NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle(resProvider.getString(R.string.feature_listening_notification_title))
             .setContentText(resProvider.getString(R.string.feature_listening_notification_text))
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setSmallIcon(R.drawable.ic_notification_listening_circle)
             .setOngoing(true)
             .setContentIntent(getPendingIntent())
             .build()
@@ -37,7 +34,7 @@ internal class ListeningNotificationDelegate(
         val channel = NotificationChannel(
             CHANNEL_ID,
             resProvider.getString(R.string.feature_listening_notification_channel_name),
-            NotificationManager.IMPORTANCE_LOW
+            NotificationManager.IMPORTANCE_HIGH
         )
         context.getSystemService(NotificationManager::class.java)
             .createNotificationChannel(channel)
@@ -51,6 +48,6 @@ internal class ListeningNotificationDelegate(
     }
 
     private companion object {
-        const val CHANNEL_ID = "sms_listening_channel"
+        const val CHANNEL_ID = "sms_listening_notification_channel"
     }
 }

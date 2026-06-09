@@ -75,4 +75,20 @@ internal class EmailRepositoryImpl(
     override suspend fun getSmtpList(): List<SmtpEmailModel> {
         return smtpEmailDao.getAll().map(smtpEmailDataMapper::toModel)
     }
+
+    override suspend fun getEnabledSmtpList(): List<SmtpEmailModel> {
+        return smtpEmailDao.getAllEnabled().map(smtpEmailDataMapper::toModel)
+    }
+
+    override suspend fun getEnabledSmtpIds(): List<Long> {
+        return smtpEmailDao.getAllEnabledIds()
+    }
+
+    override suspend fun deleteSmtpConfigById(id: Long) {
+        smtpEmailDao.deleteById(id)
+    }
+
+    private companion object {
+
+    }
 }

@@ -6,8 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -140,24 +142,13 @@ private fun SmsCheckerApp(
             rememberViewModelStoreNavEntryDecorator()
         ),
         transitionSpec = {
-            val navTransition =
-                targetState.entries.lastOrNull()?.metadata?.get(NAV_TRANSITION_KEY)
-            when (navTransition) {
-                NavTransition.NONE -> EnterTransition.None togetherWith ExitTransition.None
-                NavTransition.SLIDE_VERTICAL -> slideInVertically { it } togetherWith fadeOut()
-                NavTransition.SLIDE_HORIZONTAL -> slideInHorizontally { it } togetherWith slideOutHorizontally { -it }
-                else -> fadeIn() togetherWith fadeOut()
-            }
+            enterContentTransform(targetState.entries.lastOrNull()?.metadata?.get(NAV_TRANSITION_KEY))
         },
         popTransitionSpec = {
-            val navTransition =
-                initialState.entries.lastOrNull()?.metadata?.get(NAV_TRANSITION_KEY)
-            when (navTransition) {
-                NavTransition.NONE -> EnterTransition.None togetherWith ExitTransition.None
-                NavTransition.SLIDE_VERTICAL -> fadeIn() togetherWith slideOutVertically { it }
-                NavTransition.SLIDE_HORIZONTAL -> slideInHorizontally { -it } togetherWith slideOutHorizontally { it }
-                else -> fadeIn() togetherWith fadeOut()
-            }
+            popContentTransform(initialState.entries.lastOrNull()?.metadata?.get(NAV_TRANSITION_KEY))
+        },
+        predictivePopTransitionSpec = {
+            popContentTransform(initialState.entries.lastOrNull()?.metadata?.get(NAV_TRANSITION_KEY))
         },
         entryProvider = entryProvider {
             getKoin()
@@ -165,4 +156,28 @@ private fun SmsCheckerApp(
                 .forEach { it.invoke().invoke(this) }
         }
     )
+}
+
+private fun enterContentTransform(navTransition: Any?): ContentTransform = when (navTransition) {
+    NavTransition.NONE -> EnterTransition.None togetherWith ExitTransition.None
+    NavTransition.SLIDE_VERTICAL -> slideInVertically { it } togetherWith fadeOut()
+    NavTransition.SLIDE_HORIZONTAL -> ContentTransform(
+        targetContentEnter = slideInHorizontally { it },
+        initialContentExit = ExitTransition.None,
+        targetContentZIndex = 1f,
+    )
+    else -> fadeIn() togetherWith fadeOut()
+}
+
+private fun popContentTransform(navTransition: Any?): ContentTransform = when (navTransition) {
+    NavTransition.NONE -> EnterTransition.None togetherWith ExitTransition.None
+    NavTransition.SLIDE_VERTICAL -> fadeIn() togetherWith slideOutVertically { it }
+    NavTransition.SLIDE_HORIZONTAL -> ContentTransform(
+        targetContentEnter = EnterTransition.None,
+        initialContentExit = slideOutHorizontally(
+            animationSpec = tween(durationMillis = 300, easing = LinearEasing),
+        ) { it },
+        targetContentZIndex = -1f,
+    )
+    else -> fadeIn() togetherWith fadeOut()
 }

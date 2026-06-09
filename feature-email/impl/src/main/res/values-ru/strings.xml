@@ -39,6 +39,8 @@
 
     <string name="feature_email_smtp_save_success">Конфигурация успешно сохранена</string>
     <string name="feature_email_smtp_save_error">Произошла ошибка при сохранении, попробуйте еще раз</string>
+    <string name="feature_email_smtp_delete_success">Конфигурация успешно удалена</string>
+    <string name="feature_email_smtp_delete_error">Конфигурация не была удалена, произошла ошибка</string>
     <string name="feature_email_smtp_send_again">Отправить еще раз</string>
 
     <string name="feature_email_smtp_fields_invalid">Поля не заполнены или заполнены неверно</string>

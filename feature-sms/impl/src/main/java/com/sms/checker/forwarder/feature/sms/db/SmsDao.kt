@@ -4,7 +4,10 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import com.sms.checker.forwarder.feature.sms.db.entity.SmsEntity
+import com.sms.checker.forwarder.feature.sms.db.entity.SmsWithForwardsEntity
 
 @Dao
 interface SmsDao {
@@ -13,17 +16,19 @@ interface SmsDao {
     suspend fun insertAll(entities: List<SmsEntity>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAllReturnIds(entities: List<SmsEntity>): List<Long>
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(entity: SmsEntity): Long
+
+    @Update
+    suspend fun update(entity: SmsEntity): Int
 
     @Query("SELECT * FROM sms_table WHERE id = :id")
     suspend fun getById(id: Long): SmsEntity?
 
+    @Transaction
     @Query("SELECT * FROM sms_table WHERE id IN (:ids)")
-    suspend fun getByIds(ids: List<Long>): List<SmsEntity>
+    suspend fun getByIdsWithForwards(ids: List<Long>): List<SmsWithForwardsEntity>
 
+    @Transaction
     @Query("SELECT * FROM sms_table ORDER BY timestamp DESC LIMIT :limit OFFSET :offset")
-    suspend fun getPage(limit: Int, offset: Int): List<SmsEntity>
+    suspend fun getPageWithForwards(limit: Int, offset: Int): List<SmsWithForwardsEntity>
 }

@@ -6,6 +6,9 @@ import com.sms.checker.forwarder.feature.listening.domain.usecase.GetListeningUs
 import com.sms.checker.forwarder.feature.listening.domain.usecase.StartListeningUseCase
 import com.sms.checker.forwarder.feature.listening.domain.usecase.StopListeningUseCase
 import com.sms.checker.forwarder.feature.listening.infrastructure.management.ListeningNotificationDelegate
+import com.sms.checker.forwarder.feature.listening.infrastructure.management.sending.ListeningSendingDelegate
+import com.sms.checker.forwarder.feature.listening.infrastructure.management.sending.facade.ListeningSendingFacade
+import com.sms.checker.forwarder.feature.listening.infrastructure.management.sending.facade.ListeningSmtpFacade
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.bottombar.mapper.ListeningBottomBarMapper
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.listening.mapper.ListeningMapper
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.screen.blocks.toolbar.mapper.ListeningToolbarMapper
@@ -52,7 +55,9 @@ object ListeningModule {
         singleOf(::ListeningRepositoryImpl) bind ListeningRepository::class
 
         // infrastructure
-        single(createdAtStart = true) { ListeningNotificationDelegate(get(), get()) }
+        factoryOf(::ListeningNotificationDelegate)
+        factoryOf(::ListeningSendingDelegate)
+        factoryOf(::ListeningSmtpFacade) bind ListeningSendingFacade::class
 
         // navigation
         singleOf(::ListeningRouterImpl) bind ListeningRouter::class

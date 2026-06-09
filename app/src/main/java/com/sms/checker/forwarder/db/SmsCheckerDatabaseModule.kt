@@ -17,6 +17,7 @@ object SmsCheckerDatabaseModule {
         }
 
         single { get<SmsCheckerDatabase>().smsDao() }
+        single { get<SmsCheckerDatabase>().smsForwardDao() }
         single { get<SmsCheckerDatabase>().smtpEmailDao() }
     }
 }
