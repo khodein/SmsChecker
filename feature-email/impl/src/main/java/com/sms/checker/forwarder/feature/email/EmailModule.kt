@@ -2,6 +2,8 @@ package com.sms.checker.forwarder.feature.email
 
 import com.sms.checker.forwarder.feature.email.data.EmailRepositoryImpl
 import com.sms.checker.forwarder.feature.email.data.mapper.SmtpEmailDataMapper
+import com.sms.checker.forwarder.feature.email.delegate.SmtpEmailDelegate
+import com.sms.checker.forwarder.feature.email.delegate.SmtpEmailDelegateImpl
 import com.sms.checker.forwarder.feature.email.domain.EmailRepository
 import com.sms.checker.forwarder.feature.email.domain.usecase.DeleteSmtpConfigByIdUseCase
 import com.sms.checker.forwarder.feature.email.domain.usecase.DeleteSmtpConfigByIdUseCaseImpl
@@ -19,15 +21,13 @@ import com.sms.checker.forwarder.feature.email.domain.usecase.SendSmtpMessageUse
 import com.sms.checker.forwarder.feature.email.domain.usecase.SendSmtpMessageUseCaseImpl
 import com.sms.checker.forwarder.feature.email.domain.usecase.UpdateSmtpConfigUseCase
 import com.sms.checker.forwarder.feature.email.domain.usecase.UpdateSmtpConfigUseCaseImpl
-import com.sms.checker.forwarder.feature.email.infrastructure.SmtpEmailDelegate
-import com.sms.checker.forwarder.feature.email.infrastructure.SmtpEmailDelegateImpl
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.SmtpEmailViewModel
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.bottombar.SmtpBottomBarBlock
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.bottombar.mapper.SmtpBottomBarMapper
-import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.name.SmtpEmailNameBlock
-import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.name.mapper.SmtpEmailNameMapper
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.from.SmtpEmailFromBlock
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.from.mapper.SmtpEmailFromMapper
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.name.SmtpEmailNameBlock
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.name.mapper.SmtpEmailNameMapper
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.recipient.SmtpEmailRecipientBlock
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.recipient.mapper.SmtpEmailRecipientMapper
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.server.SmtpEmailServerBlock
@@ -44,7 +44,6 @@ import com.sms.checker.forwarder.framework.router.Router
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
-import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -97,7 +96,7 @@ object EmailModule {
         factoryOf(::SmtpEmailRecipientBlock)
         factoryOf(::SmtpEmailTestBlock)
 
-        // infrastructure
+        // delegate
         factoryOf(::SmtpEmailDelegateImpl) bind SmtpEmailDelegate::class
 
         // mappers

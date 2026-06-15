@@ -28,6 +28,8 @@ feature-<name>/                                — папка-контейнер
     src/main/java/<root.package>/feature/<name>/
       router/
         XRouter.kt                             — public interface (нужен, если фича навигируема извне)
+      delegate/
+        XDelegate.kt                           — public interface (контракт delegate, см. delegate.md)
       domain/
         model/
           XModel.kt                            — public data class (domain-модель)
@@ -44,6 +46,8 @@ feature-<name>/                                — папка-контейнер
       router/
         XRouterImpl.kt                         — internal class XRouterImpl : XRouter
         XProviderImpl.kt                       — internal class XProviderImpl : Router.Provider
+      delegate/
+        XDelegateImpl.kt                       — internal class XDelegateImpl : XDelegate (см. delegate.md)
       data/
         XRepositoryImpl.kt                     — internal class XRepositoryImpl : XRepository
         mapper/
@@ -73,7 +77,7 @@ feature-<name>/                                — папка-контейнер
               XScreenEvent.kt                  — internal interface : UiEvent (опционально)
             blocks/
               <block>/
-                XBlockBlock.kt                 — internal class XBlockBlock : BaseBlock<State, Action, Provider>
+                XBlockBlock.kt                 — internal class XBlockBlock : Block<State, Action, Provider>
                 mapper/
                   XBlockMapper.kt
                 state/
@@ -89,6 +93,8 @@ feature-<name>/                                — папка-контейнер
 Только то, что фича выставляет наружу — другим фичам или `app`:
 
 - `router/XRouter.kt` — навигационный контракт фичи (методы вида `gotoXList()`, `gotoXDetail(id)`).
+- `delegate/*.kt` — публичные интерфейсы делегатов фичи, через которые соседние фичи или `app`
+  подключаются к её рантайму (см. `delegate.md`).
 - `domain/model/*.kt` — domain-модели, если они нужны соседним фичам или `app` (как входные/выходные параметры `UseCase`).
 - `domain/usecase/*.kt` — интерфейсы `UseCase`, которые могут использоваться другими фичами.
 - `domain/exception/*.kt` — domain-исключения, которые соседние фичи могут перехватывать.
@@ -102,6 +108,8 @@ feature-<name>/                                — папка-контейнер
 - `XModule.kt` — Koin-модуль фичи (`object XModule { fun get(): Module }`). **public**, так как вызывается из `AppModule` в `app`.
 - `router/XRouterImpl.kt` — реализация `XRouter`, использует `Router` из `framework/router`.
 - `router/XProviderImpl.kt` — `Router.Provider`, регистрирует `entry<XScreenKey>` фичи.
+- `delegate/*.kt` — реализации делегатов фичи (`XDelegateImpl`, вспомогательные `Receiver`,
+  `Service`, `Mapper`-ы только для делегата). См. `delegate.md`.
 - `data/XRepositoryImpl.kt` — реализация `XRepository`, использует `XDao` и/или внешние API.
 - `data/mapper/XDataMapper.kt` — мапперы между `XEntity`/response/request и domain-моделями.
 - `db/XDao.kt` — Room `@Dao interface` (только декларация запросов). **public**, так как `AppDatabase` в `app` его агрегирует.
@@ -125,13 +133,13 @@ feature-<name>/                                — папка-контейнер
 
 ### Видимость
 
-| Где | Что | Модификатор |
-|---|---|---|
-| `api/**` | всё содержимое (router interface, models, usecase interfaces, exceptions) | `public` (по умолчанию) |
-| `impl/XModule.kt` | `object XModule` | `public` (вызывается из `AppModule`) |
-| `impl/db/XDao.kt` | `@Dao interface XDao` | `public` (агрегируется в `AppDatabase`) |
-| `impl/db/entity/XEntity.kt` | `@Entity class XEntity` | `public` (агрегируется в `AppDatabase`) |
-| `impl/**` всё остальное | `RepositoryImpl`, `Repository` interface, `UseCaseImpl`, `XRouterImpl`, `XProviderImpl`, `ViewModel`, `Screen`, `Route`, `NavKey`, `Block`, `State`, `Action`, `Event`, `Mapper`, `Widget`, `Data*Mapper` | `internal` |
+| Где                         | Что                                                                                                                                                                                                                        | Модификатор                             |
+|-----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------|
+| `api/**`                    | всё содержимое (router interface, delegate interfaces, models, usecase interfaces, exceptions)                                                                                                                             | `public` (по умолчанию)                 |
+| `impl/XModule.kt`           | `object XModule`                                                                                                                                                                                                           | `public` (вызывается из `AppModule`)    |
+| `impl/db/XDao.kt`           | `@Dao interface XDao`                                                                                                                                                                                                      | `public` (агрегируется в `AppDatabase`) |
+| `impl/db/entity/XEntity.kt` | `@Entity class XEntity`                                                                                                                                                                                                    | `public` (агрегируется в `AppDatabase`) |
+| `impl/**` всё остальное     | `RepositoryImpl`, `Repository` interface, `UseCaseImpl`, `XRouterImpl`, `XProviderImpl`, `XDelegateImpl`, `ViewModel`, `Screen`, `Route`, `NavKey`, `Block`, `State`, `Action`, `Event`, `Mapper`, `Widget`, `Data*Mapper` | `internal`                              |
 
 Старый паттерн «`private` classes внутри `object XModule`» **не используется**. Классы располагаются в собственных файлах и помечаются `internal`.
 
@@ -141,6 +149,8 @@ feature-<name>/                                — папка-контейнер
 
 - `XModule.kt` — `Feature` + `Module`, например `HomeModule.kt`.
 - `XRouter.kt` (api) / `XRouterImpl.kt`, `XProviderImpl.kt` (impl) — навигация фичи.
+- `XDelegate.kt` (api) / `XDelegateImpl.kt` (impl) — пара контракт + реализация делегата. Имя
+  обязательно заканчивается на `Delegate`. См. `delegate.md`.
 - `XRepository.kt` (impl/domain) / `XRepositoryImpl.kt` (impl/data) — пара контракт + реализация.
 - `XUseCase.kt` (api) / `XUseCaseImpl.kt` (impl) — пара контракт + реализация. Имя начинается с глагола: `GetHomeUseCase`, `SaveNoteUseCase`, `DeleteCartItemUseCase`.
 - `XModel.kt` (api) — domain-модель. Имя обязательно заканчивается на `Model`: `HomeModel`, `NoteModel`, `CartItemModel`.

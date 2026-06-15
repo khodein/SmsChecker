@@ -3,11 +3,16 @@
     <string name="feature_listening_title">SMS Checker</string>
     <string name="feature_listening_add_forward">Арна қосу</string>
     <string name="feature_listening_switch_title">Тыңдау</string>
-    <string name="feature_listening_switch_description">SMS тыңдауды қосыңыз, шығудан кейін де жұмыс істейді (хабарлама қажет)</string>
+    <string name="feature_listening_switch_description">Тыңдау үшін қосыңыз! Хабарламаның пайда болуын күтіңіз</string>
     <string name="feature_listening_notification_channel_name">SMS тыңдау</string>
     <string name="feature_listening_notification_title">SMS Checker</string>
     <string name="feature_listening_notification_text">Кіріс SMS тыңдалуда</string>
     <string name="feature_listening_config_apply">Қолданылған конфигурациялар</string>
+    <string name="feature_listening_history_title">Хабарламалар тарихы</string>
+    <string name="feature_listening_show_all_history">Барлық тарихты көрсету</string>
+    <string name="feature_listening_empty_history">Бос, ешқандай жазба болған жоқ</string>
+    <string name="feature_listening_error_read_history">Тарихты оқу кезінде қате орын алды, қайталап көріңіз</string>
+    <string name="feature_listening_retry_loading">Қайта жүктеу</string>
     <string name="feature_listening_empty_configs">SMS жіберуге арналған конфигурациялар жоқ, оларды қосыңыз</string>
     <string name="feature_listening_add_config">Конфигурация қосу</string>
     <string name="feature_listening_add_disabled_hint">Қосу тек тыңдау өшірілген кезде ғана мүмкін</string>

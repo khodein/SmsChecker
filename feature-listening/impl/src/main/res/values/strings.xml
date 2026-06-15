@@ -3,11 +3,16 @@
     <string name="feature_listening_title">SMS Checker</string>
     <string name="feature_listening_add_forward">Add Forward</string>
     <string name="feature_listening_switch_title">Listening</string>
-    <string name="feature_listening_switch_description">Enable to listen for SMS, keeps running after exit (notification required)</string>
+    <string name="feature_listening_switch_description">Turn it on to listen! Wait for the notification to appear</string>
     <string name="feature_listening_notification_channel_name">SMS Listening</string>
     <string name="feature_listening_notification_title">SMS Checker</string>
     <string name="feature_listening_notification_text">Listening for incoming SMS</string>
     <string name="feature_listening_config_apply">Config Apply</string>
+    <string name="feature_listening_history_title">History</string>
+    <string name="feature_listening_show_all_history">Show full history</string>
+    <string name="feature_listening_empty_history">Empty, there were no records</string>
+    <string name="feature_listening_error_read_history">An error occurred while reading history, please try again</string>
+    <string name="feature_listening_retry_loading">Retry loading</string>
     <string name="feature_listening_empty_configs">You have no configurations to forward SMS to, please add them</string>
     <string name="feature_listening_add_config">Add Configuration</string>
     <string name="feature_listening_add_disabled_hint">You can add only when listening is disabled</string>

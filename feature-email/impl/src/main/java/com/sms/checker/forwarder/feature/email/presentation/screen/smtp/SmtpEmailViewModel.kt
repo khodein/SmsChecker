@@ -12,8 +12,8 @@ import com.sms.checker.forwarder.feature.email.domain.usecase.GetSmtpConfigByIdU
 import com.sms.checker.forwarder.feature.email.domain.usecase.SaveSmtpConfigUseCase
 import com.sms.checker.forwarder.feature.email.domain.usecase.UpdateSmtpConfigUseCase
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.bottombar.SmtpBottomBarBlock
-import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.name.SmtpEmailNameBlock
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.from.SmtpEmailFromBlock
+import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.name.SmtpEmailNameBlock
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.recipient.SmtpEmailRecipientBlock
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.server.SmtpEmailServerBlock
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.test.SmtpEmailTestBlock
@@ -66,6 +66,10 @@ internal class SmtpEmailViewModel(
 
     init {
         attach()
+    }
+
+    override fun startBlocks() {
+        super.startBlocks()
         loadById()
     }
 

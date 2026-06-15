@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "sms_table")
+@Entity(tableName = SmsEntity.TABLE_NAME)
 data class SmsEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
@@ -15,4 +15,8 @@ data class SmsEntity(
     val body: String,
     @ColumnInfo(name = "timestamp")
     val timestamp: Long,
-)
+) {
+    companion object {
+        const val TABLE_NAME = "sms_table"
+    }
+}

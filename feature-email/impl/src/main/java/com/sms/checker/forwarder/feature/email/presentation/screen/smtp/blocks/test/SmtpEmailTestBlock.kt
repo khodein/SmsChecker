@@ -6,15 +6,14 @@ import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.t
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.test.state.SmtpEmailTestAction
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.test.state.SmtpEmailTestEvent
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.test.state.SmtpEmailTestState
-import com.sms.checker.forwarder.framework.Status
-import com.sms.checker.forwarder.framework.block.BaseBlock
+import com.sms.checker.forwarder.framework.block.Block
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 internal class SmtpEmailTestBlock(
     private val smtpEmailTestMapper: SmtpEmailTestMapper,
     private val sendSmtpMessageUseCase: SendSmtpMessageUseCase
-) : BaseBlock<SmtpEmailTestState, SmtpEmailTestAction, SmtpEmailTestBlock.Provider>() {
+) : Block<SmtpEmailTestState, SmtpEmailTestAction, SmtpEmailTestBlock.Provider>() {
 
     private var loadJob: Job? = null
 

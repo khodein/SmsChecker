@@ -1,15 +1,13 @@
 package com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.bottombar
 
-import androidx.room.Update
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.bottombar.mapper.SmtpBottomBarMapper
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.bottombar.state.SmtpBottomBarAction
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.bottombar.state.SmtpBottomBarState
-import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.state.SmtpEmailEvent
-import com.sms.checker.forwarder.framework.block.BaseBlock
+import com.sms.checker.forwarder.framework.block.Block
 
 internal class SmtpBottomBarBlock(
     private val smtpBottomBarMapper: SmtpBottomBarMapper,
-) : BaseBlock<SmtpBottomBarState, SmtpBottomBarAction, SmtpBottomBarBlock.Provider>() {
+) : Block<SmtpBottomBarState, SmtpBottomBarAction, SmtpBottomBarBlock.Provider>() {
 
     private var isUpdate: Boolean = false
 

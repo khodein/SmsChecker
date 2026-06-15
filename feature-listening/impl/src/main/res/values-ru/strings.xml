@@ -3,11 +3,16 @@
     <string name="feature_listening_title">SMS Checker</string>
     <string name="feature_listening_add_forward">Добавить канал</string>
     <string name="feature_listening_switch_title">Прослушивание</string>
-    <string name="feature_listening_switch_description">Включите, чтобы прослушивать SMS. Продолжает работу после выхода (требуется уведомление)</string>
+    <string name="feature_listening_switch_description">Включите, для прослушивания! Дождитесь появления Уведомления</string>
     <string name="feature_listening_notification_channel_name">Прослушивание SMS</string>
     <string name="feature_listening_notification_title">SMS Checker</string>
     <string name="feature_listening_notification_text">Входящие SMS прослушиваются</string>
     <string name="feature_listening_config_apply">Применённые конфигурации</string>
+    <string name="feature_listening_history_title">История сообщений</string>
+    <string name="feature_listening_show_all_history">Показать всю историю</string>
+    <string name="feature_listening_empty_history">Пусто, никаких записей не было</string>
+    <string name="feature_listening_error_read_history">Произошла ошибка при чтении истории, пожалуйста повторите</string>
+    <string name="feature_listening_retry_loading">Повторить загрузку</string>
     <string name="feature_listening_empty_configs">У вас нет конфигураций, на которые можно переслать sms, добавьте их</string>
     <string name="feature_listening_add_config">Добавить конфигурацию</string>
     <string name="feature_listening_add_disabled_hint">Добавить можно только при выключенном прослушивании</string>

@@ -1,0 +1,15 @@
+package com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.toolbar.mapper
+
+import com.sms.checker.forwarder.feature.listening.R
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.toolbar.state.ListeningToolbarState
+import com.sms.checker.forwarder.framework.tools.res.ResProvider
+
+internal class ListeningToolbarMapper(
+    private val resProvider: ResProvider
+) {
+    fun map(): ListeningToolbarState {
+        return ListeningToolbarState(
+            title = resProvider.getString(R.string.feature_listening_title),
+        )
+    }
+}

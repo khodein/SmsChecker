@@ -47,6 +47,7 @@ framework/tools/src/main/java/<root.package>/framework/tools/
   - `viewModelOf(::XScreenViewModel)` — каждый `ViewModel`.
   - `factoryOf(::XBlockBlock)` — каждый блок (factoryOf, потому что блоки создаются заново при каждом attach к ViewModel).
   - `singleOf(::XScreenMapper)` и `singleOf(::XBlockMapper)` — мапперы presentation-слоя.
+  - `factoryOf(::XDelegateImpl) bind XDelegate::class` — delegate-контракты фичи, если они есть.
 - Не объявляй `XModule` вне `impl/` — он принадлежит реализации фичи.
 - Не дроби фичу на несколько Koin-модулей без причины.
 - Не смешивай регистрации разных фич в одном модуле.
@@ -74,7 +75,8 @@ framework/tools/src/main/java/<root.package>/framework/tools/
 - Регистрируй `Repository`, `UseCase`, `Mapper`, `Router`, `Router.Provider` через `singleOf(::Impl) bind Interface::class`.
 - Регистрируй `ViewModel` через `viewModelOf(::XScreenViewModel)`.
 - Регистрируй блоки через `factoryOf(::XBlockBlock)`.
-- Группируй регистрации внутри модуля по слоям с комментариями `// data`, `// domain`, `// navigation`, `// presentation`, `// mappers`.
+- Группируй регистрации внутри модуля по слоям с комментариями `// presentation`, `// block`,
+  `// domain`, `// data`, `// delegate`, `// navigation`.
 - Связывай интерфейс с реализацией через `bind`: `singleOf(::XRepositoryImpl) bind XRepository::class`.
 - Подключай `XModule.get()` нового модуля в `AppModule.get()` сразу после создания.
 - Подключай `framework/tools/ResModule.get()` в `AppModule.get()` один раз.
@@ -129,6 +131,49 @@ object XModule {
         singleOf(::XToolbarMapper)
         singleOf(::XContentMapper)
         singleOf(::XBottomBarMapper)
+    }
+}
+```
+
+### ✅ Correct — реальный пример `ListeningModule`
+
+```kotlin
+// feature-listening/impl/.../ListeningModule.kt
+object ListeningModule {
+
+    fun get() = module {
+        // presentation
+        viewModelOf(::ListeningListViewModel)
+        singleOf(::ListeningListMapper)
+        singleOf(::ListeningMapper)
+        singleOf(::ListeningBottomBarMapper)
+        singleOf(::ListeningToolbarMapper)
+        singleOf(::ListeningConfigMapper)
+        singleOf(::ListeningHistoryMapper)
+
+        // block
+        factoryOf(::ListeningBlock)
+        factoryOf(::ListeningToolbarBlock)
+        factoryOf(::ListeningBottomBarBlock)
+        factoryOf(::ListeningConfigBlock)
+        factoryOf(::ListeningHistoryBlock)
+
+        // domain
+        factoryOf(::StartListeningUseCase)
+        factoryOf(::StopListeningUseCase)
+        factoryOf(::GetListeningUseCase)
+
+        // data
+        singleOf(::ListeningRepositoryImpl) bind ListeningRepository::class
+
+        // delegate
+        factoryOf(::ListeningNotificationDelegate)
+        factoryOf(::ListeningSendingDelegate)
+        factoryOf(::ListeningSmtpFacade) bind ListeningSendingFacade::class
+
+        // navigation
+        singleOf(::ListeningRouterImpl) bind ListeningRouter::class
+        singleOf(::ListeningProviderImpl) bind Router.Provider::class
     }
 }
 ```
@@ -220,7 +265,7 @@ val appModule = module {
 // 6. Ручное создание зависимостей вместо DI
 internal class XContentBlock(
     private val getXUseCase: GetXUseCase = GetXUseCaseImpl(XRepositoryImpl(...)),   // ❌
-) : BaseBlock<...>() { ... }
+) : Block<...>() { ... }
 
 // 7. XModule вне impl
 // feature-x/api/.../XModule.kt
@@ -235,7 +280,7 @@ object AppModule {
 }
 
 // 9. Прямое использование Koin вместо конструктора
-internal class XContentBlock(...) : BaseBlock<...>() {
+internal class XContentBlock(...) : Block<...>() {
     private val useCase: GetXUseCase by inject()        // ❌ инжекти через конструктор
 }
 ```

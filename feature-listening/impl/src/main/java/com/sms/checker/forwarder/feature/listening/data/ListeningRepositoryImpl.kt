@@ -2,8 +2,8 @@ package com.sms.checker.forwarder.feature.listening.data
 
 import android.content.Context
 import android.content.Intent
+import com.sms.checker.forwarder.feature.listening.delegate.ListeningService
 import com.sms.checker.forwarder.feature.listening.domain.ListeningRepository
-import com.sms.checker.forwarder.feature.listening.infrastructure.ListeningService
 
 internal class ListeningRepositoryImpl(
     private val context: Context,

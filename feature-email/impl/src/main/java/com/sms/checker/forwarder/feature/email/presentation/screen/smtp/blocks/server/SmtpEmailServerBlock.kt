@@ -3,11 +3,11 @@ package com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.server.mapper.SmtpEmailServerMapper
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.server.state.SmtpEmailServerAction
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.server.state.SmtpEmailServerState
-import com.sms.checker.forwarder.framework.block.BaseBlock
+import com.sms.checker.forwarder.framework.block.Block
 
 internal class SmtpEmailServerBlock(
     private val smtpEmailServerMapper: SmtpEmailServerMapper,
-) : BaseBlock<SmtpEmailServerState, SmtpEmailServerAction, Unit>() {
+) : Block<SmtpEmailServerState, SmtpEmailServerAction, Unit>() {
 
     private var hostState: String = ""
     private var portState: String = ""

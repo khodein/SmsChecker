@@ -3,11 +3,11 @@ package com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.name.mapper.SmtpEmailNameMapper
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.name.state.SmtpEmailNameAction
 import com.sms.checker.forwarder.feature.email.presentation.screen.smtp.blocks.name.state.SmtpEmailNameState
-import com.sms.checker.forwarder.framework.block.BaseBlock
+import com.sms.checker.forwarder.framework.block.Block
 
 internal class SmtpEmailNameBlock(
     private val smtpEmailNameMapper: SmtpEmailNameMapper,
-) : BaseBlock<SmtpEmailNameState, SmtpEmailNameAction, Unit>() {
+) : Block<SmtpEmailNameState, SmtpEmailNameAction, Unit>() {
 
     private var valueState: String = ""
     private var errorState: String? = null

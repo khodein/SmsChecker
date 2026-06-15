@@ -1,6 +1,7 @@
 package com.sms.checker.forwarder.db
 
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -15,6 +16,7 @@ object SmsCheckerDatabaseModule {
                 .fallbackToDestructiveMigration(false)
                 .build()
         }
+        single<RoomDatabase> { get<SmsCheckerDatabase>() }
 
         single { get<SmsCheckerDatabase>().smsDao() }
         single { get<SmsCheckerDatabase>().smsForwardDao() }

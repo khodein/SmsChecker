@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import kotlin.collections.map
 
 abstract class BaseViewModel<State : UiState, Action> : ViewModel() {
 
@@ -38,6 +37,7 @@ abstract class BaseViewModel<State : UiState, Action> : ViewModel() {
         blockStore.apply(builder)
         val blocks = blockStore.build()
         if (blocks.isEmpty()) return
+        startBlocks()
 
         viewModelScope.launch {
             val flows = blocks.map { it.blockState }
@@ -71,4 +71,9 @@ abstract class BaseViewModel<State : UiState, Action> : ViewModel() {
     }
 
     abstract fun attach()
+
+    @CallSuper
+    open fun startBlocks() {
+        blockStore.startBlock()
+    }
 }

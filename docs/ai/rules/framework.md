@@ -28,7 +28,7 @@ framework/                                          ← базовые конт�
     UiEvent.kt                                      ← @Immutable interface UiEvent
     Status.kt                                       ← enum class Status { LOADING, ERROR, SUCCESS, IDLE }
     block/
-      BaseBlock.kt                                  ← abstract class BaseBlock<State : Any, Action, Provider>
+      Block.kt                                      ← abstract class Block<State : Any, Action, Provider>
       BlockStore.kt                                 ← регистрация блоков, attach к scope/onEvent
       BlockProvider.kt                              ← marker interface
     theme/
@@ -108,7 +108,7 @@ interface UiEvent
 
 - Маркер one-time события (snackbar, навигация, scroll).
 - Конкретные события объявляются как `internal data class XScreenEvent(...) : UiEvent` или `internal sealed class` в `state/` экрана/блока.
-- Эмит — через `BaseViewModel.onEvent(event)` или `BaseBlock.onEvent(event)`.
+- Эмит — через `BaseViewModel.onEvent(event)` или `Block.onEvent(event)`.
 - Подписка — в `XScreenRoute` через `viewModel.uiEvent.collect { ... }`.
 
 ### Status
@@ -124,10 +124,10 @@ enum class Status {
 
 Используй `IDLE` для начального состояния без активности, `LOADING` — для процесса, `SUCCESS` — для готового состояния, `ERROR` — для ошибочного.
 
-### BaseBlock
+### Block
 
 ```kotlin
-abstract class BaseBlock<State : Any, Action, Provider> {
+abstract class Block<State : Any, Action, Provider> {
 
     abstract val action: Action
 
@@ -157,8 +157,9 @@ protected fun registerBlocks(builder: BlockStore.() -> Unit)
 ```
 
 Внутри `builder` доступны методы:
-- `fun <P> add(block: BaseBlock<*, *, P>, provider: P)` — регистрация блока с `Provider`.
-- `fun add(block: BaseBlock<*, *, Unit>)` — регистрация блока без `Provider`.
+
+- `fun <P> add(block: Block<*, *, P>, provider: P)` — регистрация блока с `Provider`.
+- `fun add(block: Block<*, *, Unit>)` — регистрация блока без `Provider`.
 
 После регистрации `BaseViewModel` подписывается на изменения `blockState` каждого блока и автоматически вызывает `updateViewState()`.
 
@@ -239,7 +240,8 @@ object ResModule {
 ## Rules
 - Не размещай feature-логику в `framework/*`.
 - Не добавляй классы в `framework/uikit/`, если они нужны только одной фиче.
-- Не дублируй контракты `framework` внутри фич (`BaseViewModel`, `UiState`, `UiEvent`, `Status`, `BaseBlock`).
+- Не дублируй контракты `framework` внутри фич (`BaseViewModel`, `UiState`, `UiEvent`, `Status`,
+  `Block`).
 - Используй `UiState` (не `BaseUiState`) как базовый класс для `XScreenState`.
 - Используй `Router` и `Router.Provider` только из `framework/router`, не дублируй их.
 - Используй `ResProvider` для строк в мапперах; не вызывай `Context.getString(...)` напрямую в presentation.
@@ -250,7 +252,8 @@ object ResModule {
 - Расширяй `framework/uikit/` теми компонентами, которые реально переиспользуются между фичами.
 - Расширяй `framework/tools/` утилитами без UI-зависимостей (форматтеры, парсеры, обёртки над Android).
 - Добавляй новые элементы `framework/router/`, только если они нужны механизму навигации в целом (новые типы переходов, типы entry).
-- Согласовывай добавление новых базовых контрактов в `framework/` (`BaseViewModel`, `UiState`, `UiEvent`, `BaseBlock`, `BlockStore`) — это меняет всю архитектуру.
+- Согласовывай добавление новых базовых контрактов в `framework/` (`BaseViewModel`, `UiState`,
+  `UiEvent`, `Block`, `BlockStore`) — это меняет всю архитектуру.
 - Подключай `framework` к фиче только через convention plugins.
 
 ## Don't
@@ -258,8 +261,9 @@ object ResModule {
 - Не подключай Koin к `framework/` — DI поднимается только в `framework/tools/ResModule` и фичах.
 - Не размещай в `framework/` зависимости от feature-модулей.
 - Не выноси feature-specific Composable-функции (кастомные карточки, экраны) в `framework/uikit/`.
-- Не дублируй `BaseViewModel`, `UiState`, `UiEvent`, `BaseBlock` внутри фич.
-- Не используй устаревшие имена `BaseUiState`, `BaseViewModel<State>` без `Action`, `BaseBlock<State, Provider>` без `Action` — они не существуют.
+- Не дублируй `BaseViewModel`, `UiState`, `UiEvent`, `Block` внутри фич.
+- Не используй устаревшие имена `BaseUiState`, `BaseBlock`, `BaseViewModel<State>` без `Action`,
+  `Block<State, Provider>` без `Action` — они не существуют.
 - Не подключай `framework/*` напрямую в `feature-<name>/*/build.gradle.kts` — это работа convention plugin.
 
 ## Examples

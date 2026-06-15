@@ -212,7 +212,7 @@ internal class XProviderImpl : Router.Provider {
 ```kotlin
 internal class XListItemBlock(
     private val yRouter: YRouter,                  // инжектим контракт соседней фичи (из её api)
-) : BaseBlock<XListItemState, XListItemAction, Unit>() {
+) : Block<XListItemState, XListItemAction, Unit>() {
 
     override val action = XListItemAction(
         onClickItem = ::onClickItem,

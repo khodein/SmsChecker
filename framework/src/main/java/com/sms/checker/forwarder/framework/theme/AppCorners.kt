@@ -12,6 +12,10 @@ data class AppCorners(
     private val medium: Dp = 16.dp,
     private val large: Dp = 24.dp,
 ) {
+    fun medium() = medium
+    fun small() = small
+    fun large() = large
+
     fun top(corner: Dp = medium): RoundedCornerShape = RoundedCornerShape(
         topStart = corner,
         topEnd = corner,

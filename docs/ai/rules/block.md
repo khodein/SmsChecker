@@ -18,7 +18,7 @@
 ## Базовый контракт
 
 ```kotlin
-abstract class BaseBlock<State : Any, Action, Provider> {
+abstract class Block<State : Any, Action, Provider> {
 
     abstract val action: Action
 
@@ -44,7 +44,8 @@ abstract class BaseBlock<State : Any, Action, Provider> {
 
 ## Rules
 - Создавай `Block` как `internal class` в `impl/presentation/screen/<screen>/blocks/<block>/`.
-- Наследуй блок от `BaseBlock<XBlockState, XBlockAction, XBlockBlock.Provider>` (если есть `Provider`) или `BaseBlock<XBlockState, XBlockAction, Unit>` (если нет).
+- Наследуй блок от `Block<XBlockState, XBlockAction, XBlockBlock.Provider>` (если есть `Provider`)
+  или `Block<XBlockState, XBlockAction, Unit>` (если нет).
 - Объявляй `interface Provider` вложенным в Block-класс (`XBlockBlock.Provider`), если блоку нужны внешние callbacks.
 - Переопределяй `val action: XBlockAction` и инициализируй его ссылками на методы блока: `XBlockAction(onClickX = ::onClickX, onChangeY = ::onChangeY)`.
 - Реализуй `getInitialUiState()` — возвращает начальное состояние блока (обычно через `XBlockMapper`).
@@ -75,8 +76,10 @@ abstract class BaseBlock<State : Any, Action, Provider> {
 - Подключай `UseCase`, `Mapper` и другие зависимости через конструктор блока и регистрируй их в `XModule` через `factoryOf(::XBlockBlock)`.
 
 ## Don't
-- Не создавай `Block`, не наследующийся от `BaseBlock<State, Action, Provider>`.
-- Не используй устаревшую сигнатуру `BaseBlock<State, Provider>` без параметра `Action`.
+
+- Не создавай `Block`, не наследующийся от `Block<State, Action, Provider>`.
+- Не используй устаревшее имя базового класса `BaseBlock` — оно переименовано в `Block`.
+- Не используй устаревшую сигнатуру `Block<State, Provider>` без параметра `Action`.
 - Не размещай логику блоков напрямую во `ViewModel`.
 - Не обращайся к `Repository` и API напрямую из `Block`.
 - Не используй Android-, Compose- и UI-типы в логике `Block` (только в его `Widget`).
@@ -113,7 +116,7 @@ internal class XToolbarMapper(
 internal class XToolbarBlock(
     private val mapper: XToolbarMapper,
     private val xRouter: XRouter,
-) : BaseBlock<XToolbarState, XToolbarAction, Unit>() {
+) : Block<XToolbarState, XToolbarAction, Unit>() {
 
     override val action = XToolbarAction(
         onClickBack = ::onClickBack,
@@ -148,7 +151,7 @@ internal data class XContentAction(
 internal class XContentBlock(
     private val getXListUseCase: GetXListUseCase,
     private val xRouter: XRouter,
-) : BaseBlock<XContentState, XContentAction, Unit>() {
+) : Block<XContentState, XContentAction, Unit>() {
 
     private var items: List<XItemModel> = emptyList()
     private var isLoading: Boolean = true
@@ -204,7 +207,7 @@ internal data class XFormAction(
 
 internal class XFormBlock(
     private val mapper: XFormMapper,
-) : BaseBlock<XFormState, XFormAction, XFormBlock.Provider>() {
+) : Block<XFormState, XFormAction, XFormBlock.Provider>() {
 
     private var name: String = ""
 
@@ -238,7 +241,7 @@ internal class XFormBlock(
 
 ```kotlin
 // Устаревшая сигнатура без Action
-internal class XToolbarBlock(...) : BaseBlock<XToolbarState, Unit>() { ... }   // ❌ нет Action
+internal class XToolbarBlock(...) : Block<XToolbarState, Unit>() { ... }   // ❌ нет Action
 
 // Action как поле State
 @Immutable
@@ -250,10 +253,10 @@ internal data class XToolbarState(
 // Прямое обращение к Repository
 internal class XContentBlock(
     private val repository: XRepository,               // ❌ только через UseCase
-) : BaseBlock<XContentState, XContentAction, Unit>() { ... }
+) : Block<XContentState, XContentAction, Unit>() { ... }
 
 // Compose-типы в логике блока
-internal class XContentBlock(...) : BaseBlock<...>() {
+internal class XContentBlock(...) : Block<...>() {
     private var color: Color = Color.Red               // ❌ androidx.compose.ui.graphics.Color
     private fun onClick() {
         Modifier.fillMaxSize()                          // ❌ Compose в логике блока
@@ -263,5 +266,5 @@ internal class XContentBlock(...) : BaseBlock<...>() {
 // Передача Provider через конструктор
 internal class XFormBlock(
     private val provider: Provider,                    // ❌ Provider передаётся через add(block, provider)
-) : BaseBlock<XFormState, XFormAction, XFormBlock.Provider>() { ... }
+) : Block<XFormState, XFormAction, XFormBlock.Provider>() { ... }
 ```

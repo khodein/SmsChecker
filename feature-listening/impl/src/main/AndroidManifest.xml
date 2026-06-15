@@ -2,7 +2,7 @@
 
     <application>
         <service
-            android:name="com.sms.checker.forwarder.feature.listening.infrastructure.ListeningService"
+            android:name="com.sms.checker.forwarder.feature.listening.delegate.ListeningService"
             android:exported="false"
             android:stopWithTask="false"
             android:foregroundServiceType="specialUse">

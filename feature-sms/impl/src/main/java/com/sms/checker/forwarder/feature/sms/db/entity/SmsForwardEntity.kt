@@ -7,7 +7,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "sms_forward_table",
+    tableName = SmsForwardEntity.TABLE_NAME,
     foreignKeys = [
         ForeignKey(
             entity = SmsEntity::class,
@@ -34,4 +34,8 @@ data class SmsForwardEntity(
     val error: String? = null,
     @ColumnInfo(name = "attempted_at")
     val attemptedAt: Long,
-)
+) {
+    companion object {
+        const val TABLE_NAME = "sms_forward_table"
+    }
+}

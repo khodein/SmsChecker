@@ -227,7 +227,7 @@ dependencies {
 internal class ZSomeBlock(
     private val xRouter: XRouter,                  // ✅ контракт из feature-x/api
     private val saveXUseCase: SaveXUseCase,        // ✅ контракт из feature-x/api
-) : BaseBlock<...>() { ... }
+) : Block<...>() { ... }
 ```
 
 ### ❌ Incorrect

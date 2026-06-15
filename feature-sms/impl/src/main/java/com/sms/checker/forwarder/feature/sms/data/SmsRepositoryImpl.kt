@@ -1,18 +1,24 @@
 package com.sms.checker.forwarder.feature.sms.data
 
+import androidx.room.RoomDatabase
 import com.sms.checker.forwarder.feature.sms.data.mapper.SmsDataMapper
 import com.sms.checker.forwarder.feature.sms.data.mapper.SmsForwardDataMapper
 import com.sms.checker.forwarder.feature.sms.db.SmsDao
 import com.sms.checker.forwarder.feature.sms.db.SmsForwardDao
+import com.sms.checker.forwarder.feature.sms.db.entity.SmsEntity
+import com.sms.checker.forwarder.feature.sms.db.entity.SmsForwardEntity
 import com.sms.checker.forwarder.feature.sms.domain.SmsRepository
 import com.sms.checker.forwarder.feature.sms.domain.model.SmsForwardModel
 import com.sms.checker.forwarder.feature.sms.domain.model.SmsModel
 import com.sms.checker.forwarder.feature.sms.domain.model.SmsWithForwardsModel
 import com.sms.checker.forwarder.feature.sms.domain.model.exception.SmsException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 internal class SmsRepositoryImpl(
     private val dao: SmsDao,
     private val smsForwardDao: SmsForwardDao,
+    private val database: RoomDatabase,
     private val smsDataMapper: SmsDataMapper,
     private val smsForwardDataMapper: SmsForwardDataMapper,
 ) : SmsRepository {
@@ -37,6 +43,16 @@ internal class SmsRepositoryImpl(
 
     override suspend fun getPageWithForwards(limit: Int, offset: Int): List<SmsWithForwardsModel> {
         return dao.getPageWithForwards(limit, offset).map(smsDataMapper::toModel)
+    }
+
+    override suspend fun getLastWithForwards(): List<SmsWithForwardsModel> {
+        return dao.getLastWithForwards().map(smsDataMapper::toModel)
+    }
+
+    override fun observeLastWithForwards(): Flow<List<SmsWithForwardsModel>> {
+        return database.invalidationTracker
+            .createFlow(SmsEntity.TABLE_NAME, SmsForwardEntity.TABLE_NAME, emitInitialState = true)
+            .map { dao.getLastWithForwards().map(smsDataMapper::toModel) }
     }
 
     override suspend fun setSmsForward(model: SmsForwardModel): Long {

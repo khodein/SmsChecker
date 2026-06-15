@@ -60,7 +60,8 @@
 
 - Проект использует Clean Architecture с тремя слоями: presentation, domain, data.
 - Базовая инфраструктура расположена в `framework/` и состоит из трёх Gradle-модулей:
-  - `framework/` — базовые контракты presentation-слоя: `BaseViewModel`, `UiState`, `UiEvent`, `Status`, `BaseBlock`, `BlockStore`, тема (`AppTheme`) и общие UI-компоненты (`uikit`).
+    - `framework/` — базовые контракты presentation-слоя: `BaseViewModel`, `UiState`, `UiEvent`,
+      `Status`, `Block`, `BlockStore`, тема (`AppTheme`) и общие UI-компоненты (`uikit`).
   - `framework/router/` — навигационный контракт: `Router`, `Router.Provider`, `EntryProviderInstaller`, `NavTransition` (поверх Navigation 3).
   - `framework/tools/` — служебные утилиты (`ResProvider`, форматтеры времени и т.п.).
 - Каждая фича — папка-контейнер `feature-<name>/`, разбитая на два Gradle-субмодуля: `api` и `impl`.
@@ -79,7 +80,8 @@
 - Для хранения состояния в оперативной памяти и работы с состоянием используй `ViewModel`.
 - Каждая `ViewModel` должна наследоваться от `BaseViewModel<State, Action>`.
 - Состояние каждой `ViewModel` должно наследоваться от `UiState`.
-- Логика частей экрана инкапсулируется в блоках `BaseBlock<State, Action, Provider>`, которые регистрируются в `ViewModel` через `registerBlocks { add(block) }` или `add(block, provider)`.
+- Логика частей экрана инкапсулируется в блоках `Block<State, Action, Provider>`, которые
+  регистрируются в `ViewModel` через `registerBlocks { add(block) }` или `add(block, provider)`.
 - Если блок зависит от внешних callbacks, объявляй интерфейс `Provider` внутри самого Block-класса; `ViewModel` (или другой объект) реализует этот интерфейс и передаётся при `add(block, provider)`.
 - `ViewModel` собирает итоговый `UiState` из состояний блоков в методе `updateViewState()` (или через `setState { }`).
 - `Action` экрана и блоков — отдельный immutable класс, который выставляется как `val action` у `ViewModel`/`Block` и передаётся в Composable-функции отдельным параметром, а не как поле `state`.
@@ -130,7 +132,8 @@
 - Вноси минимально необходимые изменения для решения задачи.
 - Не изменяй существующие публичные контракты без необходимости.
 - Следуй текущей структуре проекта, именованию и существующим паттернам кода.
-- Переиспользуй существующие базовые компоненты, включая `BaseViewModel`, `UiState`, `BaseBlock`, `Router`, `NavKey` и `MaterialTheme`.
+- Переиспользуй существующие базовые компоненты, включая `BaseViewModel`, `UiState`, `Block`,
+  `Router`, `NavKey` и `MaterialTheme`.
 - Не создавай новые сущности, если задачу можно решить через существующие.
 - Добавляй новые классы, модели, мапперы и репозитории только если они действительно нужны для реализации фичи.
 - Не переписывай рабочий код без явной причины.
@@ -150,7 +153,8 @@
 - `feature-<name>/impl/domain/` — `XRepository` interface (internal), `XUseCaseImpl` реализации.
 - `feature-<name>/impl/data/` — `XRepositoryImpl`, мапперы и работа с источниками данных.
 - `feature-<name>/impl/db/` — `XDao` interface, `XEntity` (Room entity).
-- `framework/` — базовые контракты presentation: `BaseViewModel`, `UiState`, `UiEvent`, `Status`, `BaseBlock`, тема и UI-компоненты.
+- `framework/` — базовые контракты presentation: `BaseViewModel`, `UiState`, `UiEvent`, `Status`,
+  `Block`, тема и UI-компоненты.
 - `framework/router/` — `Router`, `Router.Provider`, `EntryProviderInstaller`, `NavTransition`.
 - `framework/tools/` — служебные утилиты (`ResProvider`, форматтеры).
 - `app/db/` — application-level `RoomDatabase` (`AppDatabase`), сборка DAO и Entity из feature-модулей.
@@ -175,6 +179,7 @@
 - `docs/ai/rules/navigation.md` — `Router`, `NavKey`, `Router.Provider` фичи.
 - `docs/ai/rules/usecase.md` — `UseCase` interface (`api`) и реализация (`impl`).
 - `docs/ai/rules/repository.md` — `Repository` interface (`impl/domain`) и реализация (`impl/data`).
+- `docs/ai/rules/delegate.md` — папка `delegate/` фичи: интерфейс и реализация runtime-делегата.
 - `docs/ai/rules/db.md` — DAO и Entity в фиче, `RoomDatabase` в `app`.
 - `docs/ai/rules/di.md` — Koin-модули фич и `AppModule`.
 - `docs/ai/rules/dependencies.md` — правила добавления и группировки зависимостей.

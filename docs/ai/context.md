@@ -70,7 +70,8 @@
 ## Structure (переносимое)
 
 - `app/` — application-модуль, `MainActivity`, root-навигация, DI bootstrap и application-level `AppDatabase`.
-- `framework/` — базовые контракты presentation-слоя: `BaseViewModel`, `UiState`, `UiEvent`, `Status`, `BaseBlock`, тема (`AppTheme`) и общие UI-компоненты (`uikit`).
+- `framework/` — базовые контракты presentation-слоя: `BaseViewModel`, `UiState`, `UiEvent`,
+  `Status`, `Block`, тема (`AppTheme`) и общие UI-компоненты (`uikit`).
 - `framework/router/` — навигационный контракт: `Router`, `Router.Provider`, `EntryProviderInstaller`, `NavTransition` (поверх Navigation 3).
 - `framework/tools/` — служебные утилиты (`ResProvider`, форматтеры и т.п.).
 - `feature-<name>/` — папка-контейнер фичи, состоит из двух Gradle-субмодулей:
