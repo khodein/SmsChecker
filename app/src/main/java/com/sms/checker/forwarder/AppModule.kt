@@ -14,7 +14,7 @@ import com.sms.checker.forwarder.main.MainModule
 import com.sms.checker.forwarder.router.RouterModule
 import org.koin.core.module.Module
 
-object AppModule {
+internal object AppModule {
 
     fun get(): List<Module> {
         return listOf(

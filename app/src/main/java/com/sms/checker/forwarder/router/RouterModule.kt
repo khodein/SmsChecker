@@ -5,7 +5,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-data object RouterModule {
+internal data object RouterModule {
 
     fun get() = module {
         singleOf(::RouterImpl) bind Router::class

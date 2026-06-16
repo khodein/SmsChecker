@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
-object SmsCheckerDatabaseModule {
+internal object SmsCheckerDatabaseModule {
     fun get() = module {
         single {
             Room.databaseBuilder(

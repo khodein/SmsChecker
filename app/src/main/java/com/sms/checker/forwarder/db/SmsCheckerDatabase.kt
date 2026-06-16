@@ -18,7 +18,7 @@ import com.sms.checker.forwarder.feature.sms.db.entity.SmsForwardEntity
     version = 1,
     exportSchema = false
 )
-abstract class SmsCheckerDatabase : RoomDatabase() {
+internal abstract class SmsCheckerDatabase : RoomDatabase() {
     abstract fun smsDao(): SmsDao
     abstract fun smsForwardDao(): SmsForwardDao
     abstract fun smtpEmailDao(): SmtpEmailDao

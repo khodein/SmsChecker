@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class MainViewModel(
+internal class MainViewModel(
     private val listeningRouter: ListeningRouter,
     private val emailRouter: EmailRouter,
     private val router: Router,
