@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxDefaults
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -55,7 +56,8 @@ fun SnackBarWidget(
     onSwipeDismiss: (() -> Unit)? = null,
 ) {
     val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = { it != SwipeToDismissBoxValue.Settled }
+        SwipeToDismissBoxValue.Settled,
+        SwipeToDismissBoxDefaults.positionalThreshold
     )
 
     LaunchedEffect(dismissState.currentValue) {
