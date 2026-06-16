@@ -5,18 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -39,12 +32,12 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.sms.checker.forwarder.framework.BottomSheetSceneStrategy
 import com.sms.checker.forwarder.framework.router.NAV_TRANSITION_KEY
-import com.sms.checker.forwarder.framework.router.NavTransition
 import com.sms.checker.forwarder.framework.router.Router
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
 import com.sms.checker.forwarder.framework.uikit.AppSnackBarVisuals
 import com.sms.checker.forwarder.framework.uikit.SnackBarPosition
 import com.sms.checker.forwarder.framework.uikit.SnackBarWidget
+import com.sms.checker.forwarder.router.RouterModule
 import org.koin.androidx.compose.koinViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.compose.getKoin
@@ -60,10 +53,8 @@ class MainActivity : ComponentActivity() {
         splashScreen.setKeepOnScreenCondition { mainViewModel.isLoading.value }
         enableEdgeToEdge()
         setContent {
-            setContent {
-                SmsCheckerTheme {
-                    SmsCheckerRoute()
-                }
+            SmsCheckerTheme {
+                SmsCheckerRoute()
             }
         }
     }
@@ -147,13 +138,25 @@ private fun SmsCheckerApp(
         ),
         sceneStrategies = listOf(bottomSheetStrategy),
         transitionSpec = {
-            enterContentTransform(targetState.entries.lastOrNull()?.metadata?.get(NAV_TRANSITION_KEY))
+            RouterModule.enterContentTransform(
+                targetState.entries.lastOrNull()?.metadata?.get(
+                    NAV_TRANSITION_KEY
+                )
+            )
         },
         popTransitionSpec = {
-            popContentTransform(initialState.entries.lastOrNull()?.metadata?.get(NAV_TRANSITION_KEY))
+            RouterModule.popContentTransform(
+                initialState.entries.lastOrNull()?.metadata?.get(
+                    NAV_TRANSITION_KEY
+                )
+            )
         },
         predictivePopTransitionSpec = {
-            popContentTransform(initialState.entries.lastOrNull()?.metadata?.get(NAV_TRANSITION_KEY))
+            RouterModule.popContentTransform(
+                initialState.entries.lastOrNull()?.metadata?.get(
+                    NAV_TRANSITION_KEY
+                )
+            )
         },
         entryProvider = entryProvider {
             getKoin()
@@ -161,30 +164,4 @@ private fun SmsCheckerApp(
                 .forEach { it.invoke().invoke(this) }
         }
     )
-}
-
-private fun enterContentTransform(navTransition: Any?): ContentTransform = when (navTransition) {
-    NavTransition.NONE -> EnterTransition.None togetherWith ExitTransition.None
-    NavTransition.SLIDE_VERTICAL -> slideInVertically { it } togetherWith fadeOut()
-    NavTransition.SLIDE_HORIZONTAL -> ContentTransform(
-        targetContentEnter = slideInHorizontally { it },
-        initialContentExit = ExitTransition.None,
-        targetContentZIndex = 1f,
-    )
-
-    else -> fadeIn() togetherWith fadeOut()
-}
-
-private fun popContentTransform(navTransition: Any?): ContentTransform = when (navTransition) {
-    NavTransition.NONE -> EnterTransition.None togetherWith ExitTransition.None
-    NavTransition.SLIDE_VERTICAL -> fadeIn() togetherWith slideOutVertically { it }
-    NavTransition.SLIDE_HORIZONTAL -> ContentTransform(
-        targetContentEnter = EnterTransition.None,
-        initialContentExit = slideOutHorizontally(
-            animationSpec = tween(durationMillis = 300, easing = LinearEasing),
-        ) { it },
-        targetContentZIndex = -1f,
-    )
-
-    else -> fadeIn() togetherWith fadeOut()
 }
