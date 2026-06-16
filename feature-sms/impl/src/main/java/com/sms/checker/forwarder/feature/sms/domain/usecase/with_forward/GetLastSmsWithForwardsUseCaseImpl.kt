@@ -6,7 +6,7 @@ import com.sms.checker.forwarder.feature.sms.domain.model.SmsWithForwardsModel
 internal class GetLastSmsWithForwardsUseCaseImpl(
     private val repository: SmsRepository,
 ) : GetLastSmsWithForwardsUseCase {
-    override suspend fun invoke(): List<SmsWithForwardsModel> {
-        return repository.getLastWithForwards()
+    override suspend fun invoke(count: Int): List<SmsWithForwardsModel> {
+        return repository.getLastWithForwards(count)
     }
 }

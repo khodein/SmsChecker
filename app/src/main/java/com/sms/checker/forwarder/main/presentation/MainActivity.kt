@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
@@ -32,10 +31,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import com.sms.checker.forwarder.framework.BottomSheetSceneStrategy
 import com.sms.checker.forwarder.framework.router.NAV_TRANSITION_KEY
 import com.sms.checker.forwarder.framework.router.NavTransition
 import com.sms.checker.forwarder.framework.router.Router
@@ -46,7 +48,6 @@ import com.sms.checker.forwarder.framework.uikit.SnackBarWidget
 import org.koin.androidx.compose.koinViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.compose.getKoin
-import kotlin.comparisons.then
 
 class MainActivity : ComponentActivity() {
 
@@ -76,6 +77,7 @@ private fun SmsCheckerRoute() {
     val currentData = snackbarHostState.currentSnackbarData
     var lastData by remember { mutableStateOf<SnackbarData?>(null) }
     var snackbarAlignment by remember { mutableStateOf(Alignment.BottomCenter) }
+    val bottomSheetStrategy = remember { BottomSheetSceneStrategy<NavKey>() }
 
     LaunchedEffect(currentData) {
         if (currentData != null) {
@@ -93,19 +95,20 @@ private fun SmsCheckerRoute() {
 
     Box(modifier = Modifier.fillMaxSize()) {
         SmsCheckerApp(
+            bottomSheetStrategy = bottomSheetStrategy,
             viewModel = viewModel
         )
 
         AnimatedVisibility(
             visible = currentData != null,
             enter = fadeIn(animationSpec = tween(300)) +
-                slideInVertically(animationSpec = tween(300)) { fullHeight ->
-                    if (snackbarAlignment == Alignment.TopCenter) -fullHeight / 2 else fullHeight / 2
-                },
+                    slideInVertically(animationSpec = tween(300)) { fullHeight ->
+                        if (snackbarAlignment == Alignment.TopCenter) -fullHeight / 2 else fullHeight / 2
+                    },
             exit = fadeOut(animationSpec = tween(200)) +
-                slideOutVertically(animationSpec = tween(200)) { fullHeight ->
-                    if (snackbarAlignment == Alignment.TopCenter) -fullHeight / 2 else fullHeight / 2
-                },
+                    slideOutVertically(animationSpec = tween(200)) { fullHeight ->
+                        if (snackbarAlignment == Alignment.TopCenter) -fullHeight / 2 else fullHeight / 2
+                    },
             modifier = Modifier
                 .align(snackbarAlignment)
                 .then(
@@ -132,6 +135,7 @@ private fun SmsCheckerRoute() {
 
 @Composable
 private fun SmsCheckerApp(
+    bottomSheetStrategy: BottomSheetSceneStrategy<NavKey>,
     viewModel: MainViewModel,
 ) {
     NavDisplay(
@@ -141,6 +145,7 @@ private fun SmsCheckerApp(
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator()
         ),
+        sceneStrategies = listOf(bottomSheetStrategy),
         transitionSpec = {
             enterContentTransform(targetState.entries.lastOrNull()?.metadata?.get(NAV_TRANSITION_KEY))
         },
@@ -166,6 +171,7 @@ private fun enterContentTransform(navTransition: Any?): ContentTransform = when 
         initialContentExit = ExitTransition.None,
         targetContentZIndex = 1f,
     )
+
     else -> fadeIn() togetherWith fadeOut()
 }
 
@@ -179,5 +185,6 @@ private fun popContentTransform(navTransition: Any?): ContentTransform = when (n
         ) { it },
         targetContentZIndex = -1f,
     )
+
     else -> fadeIn() togetherWith fadeOut()
 }

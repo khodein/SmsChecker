@@ -15,17 +15,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.bottombar.widget.ListeningBottomBarWidget
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.config.widget.item
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.history.widget.items
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.state.ListeningState
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.widget.ListeningWidget
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.widget.notificationItem
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.toolbar.state.ListeningToolbarState
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.toolbar.widget.ListeningToolbarWidget
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.state.ListeningListAction
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.state.ListeningListState
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
+
+internal const val LISTENING_ANIMATION_DURATION = 1000
+internal fun listeningFadeSpec() = tween<Float>(LISTENING_ANIMATION_DURATION)
+internal fun listeningPlacementSpec() = tween<IntOffset>(LISTENING_ANIMATION_DURATION)
 
 @Composable
 internal fun ListeningListScreen(
@@ -76,6 +82,10 @@ private fun ListeningListContent(
         contentPadding = paddingValues.plus(SmsCheckerTheme.padding.verticalExtraSmall()),
         verticalArrangement = Arrangement.spacedBy(SmsCheckerTheme.padding.extraSmall())
     ) {
+        notificationItem(
+            notificationState = state.listeningState.notificationState,
+            onClickWarning = action.listeningAction.onClickWarning
+        )
         item(
             state = state.listeningConfigState,
             action = action.configAction

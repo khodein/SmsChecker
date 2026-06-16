@@ -6,6 +6,7 @@ import com.sms.checker.forwarder.feature.listening.domain.usecase.StopListeningU
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.mapper.ListeningMapper
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.state.ListeningAction
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.state.ListeningState
+import com.sms.checker.forwarder.feature.listening.router.ListeningRouter
 import com.sms.checker.forwarder.framework.block.Block
 
 internal class ListeningBlock(
@@ -13,6 +14,7 @@ internal class ListeningBlock(
     private val startListeningUseCase: StartListeningUseCase,
     private val stopListeningUseCase: StopListeningUseCase,
     private val getListeningUseCase: GetListeningUseCase,
+    private val listeningRouter: ListeningRouter,
 ) : Block<ListeningState, ListeningAction, ListeningBlock.Provider>() {
 
     var isListeningState: Boolean = false
@@ -26,7 +28,8 @@ internal class ListeningBlock(
 
     override val action = ListeningAction(
         onClickListening = ::onClickListening,
-        onPermissionListeningResult = ::onPermissionListeningResult
+        onPermissionListeningResult = ::onPermissionListeningResult,
+        onClickWarning = ::onClickWarning
     )
 
     override fun onUiStart() {
@@ -68,7 +71,8 @@ internal class ListeningBlock(
     private fun buildState(): ListeningState {
         return listeningMapper.map(
             isListening = isListeningState,
-            needPermissionState = needPermissionState,
+        ).copy(
+            needPermissionState = needPermissionState
         )
     }
 
@@ -76,6 +80,14 @@ internal class ListeningBlock(
         needPermissionState = null
         isGrantedPermissionState = isGranted
         updateBlockState()
+    }
+
+    private fun onClickWarning() {
+        val (title, description) = listeningMapper.getDialogText()
+        listeningRouter.gotoWarning(
+            title = title,
+            description = description,
+        )
     }
 
     interface Provider {

@@ -22,8 +22,10 @@ internal class ListeningHistoryMapper(
         }
     }
 
-    fun mapButton(): String {
-        return resProvider.getString(R.string.feature_listening_show_all_history)
+    fun mapAll(): ListeningHistoryState.All {
+        return ListeningHistoryState.All(
+            text = resProvider.getString(R.string.feature_listening_show_all_history)
+        )
     }
 
     fun mapEmpty(): ListeningHistoryState.Empty {

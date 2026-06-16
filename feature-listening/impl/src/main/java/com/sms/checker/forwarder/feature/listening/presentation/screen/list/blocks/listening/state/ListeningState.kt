@@ -6,9 +6,16 @@ import androidx.compose.runtime.Immutable
 internal data class ListeningState(
     val title: String,
     val description: String,
-    val needPermissionState: NeedPermissionState? = null,
     val isListening: Boolean,
+    val needPermissionState: NeedPermissionState? = null,
+    val notificationState: NotificationState? = null,
 ) {
     @Immutable
-    internal data object NeedPermissionState
+    data object NeedPermissionState
+
+    @Immutable
+    data class NotificationState(
+        val title: String,
+        val description: String,
+    )
 }

@@ -1,9 +1,9 @@
 package com.sms.checker.forwarder.framework.uikit
 
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,11 +15,7 @@ import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
 fun BottomSheetWidget(
     modifier: Modifier = Modifier,
     skipPartiallyExpanded: Boolean = true,
-    dragHandle: @Composable (() -> Unit)? = {
-        BottomSheetDefaults.DragHandle(
-            color = SmsCheckerTheme.color.outline
-        )
-    },
+    modalBottomSheetProperties: ModalBottomSheetProperties,
     onDismissRequest: () -> Unit,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -35,8 +31,8 @@ fun BottomSheetWidget(
         containerColor = SmsCheckerTheme.color.surface,
         contentColor = SmsCheckerTheme.color.onSurface,
         tonalElevation = 0.dp,
-        scrimColor = SmsCheckerTheme.color.onBackground.copy(alpha = 0.32f),
-        dragHandle = dragHandle,
+        properties = modalBottomSheetProperties,
+        dragHandle = null,
         content = content,
     )
 }

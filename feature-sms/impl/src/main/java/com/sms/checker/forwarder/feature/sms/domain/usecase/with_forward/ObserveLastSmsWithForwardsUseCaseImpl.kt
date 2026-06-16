@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 internal class ObserveLastSmsWithForwardsUseCaseImpl(
     private val repository: SmsRepository,
 ) : ObserveLastSmsWithForwardsUseCase {
-    override fun invoke(): Flow<List<SmsWithForwardsModel>> {
-        return repository.observeLastWithForwards()
+    override fun invoke(count: Int): Flow<List<SmsWithForwardsModel>> {
+        return repository.observeLastWithForwards(count)
     }
 }

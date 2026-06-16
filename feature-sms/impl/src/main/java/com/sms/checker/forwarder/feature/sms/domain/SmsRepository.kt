@@ -11,8 +11,8 @@ interface SmsRepository {
     suspend fun getById(id: Long): SmsModel
     suspend fun getByIdsWithForwards(ids: List<Long>): List<SmsWithForwardsModel>
     suspend fun getPageWithForwards(limit: Int, offset: Int): List<SmsWithForwardsModel>
-    suspend fun getLastWithForwards(): List<SmsWithForwardsModel>
-    fun observeLastWithForwards(): Flow<List<SmsWithForwardsModel>>
+    suspend fun getLastWithForwards(count: Int): List<SmsWithForwardsModel>
+    fun observeLastWithForwards(count: Int): Flow<List<SmsWithForwardsModel>>
     suspend fun setSmsForward(model: SmsForwardModel): Long
     suspend fun updateSmsForward(model: SmsForwardModel)
 }

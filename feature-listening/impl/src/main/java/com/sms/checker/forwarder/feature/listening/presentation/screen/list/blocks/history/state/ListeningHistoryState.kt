@@ -5,9 +5,9 @@ import com.sms.checker.forwarder.framework.Status
 
 @Immutable
 internal data class ListeningHistoryState(
-    val status: Status,
-    val button: String,
     val title: String,
+    val status: Status,
+    val all: All,
     val error: Error,
     val empty: Empty,
     val items: List<Item>,
@@ -18,6 +18,11 @@ internal data class ListeningHistoryState(
         val title: String,
         val date: String,
         val description: String,
+    )
+
+    @Immutable
+    data class All(
+        val text: String
     )
 
     @Immutable

@@ -9,6 +9,7 @@ import com.sms.checker.forwarder.feature.sms.domain.usecase.with_forward.Observe
 import com.sms.checker.forwarder.framework.Status
 import com.sms.checker.forwarder.framework.block.Block
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 internal class ListeningHistoryBlock(
@@ -43,7 +44,9 @@ internal class ListeningHistoryBlock(
 
     private fun startObservable() {
         blockScope?.launch {
-            observeLastSmsWithForwardsUseCase.invoke().collect(::updateSuccess)
+            observeLastSmsWithForwardsUseCase
+                .invoke(LAST_COUNT)
+                .collectLatest(::updateSuccess)
         }
     }
 
@@ -51,7 +54,7 @@ internal class ListeningHistoryBlock(
         return ListeningHistoryState(
             status = status,
             items = listeningHistoryMapper.mapItems(list),
-            button = listeningHistoryMapper.mapButton(),
+            all = listeningHistoryMapper.mapAll(),
             empty = listeningHistoryMapper.mapEmpty(),
             error = listeningHistoryMapper.mapError(),
             title = listeningHistoryMapper.mapTitle()
@@ -62,7 +65,7 @@ internal class ListeningHistoryBlock(
         loadJob?.cancel()
         loadJob = blockScope?.launch {
             runCatching {
-                getLastSmsWithForwardsUseCase.invoke()
+                getLastSmsWithForwardsUseCase.invoke(LAST_COUNT)
             }
                 .onSuccess(::updateSuccess)
                 .onFailure(::updateError)
@@ -91,5 +94,9 @@ internal class ListeningHistoryBlock(
 
     private fun onClickAll() {
 
+    }
+
+    private companion object {
+        const val LAST_COUNT = 3
     }
 }

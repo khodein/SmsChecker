@@ -1,6 +1,5 @@
 package com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.history.widget
 
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,11 +20,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.history.state.ListeningHistoryAction
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.history.state.ListeningHistoryEvent
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.history.state.ListeningHistoryState
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.listeningFadeSpec
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.listeningPlacementSpec
 import com.sms.checker.forwarder.framework.Status
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
 import com.sms.checker.forwarder.framework.uikit.DefaultButtonWidget
@@ -44,15 +44,11 @@ private const val LISTENING_HISTORY_ALL_CONTENT_TYPE = "LISTENING_HISTORY_ALL_CO
 private const val LISTENING_HISTORY_TITLE_KEY = "LISTENING_HISTORY_TITLE_KEY"
 private const val LISTENING_HISTORY_TITLE_CONTENT_TYPE = "LISTENING_HISTORY_TITLE_CONTENT_TYPE"
 
-private const val LISTENING_HISTORY_ANIMATION_DURATION = 1000
+
 
 internal fun ListeningHistoryEvent.onEvent(snackbarHostState: SnackbarHostState) {
 
 }
-
-private fun listeningHistoryFadeSpec() = tween<Float>(LISTENING_HISTORY_ANIMATION_DURATION)
-
-private fun listeningHistoryPlacementSpec() = tween<IntOffset>(LISTENING_HISTORY_ANIMATION_DURATION)
 
 internal fun LazyListScope.items(
     state: ListeningHistoryState,
@@ -86,9 +82,9 @@ private fun LazyListScope.titleItem(
     ) {
         ListeningHistoryTitleWidget(
             modifier = Modifier.animateItem(
-                fadeInSpec = listeningHistoryFadeSpec(),
-                fadeOutSpec = listeningHistoryFadeSpec(),
-                placementSpec = listeningHistoryPlacementSpec(),
+                fadeInSpec = listeningFadeSpec(),
+                fadeOutSpec = listeningFadeSpec(),
+                placementSpec = listeningPlacementSpec(),
             ),
             title = title
         )
@@ -105,9 +101,9 @@ private fun LazyListScope.errorItem(
     ) {
         ListeningHistoryErrorWidget(
             modifier = Modifier.animateItem(
-                fadeInSpec = listeningHistoryFadeSpec(),
-                fadeOutSpec = listeningHistoryFadeSpec(),
-                placementSpec = listeningHistoryPlacementSpec(),
+                fadeInSpec = listeningFadeSpec(),
+                fadeOutSpec = listeningFadeSpec(),
+                placementSpec = listeningPlacementSpec(),
             ),
             error = state.error,
             onClickReload = action.onClickReload
@@ -125,7 +121,7 @@ private fun LazyListScope.successItem(
         emptyItem(state.empty)
     } else {
         allItem(
-            all = state.button,
+            all = state.all,
             onClickAll = action.onClickAll
         )
 
@@ -136,9 +132,9 @@ private fun LazyListScope.successItem(
         ) { item ->
             ListeningHistoryWidget(
                 modifier = Modifier.animateItem(
-                    fadeInSpec = listeningHistoryFadeSpec(),
-                    fadeOutSpec = listeningHistoryFadeSpec(),
-                    placementSpec = listeningHistoryPlacementSpec(),
+                    fadeInSpec = listeningFadeSpec(),
+                    fadeOutSpec = listeningFadeSpec(),
+                    placementSpec = listeningPlacementSpec(),
                 ),
                 item = item,
                 onClickItem = action.onClickItem,
@@ -156,9 +152,9 @@ private fun LazyListScope.emptyItem(
     ) {
         ListeningHistoryEmptyWidget(
             modifier = Modifier.animateItem(
-                fadeInSpec = listeningHistoryFadeSpec(),
-                fadeOutSpec = listeningHistoryFadeSpec(),
-                placementSpec = listeningHistoryPlacementSpec(),
+                fadeInSpec = listeningFadeSpec(),
+                fadeOutSpec = listeningFadeSpec(),
+                placementSpec = listeningPlacementSpec(),
             ),
             empty = empty
         )
@@ -166,7 +162,7 @@ private fun LazyListScope.emptyItem(
 }
 
 private fun LazyListScope.allItem(
-    all: String,
+    all: ListeningHistoryState.All,
     onClickAll: () -> Unit
 ) {
     item(
@@ -175,9 +171,9 @@ private fun LazyListScope.allItem(
     ) {
         ListeningHistoryAllWidget(
             modifier = Modifier.animateItem(
-                fadeInSpec = listeningHistoryFadeSpec(),
-                fadeOutSpec = listeningHistoryFadeSpec(),
-                placementSpec = listeningHistoryPlacementSpec(),
+                fadeInSpec = listeningFadeSpec(),
+                fadeOutSpec = listeningFadeSpec(),
+                placementSpec = listeningPlacementSpec(),
             ),
             all = all,
             onClickAll = onClickAll,
@@ -304,7 +300,7 @@ internal fun ListeningHistoryWidget(
 @Composable
 private fun ListeningHistoryAllWidget(
     modifier: Modifier = Modifier,
-    all: String,
+    all: ListeningHistoryState.All,
     onClickAll: () -> Unit
 ) {
     Row(
@@ -324,7 +320,7 @@ private fun ListeningHistoryAllWidget(
             style = SmsCheckerTheme.typography.bodySmall,
             color = SmsCheckerTheme.color.onSurfaceVariant,
             textAlign = TextAlign.Start,
-            text = all
+            text = all.text
         )
         Icon(
             modifier = Modifier

@@ -33,6 +33,6 @@ interface SmsDao {
     suspend fun getPageWithForwards(limit: Int, offset: Int): List<SmsWithForwardsEntity>
 
     @Transaction
-    @Query("SELECT * FROM sms_table ORDER BY timestamp DESC LIMIT 5")
-    suspend fun getLastWithForwards(): List<SmsWithForwardsEntity>
+    @Query("SELECT * FROM sms_table ORDER BY timestamp DESC LIMIT :count")
+    suspend fun getLastWithForwards(count: Int): List<SmsWithForwardsEntity>
 }

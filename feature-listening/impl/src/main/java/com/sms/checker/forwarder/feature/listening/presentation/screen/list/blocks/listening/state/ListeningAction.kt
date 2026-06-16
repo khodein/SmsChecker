@@ -6,4 +6,5 @@ import androidx.compose.runtime.Immutable
 internal data class ListeningAction(
     val onClickListening: (isListening: Boolean) -> Unit,
     val onPermissionListeningResult: (isGranted: Boolean) -> Unit,
+    val onClickWarning: () -> Unit,
 )

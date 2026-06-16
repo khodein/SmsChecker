@@ -45,14 +45,14 @@ internal class SmsRepositoryImpl(
         return dao.getPageWithForwards(limit, offset).map(smsDataMapper::toModel)
     }
 
-    override suspend fun getLastWithForwards(): List<SmsWithForwardsModel> {
-        return dao.getLastWithForwards().map(smsDataMapper::toModel)
+    override suspend fun getLastWithForwards(count: Int): List<SmsWithForwardsModel> {
+        return dao.getLastWithForwards(count).map(smsDataMapper::toModel)
     }
 
-    override fun observeLastWithForwards(): Flow<List<SmsWithForwardsModel>> {
+    override fun observeLastWithForwards(count: Int): Flow<List<SmsWithForwardsModel>> {
         return database.invalidationTracker
             .createFlow(SmsEntity.TABLE_NAME, SmsForwardEntity.TABLE_NAME, emitInitialState = true)
-            .map { dao.getLastWithForwards().map(smsDataMapper::toModel) }
+            .map { dao.getLastWithForwards(count).map(smsDataMapper::toModel) }
     }
 
     override suspend fun setSmsForward(model: SmsForwardModel): Long {

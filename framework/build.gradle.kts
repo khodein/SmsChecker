@@ -3,6 +3,7 @@ plugins {
     id("smschecker.android.core")
     id("smschecker.android.compose")
     id("smschecker.detekt")
+    id("smschecker.android.navigation3")
 }
 
 android {
