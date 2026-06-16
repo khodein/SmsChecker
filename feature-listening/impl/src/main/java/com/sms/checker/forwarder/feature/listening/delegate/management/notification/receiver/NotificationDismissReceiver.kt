@@ -13,7 +13,7 @@ internal class NotificationDismissReceiver(
         onDismissed.invoke()
     }
 
-    private companion object {
+    companion object {
         const val ACTION_NOTIFICATION_DISMISSED =
             "com.sms.checker.forwarder.feature.listening.ACTION_NOTIFICATION_DISMISSED"
     }

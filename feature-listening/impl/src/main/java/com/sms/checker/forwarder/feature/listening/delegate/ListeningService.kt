@@ -74,7 +74,7 @@ internal class ListeningService : Service(),
     }
 
     override fun onNotificationDismissed() {
-        if (_isRunning.value) {
+        if (isRunning.value) {
             startService()
         }
     }

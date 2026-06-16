@@ -52,7 +52,7 @@ internal class ListeningNotificationDelegate(
             ContextCompat.registerReceiver(
                 context,
                 it,
-                IntentFilter(ACTION_NOTIFICATION_DISMISSED),
+                IntentFilter(NotificationDismissReceiver.ACTION_NOTIFICATION_DISMISSED),
                 ContextCompat.RECEIVER_NOT_EXPORTED
             )
         }
@@ -82,7 +82,8 @@ internal class ListeningNotificationDelegate(
     }
 
     private fun getDeletePendingIntent(): PendingIntent {
-        val intent = Intent(ACTION_NOTIFICATION_DISMISSED).setPackage(context.packageName)
+        val intent = Intent(NotificationDismissReceiver.ACTION_NOTIFICATION_DISMISSED)
+            .setPackage(context.packageName)
         return PendingIntent.getBroadcast(
             context,
             DISMISS_REQUEST_CODE,
@@ -101,8 +102,6 @@ internal class ListeningNotificationDelegate(
 
     private companion object {
         const val CHANNEL_ID = "sms_listening_notification_channel"
-        const val ACTION_NOTIFICATION_DISMISSED =
-            "com.sms.checker.forwarder.feature.listening.ACTION_NOTIFICATION_DISMISSED"
         const val DISMISS_REQUEST_CODE = 1002
     }
 }
