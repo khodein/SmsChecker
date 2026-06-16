@@ -10,30 +10,32 @@ import com.sms.checker.forwarder.framework.tools.res.ResProvider
 internal class ListeningConfigMapper(
     private val resProvider: ResProvider,
 ) {
-    fun mapEmptyConfigState(): ListeningConfigState {
-        return ListeningConfigState.EmptyConfig(
-            title = resProvider.getString(R.string.feature_listening_empty_configs),
-            actionText = resProvider.getString(R.string.feature_listening_add_config),
-        )
-    }
-
-    fun mapItemsConfigState(
+    fun map(
         smtpList: List<SmtpEmailModel>
     ): ListeningConfigState {
-        return ListeningConfigState.ItemsConfig(
-            title = resProvider.getString(R.string.feature_listening_config_apply),
+        return ListeningConfigState(
+            title = getTitle(smtpList.isEmpty()),
+            actionText = resProvider.getString(R.string.feature_listening_add_config),
             items = buildList {
                 addAll(mapSmtpItemsConfigState(smtpList))
             }
         )
     }
 
+    private fun getTitle(isEmpty: Boolean): String {
+        return if (isEmpty) {
+            resProvider.getString(R.string.feature_listening_empty_configs)
+        } else {
+            resProvider.getString(R.string.feature_listening_config_apply)
+        }
+    }
+
     private fun mapSmtpItemsConfigState(
         smtpList: List<SmtpEmailModel>
-    ): List<ListeningConfigState.ItemsConfig.Item> {
+    ): List<ListeningConfigState.Item> {
         return smtpList.mapNotNull { model ->
             val id = model.id ?: return@mapNotNull null
-            ListeningConfigState.ItemsConfig.Item(
+            ListeningConfigState.Item(
                 id = id,
                 name = model.name,
                 type = ListeningConfigState.ConfigType.SMTP,

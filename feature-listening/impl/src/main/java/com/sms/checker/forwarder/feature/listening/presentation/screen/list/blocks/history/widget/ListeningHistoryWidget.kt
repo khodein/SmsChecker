@@ -1,5 +1,6 @@
 package com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.history.widget
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.history.state.ListeningHistoryAction
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.history.state.ListeningHistoryEvent
@@ -39,64 +41,61 @@ private const val LISTENING_HISTORY_EMPTY_CONTENT_TYPE = "LISTENING_HISTORY_EMPT
 private const val LISTENING_HISTORY_ALL_KEY = "LISTENING_HISTORY_ALL_KEY"
 private const val LISTENING_HISTORY_ALL_CONTENT_TYPE = "LISTENING_HISTORY_ALL_CONTENT_TYPE"
 
+private const val LISTENING_HISTORY_TITLE_KEY = "LISTENING_HISTORY_TITLE_KEY"
+private const val LISTENING_HISTORY_TITLE_CONTENT_TYPE = "LISTENING_HISTORY_TITLE_CONTENT_TYPE"
+
+private const val LISTENING_HISTORY_ANIMATION_DURATION = 1000
+
 internal fun ListeningHistoryEvent.onEvent(snackbarHostState: SnackbarHostState) {
 
 }
 
-internal fun LazyListScope.item(
-    state: ListeningHistoryState,
-    action: ListeningHistoryAction,
-) {
-    when (state.status) {
-        Status.IDLE -> Unit
-        else -> items(
-            state = state,
-            action = action,
-        )
-    }
-}
+private fun listeningHistoryFadeSpec() = tween<Float>(LISTENING_HISTORY_ANIMATION_DURATION)
 
-private fun LazyListScope.items(
+private fun listeningHistoryPlacementSpec() = tween<IntOffset>(LISTENING_HISTORY_ANIMATION_DURATION)
+
+internal fun LazyListScope.items(
     state: ListeningHistoryState,
     action: ListeningHistoryAction,
 ) {
     when (state.status) {
         Status.ERROR -> {
-            loadingItem(
+            errorItem(
                 state = state,
                 action = action
             )
         }
 
         Status.SUCCESS -> {
-            if (state.items.isEmpty()) {
-                emptyItem(state.empty)
-            } else {
-                items(
-                    items = state.items,
-                    key = { it.id },
-                    contentType = { LISTENING_HISTORY_ITEM_CONTENT_TYPE }
-                ) { item ->
-                    ListeningHistoryWidget(
-                        item = item,
-                        onClickItem = action.onClickItem,
-                    )
-                }
-
-                if (state.items.isNotEmpty()) {
-                    allItem(
-                        all = state.button,
-                        onClickAll = action.onClickAll
-                    )
-                }
-            }
+            successItem(
+                state = state,
+                action = action
+            )
         }
 
-        Status.IDLE, Status.LOADING -> Unit
+        else -> Unit
     }
 }
 
-private fun LazyListScope.loadingItem(
+private fun LazyListScope.titleItem(
+    title: String
+) {
+    item(
+        key = LISTENING_HISTORY_TITLE_KEY,
+        contentType = LISTENING_HISTORY_TITLE_CONTENT_TYPE
+    ) {
+        ListeningHistoryTitleWidget(
+            modifier = Modifier.animateItem(
+                fadeInSpec = listeningHistoryFadeSpec(),
+                fadeOutSpec = listeningHistoryFadeSpec(),
+                placementSpec = listeningHistoryPlacementSpec(),
+            ),
+            title = title
+        )
+    }
+}
+
+private fun LazyListScope.errorItem(
     state: ListeningHistoryState,
     action: ListeningHistoryAction,
 ) {
@@ -105,9 +104,46 @@ private fun LazyListScope.loadingItem(
         contentType = LISTENING_HISTORY_STATUS_CONTENT_TYPE
     ) {
         ListeningHistoryErrorWidget(
+            modifier = Modifier.animateItem(
+                fadeInSpec = listeningHistoryFadeSpec(),
+                fadeOutSpec = listeningHistoryFadeSpec(),
+                placementSpec = listeningHistoryPlacementSpec(),
+            ),
             error = state.error,
             onClickReload = action.onClickReload
         )
+    }
+}
+
+private fun LazyListScope.successItem(
+    state: ListeningHistoryState,
+    action: ListeningHistoryAction,
+) {
+    titleItem(state.title)
+
+    if (state.items.isEmpty()) {
+        emptyItem(state.empty)
+    } else {
+        allItem(
+            all = state.button,
+            onClickAll = action.onClickAll
+        )
+
+        items(
+            items = state.items,
+            key = { it.id },
+            contentType = { LISTENING_HISTORY_ITEM_CONTENT_TYPE }
+        ) { item ->
+            ListeningHistoryWidget(
+                modifier = Modifier.animateItem(
+                    fadeInSpec = listeningHistoryFadeSpec(),
+                    fadeOutSpec = listeningHistoryFadeSpec(),
+                    placementSpec = listeningHistoryPlacementSpec(),
+                ),
+                item = item,
+                onClickItem = action.onClickItem,
+            )
+        }
     }
 }
 
@@ -118,7 +154,14 @@ private fun LazyListScope.emptyItem(
         key = LISTENING_HISTORY_EMPTY_KEY,
         contentType = LISTENING_HISTORY_EMPTY_CONTENT_TYPE
     ) {
-        ListeningHistoryEmptyWidget(empty = empty)
+        ListeningHistoryEmptyWidget(
+            modifier = Modifier.animateItem(
+                fadeInSpec = listeningHistoryFadeSpec(),
+                fadeOutSpec = listeningHistoryFadeSpec(),
+                placementSpec = listeningHistoryPlacementSpec(),
+            ),
+            empty = empty
+        )
     }
 }
 
@@ -131,6 +174,11 @@ private fun LazyListScope.allItem(
         contentType = LISTENING_HISTORY_ALL_CONTENT_TYPE
     ) {
         ListeningHistoryAllWidget(
+            modifier = Modifier.animateItem(
+                fadeInSpec = listeningHistoryFadeSpec(),
+                fadeOutSpec = listeningHistoryFadeSpec(),
+                placementSpec = listeningHistoryPlacementSpec(),
+            ),
             all = all,
             onClickAll = onClickAll,
         )
@@ -142,33 +190,35 @@ private fun ListeningHistoryEmptyWidget(
     modifier: Modifier = Modifier,
     empty: ListeningHistoryState.Empty,
 ) {
-    Column(
+    Text(
         modifier = modifier
             .fillMaxWidth()
             .background(
                 color = SmsCheckerTheme.color.surface,
                 shape = SmsCheckerTheme.corner.all()
             )
-            .padding(SmsCheckerTheme.padding.allMedium())
-    ) {
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = SmsCheckerTheme.padding.small())
-                .align(Alignment.CenterHorizontally),
-            text = empty.title,
-            textAlign = TextAlign.Start,
-            style = SmsCheckerTheme.typography.bodyLarge,
-            color = SmsCheckerTheme.color.onSurface
-        )
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = empty.text,
-            textAlign = TextAlign.Center,
-            style = SmsCheckerTheme.typography.bodyMedium,
-            color = SmsCheckerTheme.color.onSurfaceVariant,
-        )
-    }
+            .padding(SmsCheckerTheme.padding.allMedium()),
+        text = empty.text,
+        textAlign = TextAlign.Center,
+        style = SmsCheckerTheme.typography.bodyMedium,
+        color = SmsCheckerTheme.color.onSurfaceVariant,
+    )
+}
+
+@Composable
+private fun ListeningHistoryTitleWidget(
+    modifier: Modifier = Modifier,
+    title: String,
+) {
+    Text(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(SmsCheckerTheme.padding.verticalSmall()),
+        text = title,
+        textAlign = TextAlign.Center,
+        style = SmsCheckerTheme.typography.bodyLarge,
+        color = SmsCheckerTheme.color.onSurface
+    )
 }
 
 @Composable
@@ -253,11 +303,12 @@ internal fun ListeningHistoryWidget(
 
 @Composable
 private fun ListeningHistoryAllWidget(
+    modifier: Modifier = Modifier,
     all: String,
     onClickAll: () -> Unit
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(
                 color = SmsCheckerTheme.color.surface,

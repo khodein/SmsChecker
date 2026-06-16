@@ -43,9 +43,7 @@ internal class ListeningHistoryBlock(
 
     private fun startObservable() {
         blockScope?.launch {
-            observeLastSmsWithForwardsUseCase.invoke().collect {
-                load()
-            }
+            observeLastSmsWithForwardsUseCase.invoke().collect(::updateSuccess)
         }
     }
 
@@ -55,7 +53,8 @@ internal class ListeningHistoryBlock(
             items = listeningHistoryMapper.mapItems(list),
             button = listeningHistoryMapper.mapButton(),
             empty = listeningHistoryMapper.mapEmpty(),
-            error = listeningHistoryMapper.mapError()
+            error = listeningHistoryMapper.mapError(),
+            title = listeningHistoryMapper.mapTitle()
         )
     }
 

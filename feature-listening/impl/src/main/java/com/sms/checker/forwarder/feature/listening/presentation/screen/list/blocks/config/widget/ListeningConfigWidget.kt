@@ -1,5 +1,9 @@
 package com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.config.widget
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -13,6 +17,11 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -30,6 +39,7 @@ import com.sms.checker.forwarder.framework.uikit.showAppSnackBar
 
 private const val LISTENING_CONFIG_KEY = "ListeningConfigKey"
 private const val LISTENING_CONFIG_CONTENT_TYPE = "ListeningConfigContentType"
+private const val LISTENING_CONFIG_APPEARANCE_ANIMATION_DURATION = 300
 
 internal suspend fun ListeningConfigEvent.onEvent(
     snackbarHostState: SnackbarHostState,
@@ -54,15 +64,30 @@ internal fun LazyListScope.item(
     state: ListeningConfigState,
     action: ListeningConfigAction,
 ) {
-    if (state is ListeningConfigState.None) return
     item(
         key = LISTENING_CONFIG_KEY,
         contentType = LISTENING_CONFIG_CONTENT_TYPE
     ) {
-        ListeningConfigWidget(
-            state = state,
-            action = action,
-        )
+        var isVisible by rememberSaveable { mutableStateOf(false) }
+
+        LaunchedEffect(Unit) {
+            isVisible = true
+        }
+
+        AnimatedVisibility(
+            visible = isVisible,
+            enter = fadeIn(
+                animationSpec = tween(LISTENING_CONFIG_APPEARANCE_ANIMATION_DURATION)
+            ) + expandVertically(
+                animationSpec = tween(LISTENING_CONFIG_APPEARANCE_ANIMATION_DURATION)
+            )
+        ) {
+            ListeningConfigWidget(
+                modifier = Modifier,
+                state = state,
+                action = action,
+            )
+        }
     }
 }
 
@@ -81,24 +106,18 @@ internal fun ListeningConfigWidget(
             )
             .padding(SmsCheckerTheme.padding.allNormal())
     ) {
-        when (state) {
-            is ListeningConfigState.EmptyConfig -> {
-                ListeningConfigEmptyWidget(
-                    title = state.title,
-                    caption = state.actionText,
-                    onClickEmpty = action.onClickEmpty
-                )
-            }
-
-            is ListeningConfigState.ItemsConfig -> {
-                ListeningConfigListWidget(
-                    title = state.title,
-                    items = state.items,
-                    action = action,
-                )
-            }
-
-            else -> Unit
+        if (state.items.isEmpty()) {
+            ListeningConfigEmptyWidget(
+                title = state.title,
+                caption = state.actionText,
+                onClickEmpty = action.onClickEmpty
+            )
+        } else {
+            ListeningConfigListWidget(
+                title = state.title,
+                items = state.items,
+                action = action,
+            )
         }
     }
 }
@@ -106,7 +125,7 @@ internal fun ListeningConfigWidget(
 @Composable
 private fun ColumnScope.ListeningConfigListWidget(
     title: String,
-    items: List<ListeningConfigState.ItemsConfig.Item>,
+    items: List<ListeningConfigState.Item>,
     action: ListeningConfigAction,
 ) {
     Text(
@@ -152,7 +171,7 @@ private fun ColumnScope.ListeningConfigListWidget(
 @Composable
 private fun ListeningConfigItemWidget(
     modifier: Modifier,
-    item: ListeningConfigState.ItemsConfig.Item,
+    item: ListeningConfigState.Item,
     onChangeConfig: (isStatus: Boolean) -> Unit
 ) {
     Row(

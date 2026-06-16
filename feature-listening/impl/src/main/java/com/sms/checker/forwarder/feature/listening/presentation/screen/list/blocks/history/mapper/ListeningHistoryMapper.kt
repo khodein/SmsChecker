@@ -29,8 +29,11 @@ internal class ListeningHistoryMapper(
     fun mapEmpty(): ListeningHistoryState.Empty {
         return ListeningHistoryState.Empty(
             text = resProvider.getString(R.string.feature_listening_empty_history),
-            title = resProvider.getString(R.string.feature_listening_history_title)
         )
+    }
+
+    fun mapTitle(): String {
+        return resProvider.getString(R.string.feature_listening_history_title)
     }
 
     fun mapError(): ListeningHistoryState.Error {

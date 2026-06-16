@@ -7,6 +7,7 @@ import com.sms.checker.forwarder.framework.Status
 internal data class ListeningHistoryState(
     val status: Status,
     val button: String,
+    val title: String,
     val error: Error,
     val empty: Empty,
     val items: List<Item>,
@@ -28,6 +29,5 @@ internal data class ListeningHistoryState(
     @Immutable
     data class Empty(
         val text: String,
-        val title: String
     )
 }

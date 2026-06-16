@@ -36,7 +36,7 @@ internal class ListeningConfigBlock(
     )
 
     override fun getInitialUiState(): ListeningConfigState {
-        return ListeningConfigState.None
+        return buildState()
     }
 
     override fun updateBlockState() {
@@ -44,11 +44,7 @@ internal class ListeningConfigBlock(
     }
 
     private fun buildState(): ListeningConfigState {
-        return if (smtpList.isEmpty()) {
-            listeningConfigMapper.mapEmptyConfigState()
-        } else {
-            listeningConfigMapper.mapItemsConfigState(smtpList)
-        }
+        return listeningConfigMapper.map(smtpList)
     }
 
     override fun onUiStart() {

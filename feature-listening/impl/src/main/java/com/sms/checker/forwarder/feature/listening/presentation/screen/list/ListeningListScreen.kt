@@ -14,9 +14,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.unit.dp
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.bottombar.widget.ListeningBottomBarWidget
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.config.widget.item
-import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.history.widget.item
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.history.widget.items
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.state.ListeningState
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.widget.ListeningWidget
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.toolbar.state.ListeningToolbarState
@@ -78,7 +80,7 @@ private fun ListeningListContent(
             state = state.listeningConfigState,
             action = action.configAction
         )
-        item(
+        items(
             state = state.listeningHistoryState,
             action = action.historyAction
         )
@@ -95,6 +97,7 @@ internal fun ListeningListAppBarWidget(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .shadow(6.dp)
             .background(
                 color = SmsCheckerTheme.color.surface,
                 shape = SmsCheckerTheme.corner.bottom()
