@@ -1,13 +1,18 @@
 import com.android.build.api.dsl.ApplicationExtension
-import org.gradle.api.JavaVersion
 
 plugins {
     id("com.android.application")
 }
 
-val appVersionMajor = providers.gradleProperty("app.version.major").get().toInt()
-val appVersionMinor = providers.gradleProperty("app.version.minor").get().toInt()
-val appVersionPatch = providers.gradleProperty("app.version.patch").get().toInt()
+object AppVersion {
+    private val major = providers.gradleProperty("app.version.major").get().toInt()
+    private val minor = providers.gradleProperty("app.version.minor").get().toInt()
+    private val patch = providers.gradleProperty("app.version.patch").get().toInt()
+
+    val versionName = "$major.$minor.$patch"
+    val versionCode = providers.gradleProperty("app.version.code").get().toInt()
+}
+
 val isReleaseMinifyEnabled = providers.gradleProperty("app.release.minify")
     .map(String::toBoolean)
     .getOrElse(false)
@@ -20,8 +25,8 @@ extensions.configure<ApplicationExtension>("android") {
     defaultConfig {
         minSdk = 28
         targetSdk = 37
-        versionCode = 1
-        versionName = "$appVersionMajor.$appVersionMinor.$appVersionPatch"
+        versionCode = AppVersion.versionCode
+        versionName = AppVersion.versionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
