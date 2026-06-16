@@ -12,6 +12,7 @@ import com.sms.checker.forwarder.feature.sms.delegate.SmsBroadcastDelegate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,19 +24,21 @@ internal class ListeningService : Service(),
     SmsBroadcastDelegate.Provider,
     ListeningNotificationDelegate.Provider {
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private var scope: CoroutineScope? = null
     private val listeningNotificationDelegate by inject<ListeningNotificationDelegate>()
     private val listeningSendingDelegate by inject<ListeningSendingDelegate>()
     private val smsBroadcastDelegate by inject<SmsBroadcastDelegate>()
 
     override fun onCreate() {
         super.onCreate()
+        scope = CoroutineScope(SupervisorJob() + Dispatchers.Default).also {
+            smsBroadcastDelegate.onCreate(
+                scope = it,
+                provider = this@ListeningService
+            )
+            listeningSendingDelegate.onCreate(scope = it)
+        }
         listeningNotificationDelegate.onCreate(this)
-        smsBroadcastDelegate.onCreate(
-            scope = scope,
-            provider = this
-        )
-        listeningSendingDelegate.onCreate(scope = scope)
         _isRunning.value = true
     }
 
@@ -65,6 +68,8 @@ internal class ListeningService : Service(),
         smsBroadcastDelegate.onDestroy()
         listeningNotificationDelegate.onDestroy()
         listeningSendingDelegate.onDestroy()
+        scope?.cancel()
+        scope = null
         _isRunning.value = false
         stopForeground(STOP_FOREGROUND_REMOVE)
     }
