@@ -22,19 +22,8 @@ internal class ListeningNotificationDelegate(
     private var notificationReceiver: NotificationDismissReceiver? = null
     private var provider: Provider? = null
 
-    fun onCreate(provider: Provider) {
-        this.provider = provider
-        createNotificationChannel()
-        registerReceiver()
-    }
-
-    fun onDestroy() {
-        unregisterReceiver()
-        provider = null
-    }
-
-    fun getNotification(): Notification {
-        return NotificationCompat.Builder(context, CHANNEL_ID)
+    val notification: Notification
+        get() = NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle(resProvider.getString(R.string.feature_listening_notification_title))
             .setContentText(resProvider.getString(R.string.feature_listening_notification_text))
             .setSmallIcon(R.drawable.ic_notification_listening_circle)
@@ -44,6 +33,16 @@ internal class ListeningNotificationDelegate(
             .setPriority(PRIORITY_HIGH)
             .setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE)
             .build()
+
+    fun onCreate(provider: Provider) {
+        this.provider = provider
+        createNotificationChannel()
+        registerReceiver()
+    }
+
+    fun onDestroy() {
+        unregisterReceiver()
+        provider = null
     }
 
     private fun registerReceiver() {

@@ -50,16 +50,15 @@ internal class ListeningService : Service(),
     override fun onBind(intent: Intent?): IBinder? = null
 
     private fun startService() {
-        val notification = listeningNotificationDelegate.getNotification()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             ServiceCompat.startForeground(
                 this,
                 NOTIFICATION_ID,
-                notification,
+                listeningNotificationDelegate.notification,
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
             )
         } else {
-            startForeground(NOTIFICATION_ID, notification)
+            startForeground(NOTIFICATION_ID, listeningNotificationDelegate.notification)
         }
     }
 
