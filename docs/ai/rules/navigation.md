@@ -55,6 +55,9 @@ feature-<name>/
 ## Rules
 - Создавай интерфейс `XRouter` в `api/router/XRouter.kt`. Он `public`.
 - Описывай методы `XRouter` в терминах действий пользователя: `gotoXList()`, `gotoXDetail(id: Long)`, `gotoXEdit(id: Long? = null)`. Имя — `goto<Screen>`.
+- Не добавляй в `XRouter` метод `goBack()` только ради обёртки над корневым `Router.goBack()`. Для
+  возврата используй `Router.goBack()` напрямую из класса, где уже есть
+  `private val router: Router`.
 - Создавай `XRouterImpl` в `impl/router/XRouterImpl.kt` как `internal class`, принимающий корневой `Router` через конструктор. В методах создавай нужный `NavKey` и вызывай `router.goTo(key)` или `router.goBack()`.
 - Создавай `XProviderImpl` в `impl/router/XProviderImpl.kt` как `internal class XProviderImpl : Router.Provider`. Возвращай из `invoke()` лямбду, где регистрируешь `entry<XScreenKey>` для каждого экрана фичи.
 - Создавай `XScreenKey` в `impl/presentation/route/<screen>/XScreenKey.kt` как `internal @Serializable data class XScreenKey(...) : NavKey` (или `internal @Serializable object XScreenKey : NavKey`, если параметры не нужны).
@@ -73,6 +76,8 @@ feature-<name>/
 - Делай `XRouterImpl` и `XProviderImpl` `internal class` в `impl/router/`.
 - Делай `XScreenKey` `internal @Serializable data class` (или `object`) в `impl/presentation/route/<screen>/`.
 - Называй методы `XRouter` по шаблону `goto<Screen>(...)`.
+- Оставляй в `XRouter` только методы перехода на экраны фичи; возврат назад выполняй через корневой
+  `Router.goBack()`.
 - Возвращай из `XProviderImpl.invoke()` лямбду, регистрирующую все экраны фичи через `entry<XKey> { koinViewModel<XViewModel>().let { vm -> XRoute(viewModel = vm) } }`.
 - Регистрируй `singleOf(::XProviderImpl) bind Router.Provider::class` в `XModule`, чтобы `app` подхватил его через `getAll<Router.Provider>()`.
 - Передавай параметры экрана через свойства `NavKey` (id, query, режим открытия) — они сериализуются.
@@ -81,6 +86,8 @@ feature-<name>/
 
 ## Don't
 - Не размещай `XRouter` interface в `impl` — он должен быть доступен другим фичам через `api`.
+- Не добавляй в `XRouter` метод `goBack()`, если он просто вызывает `Router.goBack()` без
+  feature-specific логики.
 - Не размещай `NavKey`, `XRouterImpl`, `XProviderImpl` как `private` classes внутри `object XModule` — это устаревший паттерн. Используй отдельные файлы с модификатором `internal`.
 - Не размещай `NavKey` в `api` — он принадлежит реализации фичи и не должен быть видим снаружи.
 - Не создавай `NavKey` без `@Serializable`.
@@ -180,6 +187,16 @@ internal class XRouterImpl(
 ) : XRouter {
     override fun gotoXList() = router.goTo(XListKey)
     override fun gotoXEdit(id: Long?) = router.goTo(XEditKey(id = id))
+}
+
+// Для возврата не добавляй goBack() в XRouter.
+// Используй корневой Router там, где обрабатывается действие назад:
+internal class XEditViewModel(
+    private val router: Router,
+) {
+    private fun onClickBack() {
+        router.goBack()
+    }
 }
 
 // impl/presentation/route/list/XListKey.kt

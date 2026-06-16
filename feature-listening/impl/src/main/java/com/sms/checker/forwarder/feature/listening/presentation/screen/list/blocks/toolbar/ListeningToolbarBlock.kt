@@ -3,10 +3,12 @@ package com.sms.checker.forwarder.feature.listening.presentation.screen.list.blo
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.toolbar.mapper.ListeningToolbarMapper
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.toolbar.state.ListeningToolbarAction
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.toolbar.state.ListeningToolbarState
+import com.sms.checker.forwarder.feature.settings.router.SettingsRouter
 import com.sms.checker.forwarder.framework.block.Block
 
 internal class ListeningToolbarBlock(
     private val listeningToolbarMapper: ListeningToolbarMapper,
+    private val settingsRouter: SettingsRouter,
 ) : Block<ListeningToolbarState, ListeningToolbarAction, Unit>() {
 
     override val action = ListeningToolbarAction(
@@ -17,11 +19,9 @@ internal class ListeningToolbarBlock(
         return listeningToolbarMapper.map()
     }
 
-    override fun updateBlockState() {
-
-    }
+    override fun updateBlockState() = Unit
 
     private fun onClickSettings() {
-
+        settingsRouter.gotoSettings()
     }
 }

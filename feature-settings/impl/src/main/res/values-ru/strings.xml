@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_settings_list_title">Настройки</string>
+    <string name="feature_settings_list_empty_title">Настроек пока нет</string>
+    <string name="feature_settings_list_empty_description">Настройки появятся здесь, когда будут добавлены</string>
+</resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_settings_list_title">Параметрлер</string>
+    <string name="feature_settings_list_empty_title">Әзірге параметрлер жоқ</string>
+    <string name="feature_settings_list_empty_description">Параметрлер қосылған кезде осында пайда болады</string>
+</resources>

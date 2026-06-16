@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_settings_list_title">Settings</string>
+    <string name="feature_settings_list_empty_title">No settings yet</string>
+    <string name="feature_settings_list_empty_description">Settings will appear here when they are added</string>
+</resources>
