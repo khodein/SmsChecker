@@ -31,7 +31,7 @@ internal class ListeningService : Service(),
 
     override fun onCreate() {
         super.onCreate()
-        scope = CoroutineScope(SupervisorJob() + Dispatchers.Default).also {
+        scope = CoroutineScope(SupervisorJob() + Dispatchers.IO).also {
             smsBroadcastDelegate.onCreate(
                 scope = it,
                 provider = this@ListeningService
