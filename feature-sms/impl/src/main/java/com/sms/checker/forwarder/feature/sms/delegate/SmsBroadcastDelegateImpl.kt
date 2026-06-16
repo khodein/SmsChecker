@@ -9,9 +9,6 @@ import com.sms.checker.forwarder.feature.sms.delegate.mapper.SmsBroadcastMapper
 import com.sms.checker.forwarder.feature.sms.delegate.receiver.SmsBroadcastReceiver
 import com.sms.checker.forwarder.feature.sms.domain.usecase.SetSmsUseCase
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 internal class SmsBroadcastDelegateImpl(
@@ -24,11 +21,14 @@ internal class SmsBroadcastDelegateImpl(
     private var receiver: SmsBroadcastReceiver? = null
     private var provider: SmsBroadcastDelegate.Provider? = null
 
-    override fun onCreate(provider: SmsBroadcastDelegate.Provider) {
+    override fun onCreate(
+        scope: CoroutineScope,
+        provider: SmsBroadcastDelegate.Provider
+    ) {
         if (receiver != null) return
         this.receiver = SmsBroadcastReceiver(::onReceiveSmsMessage)
         this.provider = provider
-        this.scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        this.scope = scope
         ContextCompat.registerReceiver(
             context,
             receiver,
@@ -39,7 +39,6 @@ internal class SmsBroadcastDelegateImpl(
 
     override fun onDestroy() {
         context.unregisterReceiver(receiver)
-        this.scope?.cancel()
         this.scope = null
         this.provider = null
         this.receiver = null

@@ -7,11 +7,8 @@ import com.sms.checker.forwarder.feature.sms.domain.model.SmsModel
 import com.sms.checker.forwarder.feature.sms.domain.usecase.GetSmsByIdUseCase
 import com.sms.checker.forwarder.feature.sms.domain.usecase.with_forward.SetSmsForwardUseCase
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 internal class ListeningSendingDelegate(
@@ -25,9 +22,11 @@ internal class ListeningSendingDelegate(
         listeningSmtpSendingDelegate
     )
 
-    fun onCreate() {
-        if (scope != null) return
-        this.scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    fun onCreate(
+        scope: CoroutineScope,
+    ) {
+        if (this.scope != null) return
+        this.scope = scope
         facades.forEach {
             it.onCreate(this)
         }
@@ -45,7 +44,6 @@ internal class ListeningSendingDelegate(
         facades.forEach {
             it.onDestroy()
         }
-        scope?.cancel()
         scope = null
     }
 

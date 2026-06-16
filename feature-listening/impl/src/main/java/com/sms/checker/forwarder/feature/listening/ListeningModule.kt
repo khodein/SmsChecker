@@ -1,7 +1,7 @@
 package com.sms.checker.forwarder.feature.listening
 
 import com.sms.checker.forwarder.feature.listening.data.ListeningRepositoryImpl
-import com.sms.checker.forwarder.feature.listening.delegate.management.ListeningNotificationDelegate
+import com.sms.checker.forwarder.feature.listening.delegate.management.notification.ListeningNotificationDelegate
 import com.sms.checker.forwarder.feature.listening.delegate.management.sending.ListeningSendingDelegate
 import com.sms.checker.forwarder.feature.listening.delegate.management.sending.facade.ListeningSendingFacade
 import com.sms.checker.forwarder.feature.listening.delegate.management.sending.facade.ListeningSmtpFacade
