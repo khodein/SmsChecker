@@ -5,17 +5,15 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.bottombar.widget.ListeningBottomBarWidget
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.config.widget.item
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.history.widget.item
@@ -56,9 +54,10 @@ internal fun ListeningListScreen(
         }
     ) {
         ListeningListContent(
-            modifier = Modifier.padding(it),
+            modifier = Modifier,
             state = state,
             action = action,
+            paddingValues = it
         )
     }
 }
@@ -68,35 +67,20 @@ private fun ListeningListContent(
     modifier: Modifier = Modifier,
     state: ListeningListState,
     action: ListeningListAction,
+    paddingValues: PaddingValues,
 ) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = SmsCheckerTheme.padding.verticalExtraSmall(),
+        contentPadding = paddingValues.plus(SmsCheckerTheme.padding.verticalExtraSmall()),
+        verticalArrangement = Arrangement.spacedBy(SmsCheckerTheme.padding.extraSmall())
     ) {
         item(
             state = state.listeningConfigState,
             action = action.configAction
         )
-        space(key = "Space1")
         item(
             state = state.listeningHistoryState,
             action = action.historyAction
-        )
-        space(key = "Space2")
-    }
-}
-
-private fun LazyListScope.space(
-    key: String
-) {
-    item(
-        key = key,
-        contentType = "SpaceBetweenContentType"
-    ) {
-        Spacer(
-            modifier = Modifier
-                .height(4.dp)
-                .fillMaxWidth()
         )
     }
 }

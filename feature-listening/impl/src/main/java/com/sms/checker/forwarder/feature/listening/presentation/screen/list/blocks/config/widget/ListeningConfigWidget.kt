@@ -54,6 +54,7 @@ internal fun LazyListScope.item(
     state: ListeningConfigState,
     action: ListeningConfigAction,
 ) {
+    if (state is ListeningConfigState.None) return
     item(
         key = LISTENING_CONFIG_KEY,
         contentType = LISTENING_CONFIG_CONTENT_TYPE
@@ -71,7 +72,6 @@ internal fun ListeningConfigWidget(
     state: ListeningConfigState,
     action: ListeningConfigAction,
 ) {
-    if (state is ListeningConfigState.None) return
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -97,6 +97,8 @@ internal fun ListeningConfigWidget(
                     action = action,
                 )
             }
+
+            else -> Unit
         }
     }
 }

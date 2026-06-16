@@ -3,7 +3,6 @@ package com.sms.checker.forwarder.feature.listening.presentation.screen.list.blo
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,11 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -30,7 +27,6 @@ import com.sms.checker.forwarder.feature.listening.presentation.screen.list.bloc
 import com.sms.checker.forwarder.framework.Status
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
 import com.sms.checker.forwarder.framework.uikit.DefaultButtonWidget
-import com.sms.checker.forwarder.framework.uikit.LoadingWidget
 
 private const val LISTENING_HISTORY_LOADING_KEY = "LISTENING_HISTORY_LOADING_KEY"
 private const val LISTENING_HISTORY_STATUS_CONTENT_TYPE = "LISTENING_HISTORY_LOADING_CONTENT_TYPE"
@@ -39,6 +35,9 @@ private const val LISTENING_HISTORY_ITEM_CONTENT_TYPE = "LISTENING_HISTORY_ITEM_
 
 private const val LISTENING_HISTORY_EMPTY_KEY = "LISTENING_HISTORY_EMPTY_KEY"
 private const val LISTENING_HISTORY_EMPTY_CONTENT_TYPE = "LISTENING_HISTORY_EMPTY_CONTENT_TYPE"
+
+private const val LISTENING_HISTORY_ALL_KEY = "LISTENING_HISTORY_ALL_KEY"
+private const val LISTENING_HISTORY_ALL_CONTENT_TYPE = "LISTENING_HISTORY_ALL_CONTENT_TYPE"
 
 internal fun ListeningHistoryEvent.onEvent(snackbarHostState: SnackbarHostState) {
 
@@ -62,70 +61,79 @@ private fun LazyListScope.items(
     action: ListeningHistoryAction,
 ) {
     when (state.status) {
-        Status.LOADING, Status.ERROR -> {
-            item(
-                key = LISTENING_HISTORY_LOADING_KEY,
-                contentType = LISTENING_HISTORY_STATUS_CONTENT_TYPE
-            ) {
-                ListeningHistoryLoadingErrorWidget(
-                    status = state.status,
-                    error = state.error,
-                    onClickReload = action.onClickReload
-                )
-            }
+        Status.ERROR -> {
+            loadingItem(
+                state = state,
+                action = action
+            )
         }
 
         Status.SUCCESS -> {
-
             if (state.items.isEmpty()) {
-                item(
-                    key = LISTENING_HISTORY_EMPTY_KEY,
-                    contentType = LISTENING_HISTORY_EMPTY_CONTENT_TYPE
-                ) {
-                    ListeningHistoryEmptyWidget(empty = state.empty)
-                }
+                emptyItem(state.empty)
             } else {
-                itemsIndexed(
+                items(
                     items = state.items,
-                    key = { _, item -> item.id },
-                    contentType = { _, _ -> LISTENING_HISTORY_ITEM_CONTENT_TYPE }
-                ) { index, item ->
-                    val lastIndex = state.items.lastIndex
-                    val isLast = index == lastIndex
-                    val modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            color = SmsCheckerTheme.color.surface,
-                            shape = RoundedCornerShape(
-                                topStart = if (index == 0) SmsCheckerTheme.corner.medium() else 0.dp,
-                                topEnd = if (index == 0) SmsCheckerTheme.corner.medium() else 0.dp,
-                                bottomStart = if (isLast) SmsCheckerTheme.corner.medium() else 0.dp,
-                                bottomEnd = if (isLast) SmsCheckerTheme.corner.medium() else 0.dp,
-                            )
-                        )
-                        .padding(SmsCheckerTheme.padding.allMedium())
+                    key = { it.id },
+                    contentType = { LISTENING_HISTORY_ITEM_CONTENT_TYPE }
+                ) { item ->
                     ListeningHistoryWidget(
-                        modifier = modifier,
                         item = item,
-                        all = if (isLast) state.button else null,
                         onClickItem = action.onClickItem,
-                        onClickAll = action.onClickAll,
                     )
-                    if (index != lastIndex) {
-                        HorizontalDivider(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(color = SmsCheckerTheme.color.surface)
-                                .padding(SmsCheckerTheme.padding.horizontalNormal()),
-                            thickness = 1.dp,
-                            color = SmsCheckerTheme.color.onSurfaceVariant
-                        )
-                    }
+                }
+
+                if (state.items.isNotEmpty()) {
+                    allItem(
+                        all = state.button,
+                        onClickAll = action.onClickAll
+                    )
                 }
             }
         }
 
-        Status.IDLE -> Unit
+        Status.IDLE, Status.LOADING -> Unit
+    }
+}
+
+private fun LazyListScope.loadingItem(
+    state: ListeningHistoryState,
+    action: ListeningHistoryAction,
+) {
+    item(
+        key = LISTENING_HISTORY_LOADING_KEY,
+        contentType = LISTENING_HISTORY_STATUS_CONTENT_TYPE
+    ) {
+        ListeningHistoryErrorWidget(
+            error = state.error,
+            onClickReload = action.onClickReload
+        )
+    }
+}
+
+private fun LazyListScope.emptyItem(
+    empty: ListeningHistoryState.Empty
+) {
+    item(
+        key = LISTENING_HISTORY_EMPTY_KEY,
+        contentType = LISTENING_HISTORY_EMPTY_CONTENT_TYPE
+    ) {
+        ListeningHistoryEmptyWidget(empty = empty)
+    }
+}
+
+private fun LazyListScope.allItem(
+    all: String,
+    onClickAll: () -> Unit
+) {
+    item(
+        key = LISTENING_HISTORY_ALL_KEY,
+        contentType = LISTENING_HISTORY_ALL_CONTENT_TYPE
+    ) {
+        ListeningHistoryAllWidget(
+            all = all,
+            onClickAll = onClickAll,
+        )
     }
 }
 
@@ -164,68 +172,52 @@ private fun ListeningHistoryEmptyWidget(
 }
 
 @Composable
-private fun ListeningHistoryLoadingErrorWidget(
+private fun ListeningHistoryErrorWidget(
     modifier: Modifier = Modifier,
-    status: Status,
     error: ListeningHistoryState.Error,
     onClickReload: () -> Unit
 ) {
-    if (status == Status.LOADING || status == Status.ERROR) {
-        Box(
-            modifier = modifier
-                .fillMaxWidth()
-                .background(
-                    color = SmsCheckerTheme.color.surface,
-                    shape = SmsCheckerTheme.corner.all()
-                )
-                .padding(SmsCheckerTheme.padding.allLarge())
-        ) {
-            when (status) {
-                Status.LOADING -> {
-                    LoadingWidget(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .align(Alignment.Center)
-                    )
-                }
-
-                Status.ERROR -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.Center),
-                        verticalArrangement = Arrangement.spacedBy(SmsCheckerTheme.padding.extraSmall())
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            text = error.text,
-                            textAlign = TextAlign.Center,
-                            style = SmsCheckerTheme.typography.bodyMedium,
-                            color = SmsCheckerTheme.color.onSurfaceVariant,
-                        )
-                        DefaultButtonWidget(
-                            modifier = Modifier.wrapContentWidth(),
-                            caption = error.button,
-                            onClick = onClickReload
-                        )
-                    }
-                }
-            }
-        }
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                color = SmsCheckerTheme.color.surface,
+                shape = SmsCheckerTheme.corner.all()
+            )
+            .padding(SmsCheckerTheme.padding.medium()),
+        verticalArrangement = Arrangement.spacedBy(SmsCheckerTheme.padding.extraSmall())
+    ) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth(),
+            text = error.text,
+            textAlign = TextAlign.Center,
+            style = SmsCheckerTheme.typography.bodyMedium,
+            color = SmsCheckerTheme.color.onSurfaceVariant,
+        )
+        DefaultButtonWidget(
+            modifier = Modifier.wrapContentWidth(),
+            caption = error.button,
+            onClick = onClickReload
+        )
     }
 }
 
 @Composable
 internal fun ListeningHistoryWidget(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     item: ListeningHistoryState.Item,
-    all: String?,
     onClickItem: (id: Long) -> Unit,
-    onClickAll: () -> Unit
 ) {
     Column(
-        modifier = modifier.clickable { onClickItem.invoke(item.id) }
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                color = SmsCheckerTheme.color.surface,
+                shape = SmsCheckerTheme.corner.all()
+            )
+            .clickable { onClickItem.invoke(item.id) }
+            .padding(SmsCheckerTheme.padding.medium())
     ) {
         Text(
             modifier = Modifier
@@ -256,34 +248,40 @@ internal fun ListeningHistoryWidget(
             style = SmsCheckerTheme.typography.bodyMedium,
             color = SmsCheckerTheme.color.onSurface,
         )
-        all?.let {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = SmsCheckerTheme.padding.small())
-                    .clickable {
-                        onClickAll.invoke()
-                    }
-                    .padding(vertical = SmsCheckerTheme.padding.small())
-            ) {
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .weight(1f),
-                    style = SmsCheckerTheme.typography.bodySmall,
-                    color = SmsCheckerTheme.color.onSurfaceVariant,
-                    textAlign = TextAlign.Start,
-                    text = it
-                )
-                Icon(
-                    modifier = Modifier
-                        .size(16.dp)
-                        .align(Alignment.CenterVertically),
-                    tint = SmsCheckerTheme.color.onSurfaceVariant,
-                    contentDescription = "Sms All Forward",
-                    imageVector = Icons.AutoMirrored.Default.ArrowForward,
-                )
-            }
-        }
+    }
+}
+
+@Composable
+private fun ListeningHistoryAllWidget(
+    all: String,
+    onClickAll: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                color = SmsCheckerTheme.color.surface,
+                shape = SmsCheckerTheme.corner.all()
+            )
+            .clickable(onClick = onClickAll)
+            .padding(SmsCheckerTheme.padding.medium())
+    ) {
+        Text(
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .weight(1f),
+            style = SmsCheckerTheme.typography.bodySmall,
+            color = SmsCheckerTheme.color.onSurfaceVariant,
+            textAlign = TextAlign.Start,
+            text = all
+        )
+        Icon(
+            modifier = Modifier
+                .size(16.dp)
+                .align(Alignment.CenterVertically),
+            tint = SmsCheckerTheme.color.onSurfaceVariant,
+            contentDescription = "Sms All Forward",
+            imageVector = Icons.AutoMirrored.Default.ArrowForward,
+        )
     }
 }

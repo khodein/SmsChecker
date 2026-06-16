@@ -62,19 +62,12 @@ internal class ListeningHistoryBlock(
     private fun load() {
         loadJob?.cancel()
         loadJob = blockScope?.launch {
-            updateLoading()
             runCatching {
                 getLastSmsWithForwardsUseCase.invoke()
             }
                 .onSuccess(::updateSuccess)
                 .onFailure(::updateError)
         }
-    }
-
-    private fun updateLoading() {
-        status = Status.LOADING
-        list = emptyList()
-        updateBlockState()
     }
 
     private fun updateSuccess(list: List<SmsWithForwardsModel>) {
