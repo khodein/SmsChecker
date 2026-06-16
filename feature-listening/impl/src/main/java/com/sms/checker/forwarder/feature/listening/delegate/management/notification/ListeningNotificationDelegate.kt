@@ -104,5 +104,3 @@ internal class ListeningNotificationDelegate(
         const val DISMISS_REQUEST_CODE = 1002
     }
 }
-
-
