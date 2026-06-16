@@ -37,9 +37,7 @@ internal suspend fun ListeningEvent.onEvent(
     snackbarHostState: SnackbarHostState
 ) {
     when (this) {
-        is ListeningEvent.ScrollTop -> {
-            lazyListState.animateScrollToItem(0)
-        }
+        is ListeningEvent.ScrollTop -> lazyListState.animateScrollToItem(0)
     }
 }
 
