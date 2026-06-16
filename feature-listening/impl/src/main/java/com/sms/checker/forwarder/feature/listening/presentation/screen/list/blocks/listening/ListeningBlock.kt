@@ -5,6 +5,7 @@ import com.sms.checker.forwarder.feature.listening.domain.usecase.StartListening
 import com.sms.checker.forwarder.feature.listening.domain.usecase.StopListeningUseCase
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.mapper.ListeningMapper
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.state.ListeningAction
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.state.ListeningEvent
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.state.ListeningState
 import com.sms.checker.forwarder.feature.listening.router.ListeningRouter
 import com.sms.checker.forwarder.framework.block.Block
@@ -58,6 +59,9 @@ internal class ListeningBlock(
 
         updateBlockState()
         blockProvider?.onUpdateListening(isListeningState)
+        if (isListening) {
+            onEvent(ListeningEvent.ScrollTop)
+        }
     }
 
     private fun onListening() {

@@ -45,8 +45,7 @@ private const val LISTENING_HISTORY_TITLE_KEY = "LISTENING_HISTORY_TITLE_KEY"
 private const val LISTENING_HISTORY_TITLE_CONTENT_TYPE = "LISTENING_HISTORY_TITLE_CONTENT_TYPE"
 
 
-
-internal fun ListeningHistoryEvent.onEvent(snackbarHostState: SnackbarHostState) {
+internal suspend fun ListeningHistoryEvent.onEvent(snackbarHostState: SnackbarHostState) {
 
 }
 

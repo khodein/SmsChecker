@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -17,6 +18,8 @@ import com.sms.checker.forwarder.feature.listening.presentation.screen.list.bloc
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.config.widget.onEvent
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.history.state.ListeningHistoryEvent
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.history.widget.onEvent
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.state.ListeningEvent
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.widget.onEvent
 import com.sms.checker.forwarder.framework.OnLifecycle
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
 
@@ -28,6 +31,7 @@ internal fun ListeningListRoute(
     val action = viewModel.action
     val context = LocalContext.current
     val snackbarHostState = SmsCheckerTheme.snackBarHostState
+    val lazyListState = rememberLazyListState()
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -57,6 +61,10 @@ internal fun ListeningListRoute(
             when (event) {
                 is ListeningConfigEvent -> event.onEvent(snackbarHostState)
                 is ListeningHistoryEvent -> event.onEvent(snackbarHostState)
+                is ListeningEvent -> event.onEvent(
+                    snackbarHostState = snackbarHostState,
+                    lazyListState = lazyListState
+                )
             }
         }
     }
@@ -68,6 +76,7 @@ internal fun ListeningListRoute(
 
     ListeningListScreen(
         state = state,
+        lazyListState = lazyListState,
         action = action,
     )
 }

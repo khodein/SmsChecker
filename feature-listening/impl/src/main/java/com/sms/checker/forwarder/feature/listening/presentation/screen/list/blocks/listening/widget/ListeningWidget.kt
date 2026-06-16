@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,16 +22,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.state.ListeningAction
+import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.state.ListeningEvent
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.state.ListeningState
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.state.ListeningState.NotificationState
-import com.sms.checker.forwarder.feature.listening.presentation.screen.list.listeningFadeSpec
-import com.sms.checker.forwarder.feature.listening.presentation.screen.list.listeningPlacementSpec
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
 import com.sms.checker.forwarder.framework.uikit.SwitchWidget
 
 private const val LISTENING_NOTIFICATION_WARNING_KEY = "LISTENING_NOTIFICATION_WARNING_KEY"
 private const val LISTENING_NOTIFICATION_WARNING_CONTENT_TYPE =
     "LISTENING_NOTIFICATION_WARNING_CONTENT_TYPE"
+
+internal suspend fun ListeningEvent.onEvent(
+    lazyListState: LazyListState,
+    snackbarHostState: SnackbarHostState
+) {
+    when (this) {
+        is ListeningEvent.ScrollTop -> {
+            lazyListState.animateScrollToItem(0)
+        }
+    }
+}
 
 @Composable
 internal fun ListeningWidget(
@@ -95,11 +107,7 @@ internal fun LazyListScope.notificationItem(
             contentType = LISTENING_NOTIFICATION_WARNING_CONTENT_TYPE
         ) {
             ListeningNotificationWidget(
-                modifier = Modifier.animateItem(
-                    fadeInSpec = listeningFadeSpec(),
-                    fadeOutSpec = listeningFadeSpec(),
-                    placementSpec = listeningPlacementSpec(),
-                ),
+                modifier = Modifier,
                 notificationState = notificationState,
                 onClickWarning = onClickWarning,
             )

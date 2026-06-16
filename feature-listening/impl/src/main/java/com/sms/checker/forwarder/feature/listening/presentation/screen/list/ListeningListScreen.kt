@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -37,6 +38,7 @@ internal fun listeningPlacementSpec() = tween<IntOffset>(LISTENING_ANIMATION_DUR
 internal fun ListeningListScreen(
     state: ListeningListState,
     action: ListeningListAction,
+    lazyListState: LazyListState,
 ) {
     Scaffold(
         topBar = {
@@ -64,6 +66,7 @@ internal fun ListeningListScreen(
         ListeningListContent(
             modifier = Modifier,
             state = state,
+            lazyListState = lazyListState,
             action = action,
             paddingValues = it
         )
@@ -73,11 +76,13 @@ internal fun ListeningListScreen(
 @Composable
 private fun ListeningListContent(
     modifier: Modifier = Modifier,
+    lazyListState: LazyListState,
     state: ListeningListState,
     action: ListeningListAction,
     paddingValues: PaddingValues,
 ) {
     LazyColumn(
+        state = lazyListState,
         modifier = modifier,
         contentPadding = paddingValues.plus(SmsCheckerTheme.padding.verticalExtraSmall()),
         verticalArrangement = Arrangement.spacedBy(SmsCheckerTheme.padding.extraSmall())
