@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_sms_history_title">История сообщений</string>
+    <string name="feature_sms_history_loading_error">Ошибка загрузки, обновить</string>
+</resources>

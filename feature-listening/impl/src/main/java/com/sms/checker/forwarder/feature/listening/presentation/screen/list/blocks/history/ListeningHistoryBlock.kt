@@ -6,6 +6,7 @@ import com.sms.checker.forwarder.feature.listening.presentation.screen.list.bloc
 import com.sms.checker.forwarder.feature.sms.domain.model.SmsWithForwardsModel
 import com.sms.checker.forwarder.feature.sms.domain.usecase.with_forward.GetLastSmsWithForwardsUseCase
 import com.sms.checker.forwarder.feature.sms.domain.usecase.with_forward.ObserveLastSmsWithForwardsUseCase
+import com.sms.checker.forwarder.feature.sms.router.SmsRouter
 import com.sms.checker.forwarder.framework.Status
 import com.sms.checker.forwarder.framework.block.Block
 import kotlinx.coroutines.Job
@@ -16,6 +17,7 @@ internal class ListeningHistoryBlock(
     private val getLastSmsWithForwardsUseCase: GetLastSmsWithForwardsUseCase,
     private val observeLastSmsWithForwardsUseCase: ObserveLastSmsWithForwardsUseCase,
     private val listeningHistoryMapper: ListeningHistoryMapper,
+    private val smsRouter: SmsRouter,
 ) : Block<ListeningHistoryState, ListeningHistoryAction, Unit>() {
 
     private var loadJob: Job? = null
@@ -93,7 +95,7 @@ internal class ListeningHistoryBlock(
     }
 
     private fun onClickAll() {
-
+        smsRouter.gotoSmsHistory()
     }
 
     private companion object {

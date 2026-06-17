@@ -23,14 +23,37 @@ import com.sms.checker.forwarder.feature.sms.domain.usecase.with_forward.SetSmsF
 import com.sms.checker.forwarder.feature.sms.domain.usecase.with_forward.SetSmsForwardUseCaseImpl
 import com.sms.checker.forwarder.feature.sms.domain.usecase.with_forward.UpdateSmsForwardUseCase
 import com.sms.checker.forwarder.feature.sms.domain.usecase.with_forward.UpdateSmsForwardUseCaseImpl
+import com.sms.checker.forwarder.feature.sms.presentation.screen.history.SmsHistoryViewModel
+import com.sms.checker.forwarder.feature.sms.presentation.screen.history.blocks.list.SmsHistoryListBlock
+import com.sms.checker.forwarder.feature.sms.presentation.screen.history.blocks.list.mapper.SmsHistoryListMapper
+import com.sms.checker.forwarder.feature.sms.presentation.screen.history.blocks.topbar.SmsHistoryTopBarBlock
+import com.sms.checker.forwarder.feature.sms.presentation.screen.history.blocks.topbar.mapper.SmsHistoryTopBarMapper
+import com.sms.checker.forwarder.feature.sms.presentation.screen.history.mapper.SmsHistoryMapper
+import com.sms.checker.forwarder.feature.sms.router.SmsProviderImpl
+import com.sms.checker.forwarder.feature.sms.router.SmsRouter
+import com.sms.checker.forwarder.feature.sms.router.SmsRouterImpl
+import com.sms.checker.forwarder.framework.router.Router
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 object SmsModule {
 
     fun get() = module {
+        // presentation
+        viewModelOf(::SmsHistoryViewModel)
+        singleOf(::SmsHistoryMapper)
+
+        //blocks
+        factoryOf(::SmsHistoryListBlock)
+        factoryOf(::SmsHistoryTopBarBlock)
+
+        //mapper
+        singleOf(::SmsHistoryListMapper)
+        singleOf(::SmsHistoryTopBarMapper)
+
         // domain
         singleOf(::SetSmsUseCaseImpl) bind SetSmsUseCase::class
         singleOf(::UpdateSmsUseCaseImpl) bind UpdateSmsUseCase::class
@@ -49,5 +72,9 @@ object SmsModule {
         // delegate
         factoryOf(::SmsBroadcastDelegateImpl) bind SmsBroadcastDelegate::class
         singleOf(::SmsBroadcastMapper)
+
+        // navigation
+        singleOf(::SmsRouterImpl) bind SmsRouter::class
+        singleOf(::SmsProviderImpl) bind Router.Provider::class
     }
 }
