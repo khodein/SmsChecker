@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_warning_title">НАЗАР АУДАРЫҢЫЗ!!!</string>
+    <string name="feature_warning_notification_text">SMS ТЫҢДАУ ЖҮРІП ЖАТЫР, АҚПАРАТ АЛУ ҮШІН БАСЫҢЫЗ</string>
+    <string name="feature_warning_dialog_description">Хабарламаларды тыңдау қосулы. Егер біреу сізге осы қолданбаны орнатуды немесе электрондық поштаға не Telegram-ға қатысты деректерді енгізуді айтса, хабарламаларды тыңдауды өшіріңіз немесе бұл қолданбаны жойыңыз. Барлық кіріс SMS ықтимал зиянкестер басқаратын поштаға немесе Telegram-ға жіберілуі мүмкін. Мұны түсінетініңізге көз жеткізіңіз.</string>
+</resources>

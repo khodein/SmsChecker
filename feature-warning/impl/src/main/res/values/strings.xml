@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_warning_title">WARNING!!!</string>
+    <string name="feature_warning_notification_text">SMS LISTENING IS ACTIVE, TAP FOR DETAILS</string>
+    <string name="feature_warning_dialog_description">Message listening is active. If someone told you to install this app or enter email or Telegram data, turn off message listening or delete this app. All incoming SMS messages may be forwarded to email or Telegram accounts controlled by possible attackers. Please make sure you understand this.</string>
+</resources>
