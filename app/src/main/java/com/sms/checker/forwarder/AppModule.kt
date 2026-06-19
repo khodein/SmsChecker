@@ -9,6 +9,7 @@ import com.sms.checker.forwarder.feature.email.EmailModule
 import com.sms.checker.forwarder.feature.listening.ListeningModule
 import com.sms.checker.forwarder.feature.settings.SettingsModule
 import com.sms.checker.forwarder.feature.sms.SmsModule
+import com.sms.checker.forwarder.feature.warning.WarningModule
 import com.sms.checker.forwarder.framework.tools.ResModule
 import com.sms.checker.forwarder.main.MainModule
 import com.sms.checker.forwarder.router.RouterModule
@@ -25,7 +26,8 @@ internal object AppModule {
             ListeningModule.get(),
             SmsModule.get(),
             EmailModule.get(),
-            SettingsModule.get()
+            SettingsModule.get(),
+            WarningModule.get(),
         )
     }
 

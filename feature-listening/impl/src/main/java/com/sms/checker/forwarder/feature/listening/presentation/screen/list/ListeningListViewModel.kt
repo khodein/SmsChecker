@@ -17,9 +17,7 @@ internal class ListeningListViewModel(
     private val listeningToolbarBlock: ListeningToolbarBlock,
     private val listeningConfigBlock: ListeningConfigBlock,
     private val listeningHistoryBlock: ListeningHistoryBlock,
-) : BaseViewModel<ListeningListState, ListeningListAction>(),
-    ListeningConfigBlock.Provider,
-    ListeningBlock.Provider {
+) : BaseViewModel<ListeningListState, ListeningListAction>() {
 
     override val action: ListeningListAction = ListeningListAction(
         bottomBarAction = listeningBottomBarBlock.action,
@@ -36,9 +34,9 @@ internal class ListeningListViewModel(
     override fun attach() {
         registerBlocks {
             add(listeningToolbarBlock)
-            add(listeningBlock, this@ListeningListViewModel)
+            add(listeningBlock)
             add(listeningBottomBarBlock)
-            add(listeningConfigBlock, this@ListeningListViewModel)
+            add(listeningConfigBlock)
             add(listeningHistoryBlock)
         }
     }
@@ -59,17 +57,5 @@ internal class ListeningListViewModel(
             listeningConfigState = listeningConfigBlock.blockState.value,
             listeningHistoryState = listeningHistoryBlock.blockState.value
         )
-    }
-
-    override fun isListening(): Boolean {
-        return listeningBlock.isListeningState
-    }
-
-    override fun onConfigSizes(list: List<Boolean>) {
-        listeningBottomBarBlock.updateConfigSizes(list)
-    }
-
-    override fun onUpdateListening(isListening: Boolean) {
-        listeningBottomBarBlock.updateListening(isListening)
     }
 }

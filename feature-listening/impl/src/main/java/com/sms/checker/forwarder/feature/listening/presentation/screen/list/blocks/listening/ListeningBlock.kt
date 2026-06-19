@@ -7,7 +7,8 @@ import com.sms.checker.forwarder.feature.listening.presentation.screen.list.bloc
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.state.ListeningAction
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.state.ListeningEvent
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.state.ListeningState
-import com.sms.checker.forwarder.feature.listening.router.ListeningRouter
+import com.sms.checker.forwarder.feature.warning.domain.usecase.GetWarningUseCase
+import com.sms.checker.forwarder.feature.warning.router.WarningRouter
 import com.sms.checker.forwarder.framework.block.Block
 
 internal class ListeningBlock(
@@ -15,15 +16,11 @@ internal class ListeningBlock(
     private val startListeningUseCase: StartListeningUseCase,
     private val stopListeningUseCase: StopListeningUseCase,
     private val getListeningUseCase: GetListeningUseCase,
-    private val listeningRouter: ListeningRouter,
-) : Block<ListeningState, ListeningAction, ListeningBlock.Provider>() {
+    private val getWarningUseCase: GetWarningUseCase,
+    private val warningRouter: WarningRouter,
+) : Block<ListeningState, ListeningAction, Unit>() {
 
-    var isListeningState: Boolean = false
-        private set(value) {
-            blockProvider?.onUpdateListening(value)
-            field = value
-        }
-
+    private var isListeningState: Boolean = false
     private var isGrantedPermissionState: Boolean = false
     private var needPermissionState: ListeningState.NeedPermissionState? = ListeningState.NeedPermissionState
 
@@ -58,7 +55,6 @@ internal class ListeningBlock(
         }
 
         updateBlockState()
-        blockProvider?.onUpdateListening(isListeningState)
         if (isListening) {
             onEvent(ListeningEvent.ScrollTop)
         }
@@ -75,6 +71,7 @@ internal class ListeningBlock(
     private fun buildState(): ListeningState {
         return listeningMapper.map(
             isListening = isListeningState,
+            warning = getWarningUseCase.invoke(),
         ).copy(
             needPermissionState = needPermissionState
         )
@@ -87,14 +84,6 @@ internal class ListeningBlock(
     }
 
     private fun onClickWarning() {
-        val (title, description) = listeningMapper.getDialogText()
-        listeningRouter.gotoWarning(
-            title = title,
-            description = description,
-        )
-    }
-
-    interface Provider {
-        fun onUpdateListening(isListening: Boolean)
+        warningRouter.gotoWarning()
     }
 }

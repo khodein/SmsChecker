@@ -7,9 +7,6 @@
     <string name="feature_listening_notification_channel_name">SMS Listening</string>
     <string name="feature_listening_notification_title">SMS Checker</string>
     <string name="feature_listening_notification_text">Listening for incoming SMS</string>
-    <string name="feature_listening_notification_warning_title">WARNING!!!</string>
-    <string name="feature_listening_notification_warning_text">SMS LISTENING IS ACTIVE, TAP FOR DETAILS</string>
-    <string name="feature_listening_warning_dialog_description">Message listening is active. If someone told you to install this app or enter email or Telegram data, turn off message listening or delete this app. All incoming SMS messages may be forwarded to email or Telegram accounts controlled by possible attackers. Please make sure you understand this.</string>
     <string name="feature_listening_config_apply">Config Apply</string>
     <string name="feature_listening_history_title">History</string>
     <string name="feature_listening_show_all_history">Show full history</string>

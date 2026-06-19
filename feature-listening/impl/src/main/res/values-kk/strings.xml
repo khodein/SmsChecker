@@ -7,9 +7,6 @@
     <string name="feature_listening_notification_channel_name">SMS тыңдау</string>
     <string name="feature_listening_notification_title">SMS Checker</string>
     <string name="feature_listening_notification_text">Кіріс SMS тыңдалуда</string>
-    <string name="feature_listening_notification_warning_title">НАЗАР АУДАРЫҢЫЗ!!!</string>
-    <string name="feature_listening_notification_warning_text">SMS ТЫҢДАУ ЖҮРІП ЖАТЫР, АҚПАРАТ АЛУ ҮШІН БАСЫҢЫЗ</string>
-    <string name="feature_listening_warning_dialog_description">Хабарламаларды тыңдау қосулы. Егер біреу сізге осы қолданбаны орнатуды немесе электрондық поштаға не Telegram-ға қатысты деректерді енгізуді айтса, хабарламаларды тыңдауды өшіріңіз немесе бұл қолданбаны жойыңыз. Барлық кіріс SMS ықтимал зиянкестер басқаратын поштаға немесе Telegram-ға жіберілуі мүмкін. Мұны түсінетініңізге көз жеткізіңіз.</string>
     <string name="feature_listening_config_apply">Қолданылған конфигурациялар</string>
     <string name="feature_listening_history_title">Хабарламалар тарихы</string>
     <string name="feature_listening_show_all_history">Барлық тарихты көрсету</string>

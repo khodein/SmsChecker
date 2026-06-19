@@ -31,6 +31,7 @@ fun <T> PageList(
         if (!reverseLayout) Arrangement.Top else Arrangement.Bottom,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     itemContent: @Composable LazyItemScope.(T) -> Unit,
+    headerContent: LazyListScope.() -> Unit = { },
     loadContent: LazyListScope.() -> Unit = { },
     errorContent: LazyListScope.(page: Int) -> Unit = { page -> },
 ) {
@@ -65,6 +66,8 @@ fun <T> PageList(
         contentPadding = contentPadding,
         modifier = modifier,
     ) {
+        headerContent()
+
         items(
             items = pageState.items,
             key = contentKey,

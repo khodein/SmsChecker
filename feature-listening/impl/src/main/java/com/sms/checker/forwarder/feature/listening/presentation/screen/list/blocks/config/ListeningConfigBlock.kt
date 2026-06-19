@@ -5,6 +5,7 @@ import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailStatus
 import com.sms.checker.forwarder.feature.email.domain.usecase.GetSmtpConfigUseCase
 import com.sms.checker.forwarder.feature.email.domain.usecase.UpdateSmtpConfigUseCase
 import com.sms.checker.forwarder.feature.email.router.EmailRouter
+import com.sms.checker.forwarder.feature.listening.domain.usecase.GetListeningUseCase
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.config.mapper.ListeningConfigMapper
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.config.state.ListeningConfigAction
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.config.state.ListeningConfigState
@@ -17,17 +18,11 @@ internal class ListeningConfigBlock(
     private val navEmailRouter: EmailRouter,
     private val getSmtpConfigUseCase: GetSmtpConfigUseCase,
     private val updateSmtpConfigUseCase: UpdateSmtpConfigUseCase,
-) : Block<ListeningConfigState, ListeningConfigAction, ListeningConfigBlock.Provider>() {
+    private val getListeningUseCase: GetListeningUseCase,
+) : Block<ListeningConfigState, ListeningConfigAction, Unit>() {
 
     private var loadSmtpJob: Job? = null
     private var smtpList: List<SmtpEmailModel> = emptyList()
-
-    private val configSizes: List<Boolean>
-        get() {
-            return listOf(
-                smtpList.size <= 3
-            )
-        }
 
     override val action = ListeningConfigAction(
         onClickEmpty = ::onClickAddNew,
@@ -91,7 +86,7 @@ internal class ListeningConfigBlock(
     private fun onCheckListening(
         doNotListening: () -> Unit
     ) {
-        if (blockProvider?.isListening() == true) {
+        if (getListeningUseCase.invoke()) {
             onEvent(listeningConfigMapper.mapSnackBarEventInfo())
         } else {
             doNotListening.invoke()
@@ -105,7 +100,6 @@ internal class ListeningConfigBlock(
                 getSmtpConfigUseCase.invoke()
             }.onSuccess { list ->
                 smtpList = list
-                blockProvider?.onConfigSizes(configSizes)
                 updateBlockState()
             }.onFailure {
                 smtpList = emptyList()
@@ -148,10 +142,5 @@ internal class ListeningConfigBlock(
     private fun updateSuccessStatus() {
         onEvent(listeningConfigMapper.mapSnackBarEventStatusSuccess())
         updateBlockState()
-    }
-
-    interface Provider {
-        fun isListening(): Boolean
-        fun onConfigSizes(list: List<Boolean>)
     }
 }

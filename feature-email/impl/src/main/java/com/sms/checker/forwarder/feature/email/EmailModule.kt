@@ -15,6 +15,8 @@ import com.sms.checker.forwarder.feature.email.domain.usecase.GetSmtpConfigByIdU
 import com.sms.checker.forwarder.feature.email.domain.usecase.GetSmtpConfigByIdUseCaseImpl
 import com.sms.checker.forwarder.feature.email.domain.usecase.GetSmtpConfigUseCase
 import com.sms.checker.forwarder.feature.email.domain.usecase.GetSmtpConfigUseCaseImpl
+import com.sms.checker.forwarder.feature.email.domain.usecase.ObserveSmtpLimitUseCase
+import com.sms.checker.forwarder.feature.email.domain.usecase.ObserveSmtpLimitUseCaseImpl
 import com.sms.checker.forwarder.feature.email.domain.usecase.SaveSmtpConfigUseCase
 import com.sms.checker.forwarder.feature.email.domain.usecase.SaveSmtpConfigUseCaseImpl
 import com.sms.checker.forwarder.feature.email.domain.usecase.SendSmtpMessageUseCase
@@ -64,6 +66,7 @@ object EmailModule {
         singleOf(::GetEnabledSmtpIdsUseCaseImpl) bind GetEnabledSmtpIdsUseCase::class
         singleOf(::DeleteSmtpConfigByIdUseCaseImpl) bind DeleteSmtpConfigByIdUseCase::class
         singleOf(::GetEnabledSmtpIdsUseCaseImpl) bind GetEnabledSmtpIdsUseCase::class
+        singleOf(::ObserveSmtpLimitUseCaseImpl) bind ObserveSmtpLimitUseCase::class
 
         // navigation
         singleOf(::EmailRouterImpl) bind EmailRouter::class

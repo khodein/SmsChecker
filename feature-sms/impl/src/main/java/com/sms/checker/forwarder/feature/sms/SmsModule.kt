@@ -28,6 +28,8 @@ import com.sms.checker.forwarder.feature.sms.presentation.screen.history.blocks.
 import com.sms.checker.forwarder.feature.sms.presentation.screen.history.blocks.list.mapper.SmsHistoryListMapper
 import com.sms.checker.forwarder.feature.sms.presentation.screen.history.blocks.topbar.SmsHistoryTopBarBlock
 import com.sms.checker.forwarder.feature.sms.presentation.screen.history.blocks.topbar.mapper.SmsHistoryTopBarMapper
+import com.sms.checker.forwarder.feature.sms.presentation.screen.history.blocks.warning.SmsHistoryWarningBlock
+import com.sms.checker.forwarder.feature.sms.presentation.screen.history.blocks.warning.mapper.SmsHistoryWarningMapper
 import com.sms.checker.forwarder.feature.sms.presentation.screen.history.mapper.SmsHistoryMapper
 import com.sms.checker.forwarder.feature.sms.router.SmsProviderImpl
 import com.sms.checker.forwarder.feature.sms.router.SmsRouter
@@ -49,10 +51,12 @@ object SmsModule {
         //blocks
         factoryOf(::SmsHistoryListBlock)
         factoryOf(::SmsHistoryTopBarBlock)
+        factoryOf(::SmsHistoryWarningBlock)
 
         //mapper
         singleOf(::SmsHistoryListMapper)
         singleOf(::SmsHistoryTopBarMapper)
+        singleOf(::SmsHistoryWarningMapper)
 
         // domain
         singleOf(::SetSmsUseCaseImpl) bind SetSmsUseCase::class

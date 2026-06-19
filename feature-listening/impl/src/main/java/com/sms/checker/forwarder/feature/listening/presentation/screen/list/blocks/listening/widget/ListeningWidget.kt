@@ -1,7 +1,5 @@
 package com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.widget
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,15 +16,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.state.ListeningAction
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.state.ListeningEvent
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.state.ListeningState
-import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.listening.state.ListeningState.NotificationState
+import com.sms.checker.forwarder.feature.warning.widget.WarningUi
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
 import com.sms.checker.forwarder.framework.uikit.SwitchWidget
+import org.koin.compose.koinInject
 
 private const val LISTENING_NOTIFICATION_WARNING_KEY = "LISTENING_NOTIFICATION_WARNING_KEY"
 private const val LISTENING_NOTIFICATION_WARNING_CONTENT_TYPE =
@@ -92,57 +89,21 @@ internal fun ListeningWidget(
     }
 }
 
-private val WarningRed = Color(0xFFEF4444)
-private val OnWarningRed = Color(0xFFFFFFFF)
-
 internal fun LazyListScope.notificationItem(
-    notificationState: NotificationState?,
+    notificationState: ListeningState.NotificationState?,
     onClickWarning: () -> Unit,
 ) {
     notificationState?.let {
         item(
             key = LISTENING_NOTIFICATION_WARNING_KEY,
-            contentType = LISTENING_NOTIFICATION_WARNING_CONTENT_TYPE
+            contentType = LISTENING_NOTIFICATION_WARNING_CONTENT_TYPE,
         ) {
-            ListeningNotificationWidget(
-                modifier = Modifier,
-                notificationState = notificationState,
-                onClickWarning = onClickWarning,
+            val warningUi: WarningUi = koinInject()
+            warningUi.WarningNotificationContent(
+                title = it.title,
+                description = it.description,
+                onClick = onClickWarning,
             )
         }
-    }
-}
-
-@Composable
-internal fun ListeningNotificationWidget(
-    modifier: Modifier = Modifier,
-    notificationState: NotificationState,
-    onClickWarning: () -> Unit,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClickWarning)
-            .background(
-                shape = SmsCheckerTheme.corner.all(),
-                color = WarningRed
-            )
-            .padding(SmsCheckerTheme.padding.medium()),
-        verticalArrangement = Arrangement.spacedBy(SmsCheckerTheme.padding.small())
-    ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = notificationState.title,
-            style = SmsCheckerTheme.typography.titleLarge,
-            textAlign = TextAlign.Center,
-            color = OnWarningRed
-        )
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = notificationState.description,
-            style = SmsCheckerTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            color = OnWarningRed
-        )
     }
 }

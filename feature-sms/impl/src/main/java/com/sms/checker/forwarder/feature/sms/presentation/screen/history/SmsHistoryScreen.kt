@@ -1,5 +1,6 @@
 package com.sms.checker.forwarder.feature.sms.presentation.screen.history
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,16 +13,21 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import com.sms.checker.forwarder.feature.sms.presentation.screen.history.blocks.list.state.SmsHistoryListState
 import com.sms.checker.forwarder.feature.sms.presentation.screen.history.blocks.list.widget.SmsHistoryWidget
 import com.sms.checker.forwarder.feature.sms.presentation.screen.history.blocks.topbar.widget.SmsHistoryTopBarWidget
+import com.sms.checker.forwarder.feature.sms.presentation.screen.history.blocks.warning.state.SmsHistoryWarningAction
+import com.sms.checker.forwarder.feature.sms.presentation.screen.history.blocks.warning.state.SmsHistoryWarningState
 import com.sms.checker.forwarder.feature.sms.presentation.screen.history.state.SmsHistoryAction
 import com.sms.checker.forwarder.feature.sms.presentation.screen.history.state.SmsHistoryState
+import com.sms.checker.forwarder.feature.warning.widget.WarningUi
 import com.sms.checker.forwarder.framework.PageList
 import com.sms.checker.forwarder.framework.theme.SmsCheckerTheme
 import com.sms.checker.forwarder.framework.uikit.DefaultButtonWidget
 import com.sms.checker.forwarder.framework.uikit.LoadingWidget
+import org.koin.compose.koinInject
 
 private const val SMS_HISTORY_CONTENT_TYPE = "SMS_HISTORY_CONTENT_TYPE"
 
@@ -44,10 +50,10 @@ internal fun SmsHistoryScreen(
                 action = action.topBarAction
             )
         }
-    ) {
+    ) { innerPadding ->
         PageList(
             state = state.listState.pageState,
-            contentPadding = it.plus(SmsCheckerTheme.padding.verticalExtraSmall()),
+            contentPadding = innerPadding.plus(SmsCheckerTheme.padding.verticalExtraSmall()),
             verticalArrangement = Arrangement.spacedBy(SmsCheckerTheme.padding.extraSmall()),
             contentType = { SMS_HISTORY_CONTENT_TYPE },
             contentKey = { item -> item.id.toString() },
@@ -72,6 +78,32 @@ internal fun SmsHistoryScreen(
             },
         )
     }
+}
+
+@Composable
+private fun WarningBanner(
+    state: SmsHistoryWarningState,
+    action: SmsHistoryWarningAction,
+) {
+    if (!state.isVisible) return
+    val warningUi: WarningUi = koinInject()
+    warningUi.WarningNotificationContent(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                color = SmsCheckerTheme.color.surface,
+                shape = SmsCheckerTheme.corner.bottom()
+            )
+            .shadow(
+                elevation = 6.dp,
+                shape = SmsCheckerTheme.corner.bottom()
+            )
+            .padding(SmsCheckerTheme.padding.horizontalNormal())
+            .padding(bottom = SmsCheckerTheme.padding.normal()),
+        title = state.title,
+        description = state.description,
+        onClick = action.onClick,
+    )
 }
 
 private fun LazyListScope.loading() {

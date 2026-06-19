@@ -1,20 +1,14 @@
 package com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.bottombar.mapper
 
 import com.sms.checker.forwarder.feature.listening.R
-import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.bottombar.state.ListeningBottomBarState
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.blocks.config.state.ListeningConfigEvent
 import com.sms.checker.forwarder.framework.tools.res.ResProvider
 
 internal class ListeningBottomBarMapper(
     private val resProvider: ResProvider
 ) {
-    fun map(
-        isVisible: Boolean,
-    ): ListeningBottomBarState {
-        return ListeningBottomBarState(
-            caption = resProvider.getString(R.string.feature_listening_add_forward),
-            isVisible = isVisible,
-        )
+    fun mapBottomBarCaption(): String {
+        return resProvider.getString(R.string.feature_listening_add_forward)
     }
 
     fun mapSnackBarEventInfo(): ListeningConfigEvent.SnackBarEvent {

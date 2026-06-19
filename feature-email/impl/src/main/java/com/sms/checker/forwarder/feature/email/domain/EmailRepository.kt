@@ -1,8 +1,11 @@
 package com.sms.checker.forwarder.feature.email.domain
 
 import com.sms.checker.forwarder.feature.email.domain.model.SmtpEmailModel
+import kotlinx.coroutines.flow.Flow
 
 internal interface EmailRepository {
+
+    val isSmtpLimitFlow: Flow<Boolean>
 
     suspend fun sendSmtpMessage(
         message: String,

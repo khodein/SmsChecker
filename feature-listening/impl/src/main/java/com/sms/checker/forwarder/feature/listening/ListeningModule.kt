@@ -7,6 +7,8 @@ import com.sms.checker.forwarder.feature.listening.delegate.management.sending.f
 import com.sms.checker.forwarder.feature.listening.delegate.management.sending.facade.ListeningSmtpFacade
 import com.sms.checker.forwarder.feature.listening.domain.ListeningRepository
 import com.sms.checker.forwarder.feature.listening.domain.usecase.GetListeningUseCase
+import com.sms.checker.forwarder.feature.listening.domain.usecase.ObserveListeningUseCase
+import com.sms.checker.forwarder.feature.listening.domain.usecase.ObserveListeningUseCaseImpl
 import com.sms.checker.forwarder.feature.listening.domain.usecase.StartListeningUseCase
 import com.sms.checker.forwarder.feature.listening.domain.usecase.StopListeningUseCase
 import com.sms.checker.forwarder.feature.listening.presentation.screen.list.ListeningListViewModel
@@ -54,6 +56,7 @@ object ListeningModule {
         factoryOf(::StartListeningUseCase)
         factoryOf(::StopListeningUseCase)
         factoryOf(::GetListeningUseCase)
+        singleOf(::ObserveListeningUseCaseImpl) bind ObserveListeningUseCase::class
 
         // data
         singleOf(::ListeningRepositoryImpl) bind ListeningRepository::class

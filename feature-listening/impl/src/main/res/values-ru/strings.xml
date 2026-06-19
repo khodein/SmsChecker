@@ -7,9 +7,6 @@
     <string name="feature_listening_notification_channel_name">Прослушивание SMS</string>
     <string name="feature_listening_notification_title">SMS Checker</string>
     <string name="feature_listening_notification_text">Входящие SMS прослушиваются</string>
-    <string name="feature_listening_notification_warning_title">ВНИМАНИЕ!!!</string>
-    <string name="feature_listening_notification_warning_text">ПРОИСХОДИТ ПРОСЛУШИВАНИЕ СМС, НАЖМИТЕ ДЛЯ ПОЛУЧЕНИЯ ИНФОРМАЦИИ</string>
-    <string name="feature_listening_warning_dialog_description">Происходит прослушивание сообщений. Если вам кто-то сказал установить это приложение или ввести данные, связанные с электронной почтой или Telegram, отключите прослушивание сообщений или удалите это приложение. Все входящие SMS могут быть перенаправлены на почту или Telegram возможных злоумышленников. Пожалуйста, убедитесь, что вы понимаете это.</string>
     <string name="feature_listening_config_apply">Применённые конфигурации</string>
     <string name="feature_listening_history_title">История сообщений</string>
     <string name="feature_listening_show_all_history">Показать всю историю</string>

@@ -40,6 +40,11 @@ abstract class Block<State : Any, Action, Provider> {
         _blockState.value = blockState.value.reducer()
     }
 
+    protected fun updateState(reducer: (State) -> State) {
+        val state = blockState.value
+        _blockState.value = reducer.invoke(state)
+    }
+
     protected fun onEvent(event: UiEvent) {
         onEvent?.invoke(event)
     }
